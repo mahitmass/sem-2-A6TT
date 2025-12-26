@@ -61,7 +61,7 @@
       color: var(--text-main);
       margin: 0;
       padding: 0;
-      /* FIXED APP SHELL - NO BODY SCROLL */
+      /* APP SHELL MODE: Fixed height, no page scroll */
       height: 100vh;
       width: 100vw;
       display: flex;
@@ -70,9 +70,9 @@
       user-select: none; 
     }
 
-    /* --- HEADER (FIXED TOP) --- */
+    /* --- HEADER (FIXED) --- */
     header {
-      flex: 0 0 auto; /* Don't shrink/grow */
+      flex: 0 0 auto; 
       width: 100%;
       height: 60px;
       padding: 0 20px;
@@ -92,7 +92,7 @@
 
     h1 {
       font-weight: 800;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       margin: 0;
       background: linear-gradient(90deg, var(--accent-color), #03dac6);
       -webkit-background-clip: text;
@@ -103,13 +103,12 @@
       background: transparent;
       border: none;
       color: var(--text-main);
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       cursor: pointer;
       padding: 5px;
     }
 
     /* --- VIEW CONTAINERS --- */
-    /* This makes the container fill the rest of the screen */
     .view-container {
         flex: 1; 
         position: relative;
@@ -140,7 +139,7 @@
         height: 100%;
         overflow-y: auto; 
         padding: 20px;
-        padding-bottom: 80px; /* Space for footer */
+        padding-bottom: 80px; 
     }
 
     .day-header {
@@ -203,36 +202,34 @@
     .break-duration-text { font-size: 0.85rem; color: var(--text-muted); opacity: 0.8; }
 
 
-    /* --- COMPACT TABLE VIEW (FIXED SCROLL) --- */
+    /* --- COMPACT TABLE VIEW (OPTIMIZED) --- */
     #compact-container {
-        /* This container scrolls internally */
         overflow: auto; 
         padding: 0;
-        /* Padding bottom to clear footer */
-        padding-bottom: 60px; 
+        padding-bottom: 60px; /* Just enough for footer */
         background-color: var(--bg-color);
     }
 
     .weekly-table {
         border-collapse: separate;
-        border-spacing: 0; /* Remove gaps for perfect sticky headers */
+        border-spacing: 0; 
         width: 100%;
         min-width: 600px; 
     }
 
+    /* TIGHTER CELLS FOR VISIBILITY */
     .weekly-table th, .weekly-table td {
-        padding: 12px 8px;
+        padding: 5px 3px; /* Very tight padding */
         text-align: center;
         vertical-align: middle;
-        font-size: 0.85rem;
+        font-size: 0.75rem; /* Smaller font to fit more */
         border-right: 1px solid var(--border-color);
         border-bottom: 1px solid var(--border-color);
         color: var(--text-main);
+        height: 45px; /* Force consistent height */
     }
 
-    /* --- STICKY HEADERS LOGIC --- */
-    
-    /* 1. Header Row (Mon, Tue...) stuck to top of container */
+    /* --- STICKY HEADERS --- */
     .weekly-table thead th {
         position: sticky;
         top: 0;
@@ -241,10 +238,9 @@
         border-bottom: 2px solid var(--border-color);
         font-weight: 800;
         text-transform: uppercase;
-        font-size: 0.8rem;
+        font-size: 0.7rem;
     }
 
-    /* 2. Time Column (09:00...) stuck to left */
     .weekly-table tbody td:first-child {
         position: sticky;
         left: 0;
@@ -253,36 +249,37 @@
         border-right: 2px solid var(--border-color);
         font-weight: bold;
         color: var(--accent-color);
-        min-width: 85px;
+        min-width: 70px;
+        font-size: 0.7rem;
     }
 
-    /* 3. The Corner Cell (Time Label) stuck to TOP and LEFT */
     .weekly-table thead th:first-child {
         position: sticky;
         top: 0;
         left: 0;
-        z-index: 30; /* Highest priority */
+        z-index: 30;
         background-color: var(--header-bg);
         border-right: 2px solid var(--border-color);
     }
 
     /* Table Cell Types */
-    .cell-lec { background-color: rgba(144, 202, 249, 0.15); border-left: 4px solid var(--lec-marker) !important; }
-    .cell-tut { background-color: rgba(255, 204, 128, 0.15); border-left: 4px solid var(--tut-marker) !important; }
-    .cell-lab { background-color: rgba(239, 154, 154, 0.15); border-left: 4px solid var(--lab-marker) !important; }
+    .cell-lec { background-color: rgba(144, 202, 249, 0.15); border-left: 3px solid var(--lec-marker) !important; }
+    .cell-tut { background-color: rgba(255, 204, 128, 0.15); border-left: 3px solid var(--tut-marker) !important; }
+    .cell-lab { background-color: rgba(239, 154, 154, 0.15); border-left: 3px solid var(--lab-marker) !important; }
     .cell-break { background-color: var(--break-bg); opacity: 0.7; }
     .cell-empty { background-color: transparent; }
 
-    .cell-subject { font-weight: 700; display: block; margin-bottom: 4px; }
-    .cell-room { font-size: 0.75rem; color: var(--text-muted); display: block; }
+    .cell-subject { font-weight: 700; display: block; margin-bottom: 2px; }
+    .cell-room { font-size: 0.65rem; color: var(--text-muted); display: block; }
 
 
-    /* --- FOOTER (FIXED BOTTOM) --- */
+    /* --- FOOTER --- */
     .footer-sig {
-        flex: 0 0 auto; /* Fixed height */
+        flex: 0 0 auto; 
         width: 100%;
         text-align: center;
-        padding: 15px;
+        padding: 10px;
+        font-size: 0.8rem;
         background: var(--bg-color);
         color: var(--text-muted);
         border-top: 1px solid var(--border-color);
@@ -354,7 +351,7 @@
               </div>
                <div class="class-card type-lec" data-day="2" data-start-hour="13" data-end-hour="14">
                 <div class="time-slot">01:00 PM - 02:00 PM</div>
-                <div class="subject-name">Mathematics-2</div>
+                <div class="subject-name">Maths-2</div>
                 <div class="card-footer">
                     <span class="info-badge">🏛️ G1</span>
                     <span class="info-badge">👨‍🏫 Dr. Arpita Nayek</span>
