@@ -124,7 +124,8 @@
         height: 100%;
         overflow-y: auto; /* Vertical scroll for classes */
         padding: 20px;
-        padding-bottom: 80px; /* Space for footer */
+        /* Increased padding so footer doesn't hide content */
+        padding-bottom: 160px; 
     }
 
     .day-header {
@@ -251,6 +252,7 @@
         background: var(--bg-color);
         color: var(--text-muted);
         border-top: 1px solid var(--border-color);
+        z-index: 20;
     }
     .signature { color: var(--accent-color); font-weight: 700; font-family: 'Courier New', monospace; }
 
@@ -283,12 +285,12 @@
 
               <div class="break-card">
                 <div class="break-header">Breaks in the Day</div>
-                <div class="break-time-text">01:00 PM - 02:00 PM </div>
+                <div class="break-time-text">12:00 PM - 01:00 PM</div>
                 <div class="break-duration-text">1 hr 0 min</div>
               </div>
 
               <div class="class-card type-lec" data-day="1" data-start-hour="13" data-end-hour="14">
-                  <div class="time-slot">02:00 PM - 03:00 PM</div>
+                  <div class="time-slot">01:00 PM - 02:00 PM</div>
                   <div class="subject-name">UHV</div>
                   <div class="card-footer">
                       <span class="info-badge">🏛️ G1</span>
@@ -371,7 +373,7 @@
             </div>
 
              <div class="class-card type-lec" data-day="3" data-start-hour="12" data-end-hour="13">
-                <div class="time-slot">01:00 PM - 02:00 PM</div>
+                <div class="time-slot">12:00 PM - 01:00 PM</div>
                 <div class="subject-name">Physics-2</div>
                 <div class="card-footer">
                     <span class="info-badge">🏛️ CS5</span>
@@ -381,7 +383,7 @@
             </div>
 
              <div class="class-card type-lec" data-day="3" data-start-hour="13" data-end-hour="14">
-                <div class="time-slot">02:00 PM - 03:00 PM</div>
+                <div class="time-slot">01:00 PM - 02:00 PM</div>
                 <div class="subject-name">Mathematics-2</div>
                 <div class="card-footer">
                     <span class="info-badge">🏛️ FF3</span>
@@ -391,7 +393,7 @@
             </div>
 
             <div class="class-card type-lab" data-day="3" data-start-hour="14" data-end-hour="16">
-                <div class="time-slot">03:00 PM - 05:00 PM</div>
+                <div class="time-slot">02:00 PM - 04:00 PM</div>
                 <div class="subject-name">SDF Lab</div>
                 <div class="card-footer">
                     <span class="info-badge">🏛️ CL02</span>
@@ -424,7 +426,7 @@
             </div>
 
             <div class="class-card type-lab" data-day="4" data-start-hour="12" data-end-hour="14">
-                <div class="time-slot">01:00 PM - 03:00 PM</div>
+                <div class="time-slot">12:00 PM - 02:00 PM</div>
                 <div class="subject-name">Life Skills Lab</div>
                 <div class="card-footer">
                     <span class="info-badge">🏛️ LL</span>
@@ -447,7 +449,7 @@
             </div>
 
              <div class="class-card type-tut" data-day="5" data-start-hour="12" data-end-hour="13">
-                <div class="time-slot">01:00 PM - 02:00 PM</div>
+                <div class="time-slot">12:00 PM - 01:00 PM</div>
                 <div class="subject-name">Physics-2</div>
                 <div class="card-footer">
                     <span class="info-badge">🏛️ TS8</span>
@@ -457,7 +459,7 @@
             </div>
 
              <div class="class-card type-tut" data-day="5" data-start-hour="13" data-end-hour="14">
-                <div class="time-slot">02:00 PM - 03:00 PM</div>
+                <div class="time-slot">01:00 PM - 02:00 PM</div>
                 <div class="subject-name">Mathematics-2</div>
                 <div class="card-footer">
                     <span class="info-badge">🏛️ TS8</span>
@@ -467,7 +469,7 @@
             </div>
 
             <div class="class-card type-tut" data-day="5" data-start-hour="14" data-end-hour="15">
-                <div class="time-slot">03:00 PM - 04:00 PM</div>
+                <div class="time-slot">02:00 PM - 03:00 PM</div>
                 <div class="subject-name">SDF-2</div>
                 <div class="card-footer">
                     <span class="info-badge">🏛️ TS6</span>
@@ -539,6 +541,14 @@
     jumpToDay(initialDayIndex);
 
 
+    // --- RESIZE LISTENER (FIX FOR ROTATION) ---
+    window.addEventListener('resize', () => {
+        // Instantly jump to current day to fix offset
+        track.style.transition = 'none';
+        jumpToDay(currentDayIndex);
+    });
+
+
     // Touch Events
     track.addEventListener('touchstart', touchStart);
     track.addEventListener('touchmove', touchMove, { passive: false }); 
@@ -597,9 +607,6 @@
         const currentX = clientX;
         const diffX = currentX - startX;
         currentTranslate = prevTranslate + diffX;
-        
-        // Resistance at edges
-        // (Removed resistance to allow checking for loop thresholds)
         
         track.style.transform = `translateX(${currentTranslate}px)`;
     }
