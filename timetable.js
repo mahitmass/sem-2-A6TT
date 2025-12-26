@@ -37,7 +37,7 @@ const schedule = [
 
 const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-// --- 2. GENERATE MOBILE SWIPE VIEW ---
+// --- 2. GENERATE MOBILE SWIPE VIEW (With Smart Lunch Split) ---
 function renderMobileView() {
   const track = document.getElementById('daysTrack');
   track.innerHTML = ''; // Clear existing
@@ -56,42 +56,48 @@ function renderMobileView() {
     // Filter classes for this day and sort by time
     const dayClasses = schedule.filter(s => s.day === d).sort((a, b) => a.start - b.start);
 
-    // If no classes
     if (dayClasses.length === 0) {
       dayView.innerHTML += `<div class="break-card"><div class="break-header">No Classes Today! 🥳</div></div>`;
-    }
-
-    // Generate Cards
-    dayClasses.forEach(cls => {
-        // Format Time (e.g., 13 -> 01:00 PM)
-        const formatTime = (h) => {
-            const ampm = h >= 12 ? 'PM' : 'AM';
-            const hr = h % 12 || 12;
-            return `${hr < 10 ? '0'+hr : hr}:00 ${ampm}`;
-        };
-
-        const timeString = `${formatTime(cls.start)} - ${formatTime(cls.start + cls.duration)}`;
+    } else {
         
-        // Type Badge Text
-        const typeText = cls.type === 'lec' ? 'Lecture' : cls.type === 'tut' ? 'Tutorial' : 'LAB';
+        // Start tracking from the START of the first class
+        let lastEndTime = dayClasses[0].start; 
 
-        const card = document.createElement('div');
-        card.className = `class-card type-${cls.type}`;
-        card.setAttribute('data-day', cls.day);
-        card.setAttribute('data-start-hour', cls.start);
-        card.setAttribute('data-end-hour', cls.start + cls.duration);
+        dayClasses.forEach((cls) => {
+            // Check for gap between previous class end and current class start
+            if (cls.start > lastEndTime) {
+                let gapStart = lastEndTime;
+                let gapEnd = cls.start;
 
-        card.innerHTML = `
-            <div class="time-slot">${timeString}</div>
-            <div class="subject-name">${cls.title}</div>
-            <div class="card-footer">
-                <span class="info-badge">🏛 ${cls.code}</span>
-                <span class="info-badge">👨‍🏫 ${cls.teacher}</span>
-                <span class="info-badge">${typeText}</span>
-            </div>
-        `;
-        dayView.appendChild(card);
-    });
+                // --- LUNCH SPLIT LOGIC ---
+                // 1. Pre-Lunch Break (Before 12:00)
+                if (gapStart < 12) {
+                    const end = Math.min(gapEnd, 12);
+                    if (end > gapStart) createBreakCard(dayView, gapStart, end, "Break");
+                }
+
+                // 2. Lunch Break (12:00 - 13:00)
+                // Only creates if the gap specifically COVERS this hour
+                if (gapStart < 13 && gapEnd > 12) {
+                    const start = Math.max(gapStart, 12);
+                    const end = Math.min(gapEnd, 13);
+                    createBreakCard(dayView, start, end, "Lunch Break");
+                }
+
+                // 3. Post-Lunch Break (After 13:00)
+                if (gapEnd > 13) {
+                    const start = Math.max(gapStart, 13);
+                    if (gapEnd > start) createBreakCard(dayView, start, gapEnd, "Break");
+                }
+            }
+
+            // Render Class Card
+            createClassCard(dayView, cls);
+
+            // Update tracker
+            lastEndTime = cls.start + cls.duration;
+        });
+    }
     
     // Add bottom padding spacer
     const spacer = document.createElement('div');
@@ -101,6 +107,56 @@ function renderMobileView() {
     track.appendChild(dayView);
   }
 }
+
+// --- Helper Functions for Mobile View ---
+
+function createClassCard(container, cls) {
+    const formatTime = (h) => {
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const hr = h % 12 || 12;
+        return `${hr < 10 ? '0'+hr : hr}:00 ${ampm}`;
+    };
+    const timeString = `${formatTime(cls.start)} - ${formatTime(cls.start + cls.duration)}`;
+    const typeText = cls.type === 'lec' ? 'Lecture' : cls.type === 'tut' ? 'Tutorial' : 'LAB';
+
+    const card = document.createElement('div');
+    card.className = `class-card type-${cls.type}`;
+    card.setAttribute('data-day', cls.day);
+    card.setAttribute('data-start-hour', cls.start);
+    card.setAttribute('data-end-hour', cls.start + cls.duration);
+
+    card.innerHTML = `
+        <div class="time-slot">${timeString}</div>
+        <div class="subject-name">${cls.title}</div>
+        <div class="card-footer">
+            <span class="info-badge">🏛 ${cls.code}</span>
+            <span class="info-badge">👨‍🏫 ${cls.teacher}</span>
+            <span class="info-badge">${typeText}</span>
+        </div>
+    `;
+    container.appendChild(card);
+}
+
+function createBreakCard(container, start, end, title) {
+    const duration = end - start;
+    if (duration <= 0) return;
+
+    const formatTime = (h) => {
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const hr = h % 12 || 12;
+        return `${hr < 10 ? '0'+hr : hr}:00 ${ampm}`;
+    };
+
+    const breakDiv = document.createElement('div');
+    breakDiv.className = 'break-card';
+    breakDiv.innerHTML = `
+        <div class="break-header">${title}</div>
+        <div class="break-time-text">${formatTime(start)} - ${formatTime(end)}</div>
+        <div class="break-duration-text">${duration} hr${duration > 1 ? 's' : ''} 0 min</div>
+    `;
+    container.appendChild(breakDiv);
+}
+
 
 // --- 3. GENERATE DESKTOP TABLE VIEW ---
 function renderDesktopView() {
@@ -143,7 +199,7 @@ function renderDesktopView() {
                 td.className = `cell-${cls.type}`;
                 if (cls.duration > 1) td.rowSpan = cls.duration;
                 
-                // Format Subject Title for Table
+                // Format Subject Title for Table (Shorten Laboratory)
                 let subjectShort = cls.title; 
                 if(subjectShort.includes('Laboratory')) subjectShort = subjectShort.replace('Laboratory', 'Lab');
 
