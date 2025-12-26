@@ -21,7 +21,7 @@
       --lec-marker: #90caf9; /* Blue */
       --tut-marker: #ffcc80; /* Orange */
       --lab-marker: #ef9a9a; /* Red */
-      --break-marker: #424242; /* Grey for breaks */
+      --break-marker: #424242; 
       
       --active-glow: 0 0 15px rgba(187, 134, 252, 0.5);
 
@@ -53,46 +53,35 @@
     }
 
     /* --- GLOBAL --- */
-    * { box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease; }
+    * { box-sizing: border-box; }
     
-    html { scroll-behavior: smooth; }
-
     body {
       font-family: 'Inter', sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
       margin: 0;
       padding: 0;
-      /* DEFAULT: APP MODE (Fixed height for swiping) */
+      /* FIXED APP SHELL - NO BODY SCROLL */
       height: 100vh;
+      width: 100vw;
       display: flex;
       flex-direction: column;
       overflow: hidden; 
       user-select: none; 
     }
 
-    /* --- NATIVE SCROLL MODE (For Compact View) --- */
-    body.native-scroll {
-        height: auto; 
-        overflow-y: auto; 
-        display: block; 
-    }
-
-    /* --- HEADER --- */
+    /* --- HEADER (FIXED TOP) --- */
     header {
+      flex: 0 0 auto; /* Don't shrink/grow */
       width: 100%;
-      height: 60px; /* FIXED HEIGHT */
+      height: 60px;
       padding: 0 20px;
       background: var(--header-bg);
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border-color);
-      
-      /* CRITICAL: STICKY TOP */
-      position: sticky;
-      top: 0;
-      z-index: 1000; 
+      z-index: 100;
     }
 
     .header-controls {
@@ -120,8 +109,9 @@
     }
 
     /* --- VIEW CONTAINERS --- */
+    /* This makes the container fill the rest of the screen */
     .view-container {
-        flex: 1;
+        flex: 1; 
         position: relative;
         overflow: hidden;
         width: 100%;
@@ -150,7 +140,7 @@
         height: 100%;
         overflow-y: auto; 
         padding: 20px;
-        padding-bottom: 160px; 
+        padding-bottom: 80px; /* Space for footer */
     }
 
     .day-header {
@@ -213,93 +203,90 @@
     .break-duration-text { font-size: 0.85rem; color: var(--text-muted); opacity: 0.8; }
 
 
-    /* --- COMPACT TABLE VIEW --- */
+    /* --- COMPACT TABLE VIEW (FIXED SCROLL) --- */
     #compact-container {
-        /* Allow horizontal scroll for the table, but let Body handle vertical scroll */
-        overflow-x: auto;
-        overflow-y: visible; 
-        padding: 0 10px 10px 10px; /* Remove top padding so sticky works perfectly */
-        padding-bottom: 250px; 
+        /* This container scrolls internally */
+        overflow: auto; 
+        padding: 0;
+        /* Padding bottom to clear footer */
+        padding-bottom: 60px; 
         background-color: var(--bg-color);
-        min-height: 100vh; 
     }
 
     .weekly-table {
         border-collapse: separate;
-        border-spacing: 4px;
+        border-spacing: 0; /* Remove gaps for perfect sticky headers */
         width: 100%;
         min-width: 600px; 
     }
 
     .weekly-table th, .weekly-table td {
-        padding: 10px;
-        border-radius: 8px;
+        padding: 12px 8px;
         text-align: center;
         vertical-align: middle;
         font-size: 0.85rem;
-        border: 1px solid var(--border-color);
+        border-right: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
         color: var(--text-main);
     }
 
-    /* --- STICKY TABLE HEADERS --- */
+    /* --- STICKY HEADERS LOGIC --- */
     
-    /* 1. The Day Names (Mon, Tue...) */
-    .weekly-table th {
+    /* 1. Header Row (Mon, Tue...) stuck to top of container */
+    .weekly-table thead th {
+        position: sticky;
+        top: 0;
         background-color: var(--header-bg);
+        z-index: 20;
+        border-bottom: 2px solid var(--border-color);
         font-weight: 800;
         text-transform: uppercase;
         font-size: 0.8rem;
-        letter-spacing: 1px;
-        
-        position: sticky;
-        top: 60px; /* Sit strictly below the 60px Main Header */
-        z-index: 900; 
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3); /* Strong shadow to show separation */
     }
 
-    /* 2. The Time Column (09:00, 10:00...) */
-    .weekly-table td:first-child {
+    /* 2. Time Column (09:00...) stuck to left */
+    .weekly-table tbody td:first-child {
         position: sticky;
         left: 0;
         background-color: var(--card-bg);
-        z-index: 800; 
+        z-index: 10;
         border-right: 2px solid var(--border-color);
         font-weight: bold;
         color: var(--accent-color);
         min-width: 85px;
     }
 
-    /* 3. The Top-Left Corner (Intersection) */
-    .weekly-table th:first-child {
+    /* 3. The Corner Cell (Time Label) stuck to TOP and LEFT */
+    .weekly-table thead th:first-child {
         position: sticky;
-        top: 60px;
+        top: 0;
         left: 0;
-        z-index: 950; /* Must be higher than both row and col headers */
+        z-index: 30; /* Highest priority */
         background-color: var(--header-bg);
+        border-right: 2px solid var(--border-color);
     }
 
     /* Table Cell Types */
     .cell-lec { background-color: rgba(144, 202, 249, 0.15); border-left: 4px solid var(--lec-marker) !important; }
     .cell-tut { background-color: rgba(255, 204, 128, 0.15); border-left: 4px solid var(--tut-marker) !important; }
     .cell-lab { background-color: rgba(239, 154, 154, 0.15); border-left: 4px solid var(--lab-marker) !important; }
-    .cell-break { background-color: var(--break-bg); border: 1px dashed var(--text-muted) !important; opacity: 0.7; }
-    .cell-empty { background-color: transparent; border: none !important; }
+    .cell-break { background-color: var(--break-bg); opacity: 0.7; }
+    .cell-empty { background-color: transparent; }
 
     .cell-subject { font-weight: 700; display: block; margin-bottom: 4px; }
     .cell-room { font-size: 0.75rem; color: var(--text-muted); display: block; }
 
 
-    /* --- FOOTER --- */
+    /* --- FOOTER (FIXED BOTTOM) --- */
     .footer-sig {
-        position: fixed;
-        bottom: 0;
+        flex: 0 0 auto; /* Fixed height */
         width: 100%;
         text-align: center;
         padding: 15px;
         background: var(--bg-color);
         color: var(--text-muted);
         border-top: 1px solid var(--border-color);
-        z-index: 200;
+        z-index: 100;
     }
     .signature { color: var(--accent-color); font-weight: 700; font-family: 'Courier New', monospace; }
 
@@ -625,21 +612,16 @@
     function toggleView() {
         const swipeContainer = document.getElementById('timetable-container');
         const compactContainer = document.getElementById('compact-container');
-        const body = document.body;
         
         if (swipeContainer.classList.contains('hidden-view')) {
-            // SWITCH TO SWIPE VIEW (App Mode)
+            // SWITCH TO SWIPE VIEW
             swipeContainer.classList.remove('hidden-view');
             compactContainer.classList.add('hidden-view');
-            body.classList.remove('native-scroll'); // Lock body
-            
-            // Re-jump to current day to fix offsets
             setTimeout(() => jumpToDay(currentDayIndex), 50);
         } else {
-            // SWITCH TO COMPACT VIEW (Web Mode)
+            // SWITCH TO COMPACT VIEW
             swipeContainer.classList.add('hidden-view');
             compactContainer.classList.remove('hidden-view');
-            body.classList.add('native-scroll'); // Unlock body
         }
     }
 
