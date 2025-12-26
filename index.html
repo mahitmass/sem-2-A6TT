@@ -55,17 +55,30 @@
     /* --- GLOBAL --- */
     * { box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease; }
     
+    html {
+        /* Smooth scroll for native scrolling */
+        scroll-behavior: smooth;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
       margin: 0;
       padding: 0;
+      /* DEFAULT: APP MODE (Fixed height for swiping) */
       height: 100vh;
       display: flex;
       flex-direction: column;
       overflow: hidden; 
       user-select: none; 
+    }
+
+    /* --- NATIVE SCROLL MODE (For Compact View) --- */
+    body.native-scroll {
+        height: auto; /* Let body grow */
+        overflow-y: auto; /* Allow native browser scroll */
+        display: block; /* Remove flex constraint */
     }
 
     /* --- HEADER --- */
@@ -77,7 +90,10 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border-color);
-      z-index: 10;
+      z-index: 100;
+      /* Keep header fixed at top even when scrolling in native mode */
+      position: sticky;
+      top: 0;
     }
 
     .header-controls {
@@ -200,11 +216,13 @@
 
     /* --- COMPACT TABLE VIEW --- */
     #compact-container {
-        overflow: auto; 
+        /* Allow horizontal scroll for the table, but let Body handle vertical scroll */
+        overflow-x: auto;
+        overflow-y: visible; 
         padding: 10px;
-        /* UPDATED: Increased padding to allow scrolling past footer */
-        padding-bottom: 250px; 
+        padding-bottom: 100px; 
         background-color: var(--bg-color);
+        min-height: 100vh; /* Ensure it fills screen to allow scrolling */
     }
 
     .weekly-table {
@@ -265,7 +283,7 @@
         background: var(--bg-color);
         color: var(--text-muted);
         border-top: 1px solid var(--border-color);
-        z-index: 20;
+        z-index: 200;
     }
     .signature { color: var(--accent-color); font-weight: 700; font-family: 'Courier New', monospace; }
 
@@ -300,7 +318,7 @@
                 <div class="break-time-text">01:00 PM - 02:00 PM</div>
                 <div class="break-duration-text">1 hr 0 min</div>
               </div>
-              <div class="class-card type-lec" data-day="1" data-start-hour="13" data-end-hour="14">
+              <div class="class-card type-lec" data-day="1" data-start-hour="14" data-end-hour="15">
                   <div class="time-slot">02:00 PM - 03:00 PM</div>
                   <div class="subject-name">UHV</div>
                   <div class="card-footer">
@@ -333,7 +351,7 @@
               </div>
                <div class="class-card type-lec" data-day="2" data-start-hour="13" data-end-hour="14">
                 <div class="time-slot">01:00 PM - 02:00 PM</div>
-                <div class="subject-name">Maths-2</div>
+                <div class="subject-name">Mathematics-2</div>
                 <div class="card-footer">
                     <span class="info-badge">🏛️ G1</span>
                     <span class="info-badge">👨‍🏫 Dr. Arpita Nayek</span>
@@ -363,14 +381,14 @@
           <div class="day-view" data-day-index="3">
               <h2 class="day-header">Wednesday</h2>
               <div class="class-card type-tut" data-day="3" data-start-hour="9" data-end-hour="10">
-                <div class="time-slot">09:00 AM - 10:00 AM</div>
-                <div class="subject-name">UHV</div>
-                <div class="card-footer">
-                    <span class="info-badge">🏛️ F10</span>
-                    <span class="info-badge">👨‍🏫 Dr. Yogita Naruka</span>
-                    <span class="info-badge">Tutorial</span>
-                </div>
-            </div>
+                  <div class="time-slot">09:00 AM - 10:00 AM</div>
+                  <div class="subject-name">UHV</div>
+                  <div class="card-footer">
+                      <span class="info-badge">🏛️ F10</span>
+                      <span class="info-badge">👨‍🏫 Dr. Yogita Naruka</span>
+                      <span class="info-badge">Tutorial</span>
+                  </div>
+              </div>
             <div class="break-card">
                 <div class="break-header">Break</div>
                 <div class="break-time-text">10:00 AM - 12:00 PM</div>
@@ -387,7 +405,7 @@
             </div>
              <div class="class-card type-lec" data-day="3" data-start-hour="13" data-end-hour="14">
                 <div class="time-slot">01:00 PM - 02:00 PM</div>
-                <div class="subject-name">Maths-2</div>
+                <div class="subject-name">Mathematics-2</div>
                 <div class="card-footer">
                     <span class="info-badge">🏛️ FF3</span>
                     <span class="info-badge">👨‍🏫 Dr. Arpita Nayek</span>
@@ -447,7 +465,7 @@
                     <span class="info-badge">Lecture</span>
                 </div>
             </div>
-             <div class="class-card type-tut" data-day="5" data-start-hour="12" data-end-hour="13">
+             <div class="class-card type-tut" data-day="5" data-start-hour="13" data-end-hour="14">
                 <div class="time-slot">12:00 PM - 01:00 PM</div>
                 <div class="subject-name">Physics-2</div>
                 <div class="card-footer">
@@ -458,7 +476,7 @@
             </div>
              <div class="class-card type-tut" data-day="5" data-start-hour="13" data-end-hour="14">
                 <div class="time-slot">01:00 PM - 02:00 PM</div>
-                <div class="subject-name">Maths-2</div>
+                <div class="subject-name">Mathematics-2</div>
                 <div class="card-footer">
                     <span class="info-badge">🏛️ TS8</span>
                     <span class="info-badge">👨‍🏫 Dr. Neha Singhal</span>
@@ -489,7 +507,7 @@
             </div>
              <div class="class-card type-lec" data-day="6" data-start-hour="11" data-end-hour="12">
                 <div class="time-slot">11:00 AM - 12:00 PM</div>
-                <div class="subject-name">Maths-2</div>
+                <div class="subject-name">Mathematics-2</div>
                 <div class="card-footer">
                     <span class="info-badge">🏛️ FF1</span>
                     <span class="info-badge">👨‍🏫 Dr. Arpita Nayek</span>
@@ -525,8 +543,8 @@
               </tr>
               <tr>
                   <td>10:00 AM</td>
-                  <td class="cell-lab" rowspan="2"><span class="cell-subject">Phy Lab</span><span class="cell-room">PL2</span></td>
-                  <td class="cell-lab" rowspan="2"><span class="cell-subject">Work Lab</span><span class="cell-room">EW2</span></td>
+                  <td class="cell-lab" rowspan="2"><span class="cell-subject">Physics Lab-2</span><span class="cell-room">PL2</span></td>
+                  <td class="cell-lab" rowspan="2"><span class="cell-subject">Workshop Lab</span><span class="cell-room">EW2</span></td>
                   <td class="cell-break" rowspan="2"><span class="cell-subject">BREAK</span></td>
                   <td class="cell-lec"><span class="cell-subject">SDF-2 (Lecture)</span><span class="cell-room">G1</span></td>
                   <td class="cell-empty"></td>
@@ -540,14 +558,14 @@
               </tr>
               <tr>
                   <td>12:00 PM</td>
-                  <td class="cell-break" colspan="6" style="text-align: center; letter-spacing: 2px;"><span class="cell-subject">LUNCH</span></td>
+                  <td class="cell-break" colspan="6" style="text-align: center; letter-spacing: 2px;"><span class="cell-subject">LUNCH BREAK</span></td>
               </tr>
               <tr>
                   <td>01:00 PM</td>
                   <td class="cell-break" rowspan="1"><span class="cell-subject">BREAK</span></td>
                   <td class="cell-lec"><span class="cell-subject">Math-2 (Lecture)</span><span class="cell-room">G1</span></td>
                   <td class="cell-lec"><span class="cell-subject">Phy-2 (Lecture)</span><span class="cell-room">CS5</span></td>
-                  <td class="cell-lab" rowspan="2"><span class="cell-subject">Life Skills</span><span class="cell-room">LL</span></td>
+                  <td class="cell-lab" rowspan="2"><span class="cell-subject">Life Skills Lab</span><span class="cell-room">LL</span></td>
                   <td class="cell-tut"><span class="cell-subject">Phy-2 (Tutorial)</span><span class="cell-room">TS8</span></td>
                   <td class="cell-empty"></td>
               </tr>
@@ -591,14 +609,21 @@
     function toggleView() {
         const swipeContainer = document.getElementById('timetable-container');
         const compactContainer = document.getElementById('compact-container');
+        const body = document.body;
         
         if (swipeContainer.classList.contains('hidden-view')) {
+            // SWITCH TO SWIPE VIEW (App Mode)
             swipeContainer.classList.remove('hidden-view');
             compactContainer.classList.add('hidden-view');
+            body.classList.remove('native-scroll'); // Lock body
+            
+            // Re-jump to current day to fix offsets
             setTimeout(() => jumpToDay(currentDayIndex), 50);
         } else {
+            // SWITCH TO COMPACT VIEW (Web Mode)
             swipeContainer.classList.add('hidden-view');
             compactContainer.classList.remove('hidden-view');
+            body.classList.add('native-scroll'); // Unlock body
         }
     }
 
