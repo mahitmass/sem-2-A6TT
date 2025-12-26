@@ -74,8 +74,8 @@
     header {
       flex: 0 0 auto; /* Don't shrink/grow */
       width: 100%;
-      height: 65px; /* Slightly taller for logo */
-      padding: 0 15px;
+      height: 65px; /* Matches logo height */
+      padding: 0 15px; /* Reduced padding to fit logo */
       background: var(--header-bg);
       display: flex;
       justify-content: space-between;
@@ -88,15 +88,15 @@
     .brand-container {
         display: flex;
         align-items: center;
-        gap: 10px;
+        height: 100%; /* Fill header height */
     }
 
     .app-logo {
-        height: 40px;
-        width: 40px;
-        border-radius: 8px;
-        object-fit: cover;
-        border: 1px solid var(--border-color);
+        height: 65px; /* Touch top and bottom borders */
+        width: auto; /* Maintain aspect ratio */
+        object-fit: contain;
+        /* Optional: Remove border radius if you want it flush */
+        /* border-radius: 8px; */ 
     }
 
     .header-controls {
@@ -109,6 +109,7 @@
       font-weight: 800;
       font-size: 1.4rem;
       margin: 0;
+      margin-left: 5px; /* Push text slightly right */
       background: linear-gradient(90deg, var(--accent-color), #03dac6);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -311,7 +312,7 @@
 
   <header>
     <div class="brand-container">
-        <img src="Logo.png" alt="A6 Logo" class="app-logo">
+        <img src="1766764701746.jpg" alt="A6 Logo" class="app-logo">
         <h1>A6 Planner</h1>
     </div>
     <div class="header-controls">
@@ -781,4 +782,3 @@
   </script>
 </body>
 </html>
-
