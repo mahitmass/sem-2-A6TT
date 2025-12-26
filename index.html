@@ -33,6 +33,10 @@
       /* Break Card Colors */
       --break-bg: #000000;
       --break-border: #333;
+
+      /* Layout Dimensions */
+      --header-height: 70px;
+      --bottom-nav-height: 65px;
     }
 
     [data-theme="light"] {
@@ -45,15 +49,12 @@
       --accent-hover: #5000c9;
       --header-bg: #ffffff;
 
-      /* Slot Type Markers */
       --lec-marker: #0d47a1;
       --tut-marker: #e65100;
       --lab-marker: #c62828;
       --break-marker: #9e9e9e;
 
       --active-glow: 0 0 15px rgba(98, 0, 234, 0.4);
-
-      /* Break Card Colors Light */
       --break-bg: #e0e0e0;
       --break-border: #ccc;
     }
@@ -80,7 +81,7 @@
     header {
       flex: 0 0 auto; 
       width: 100%;
-      height: 70px; 
+      height: var(--header-height); 
       padding: 0 15px;
       background: var(--header-bg);
       display: flex;
@@ -88,15 +89,10 @@
       align-items: center;
       border-bottom: 1px solid var(--border-color);
       z-index: 100;
-      position: relative;
     }
 
-    .brand-container {
-        display: flex; align-items: center; gap: 15px; 
-    }
-    .app-logo {
-        height: 45px; width: 45px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-color);
-    }
+    .brand-container { display: flex; align-items: center; gap: 15px; }
+    .app-logo { height: 45px; width: 45px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-color); }
     h1 {
       font-weight: 800; font-size: 1.3rem; margin: 0;
       background: linear-gradient(90deg, var(--accent-color), #03dac6);
@@ -104,67 +100,7 @@
     }
 
     .header-controls { display: flex; gap: 10px; align-items: center; }
-
-    .icon-btn {
-      background: transparent; border: none; color: var(--text-main);
-      font-size: 1.4rem; cursor: pointer; padding: 8px;
-    }
-
-    /* --- NEW FILTER BUTTON & PANEL --- */
-    .filter-toggle-btn {
-        background: var(--accent-color); color: #fff;
-        border: none; padding: 8px 16px; border-radius: 20px;
-        font-weight: 700; font-size: 0.9rem; cursor: pointer;
-        display: flex; align-items: center; gap: 6px;
-        transition: background 0.2s;
-    }
-    .filter-toggle-btn:hover { background: var(--accent-hover); }
-
-    #filter-panel {
-        background: var(--header-bg);
-        width: 100%;
-        max-height: 0; 
-        overflow: hidden;
-        transition: max-height 0.35s cubic-bezier(0.4, 0.0, 0.2, 1);
-        border-bottom: 1px solid var(--border-color);
-        position: relative; z-index: 90;
-        flex: 0 0 auto; 
-    }
-    
-    #filter-panel.expanded {
-        max-height: 300px; 
-    }
-
-    .filter-content { padding: 20px 15px; display: flex; flex-direction: column; gap: 20px; }
-
-    .filter-group { display: flex; flex-direction: column; gap: 8px; }
-    .filter-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-    .filter-options { display: flex; flex-wrap: wrap; gap: 10px; }
-
-    /* Filter Toggle Buttons (Batch/View) */
-    .toggle-btn {
-        flex: 1; text-align: center; padding: 10px;
-        background: var(--card-bg); border: 2px solid var(--border-color);
-        color: var(--text-muted); font-weight: 600; border-radius: 10px;
-        cursor: pointer; transition: all 0.2s; min-width: 80px;
-    }
-    .toggle-btn.active {
-        background: rgba(187, 134, 252, 0.15); color: var(--accent-color);
-        border-color: var(--accent-color);
-    }
-    
-    /* Day Selection Buttons */
-    .day-btn {
-        width: 45px; height: 45px; border-radius: 50%;
-        background: var(--card-bg); border: 2px solid var(--border-color);
-        color: var(--text-muted); font-weight: 700; font-size: 0.9rem;
-        display: flex; align-items: center; justify-content: center;
-        cursor: pointer; transition: all 0.2s;
-    }
-    .day-btn.active-day {
-        background: var(--accent-color); color: #fff; border-color: var(--accent-color);
-        box-shadow: 0 4px 12px rgba(187, 134, 252, 0.3);
-    }
+    .icon-btn { background: transparent; border: none; color: var(--text-main); font-size: 1.4rem; cursor: pointer; padding: 8px; }
 
     /* --- VIEW CONTAINERS --- */
     .view-container { flex: 1; position: relative; overflow: hidden; width: 100%; }
@@ -174,7 +110,12 @@
     #timetable-container { cursor: grab; touch-action: pan-y; }
     #timetable-container:active { cursor: grabbing; }
     .days-track { display: flex; height: 100%; width: 600vw; transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1); }
-    .day-view { width: 100vw; height: 100%; overflow-y: auto; padding: 15px; padding-bottom: 80px; }
+    .day-view { 
+        width: 100vw; height: 100%; overflow-y: auto; 
+        padding: 15px; 
+        /* Padding bottom = Footer Sig + Bottom Nav + Extra Space */
+        padding-bottom: 140px; 
+    }
     .day-header { font-size: 1.5rem; font-weight: 800; margin: 10px 0 20px; color: var(--accent-color); text-align: center; }
 
     .class-card { background: var(--card-bg); border-radius: 16px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border-color); position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 8px; }
@@ -196,7 +137,7 @@
     .break-duration-text { font-size: 0.8rem; color: var(--text-muted); opacity: 0.8; }
 
     /* --- COMPACT TABLE VIEW --- */
-    #compact-container { overflow: auto; padding: 0; padding-bottom: 60px; background-color: var(--bg-color); }
+    #compact-container { overflow: auto; padding: 0; padding-bottom: 120px; background-color: var(--bg-color); }
     .weekly-table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 600px; }
     .weekly-table th, .weekly-table td { padding: 10px 6px; text-align: center; vertical-align: middle; font-size: 0.8rem; border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); color: var(--text-main); }
     .weekly-table thead th { position: sticky; top: 0; background-color: var(--header-bg); z-index: 20; border-bottom: 2px solid var(--border-color); font-weight: 800; text-transform: uppercase; font-size: 0.75rem; }
@@ -210,9 +151,85 @@
     .cell-subject { font-weight: 700; display: block; margin-bottom: 2px; font-size: 0.85rem;}
     .cell-room { font-size: 0.7rem; color: var(--text-muted); display: block; }
 
-    /* --- FOOTER --- */
-    .footer-sig { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; padding: 10px; background: var(--bg-color); color: var(--text-muted); border-top: 1px solid var(--border-color); z-index: 200; padding-bottom: calc(10px + env(safe-area-inset-bottom)); font-size: 0.8rem; }
+
+    /* --- BOTTOM LAYOUT STACK --- */
+    
+    /* 1. Filter Bottom Sheet */
+    #filter-panel {
+        position: fixed;
+        bottom: calc(var(--bottom-nav-height) + 5px); /* Just above nav */
+        left: 0; width: 100%;
+        background: var(--header-bg);
+        border-top: 1px solid var(--border-color);
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        transform: translateY(120%); /* Hidden Down */
+        transition: transform 0.3s cubic-bezier(0.1, 0.7, 0.1, 1);
+        z-index: 190;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+    #filter-panel.expanded { transform: translateY(0); }
+
+    .filter-content { padding: 25px 20px; display: flex; flex-direction: column; gap: 20px; }
+    .filter-group { display: flex; flex-direction: column; gap: 8px; }
+    .filter-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+    .filter-options { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    /* Filter Buttons */
+    .toggle-btn { flex: 1; text-align: center; padding: 12px; background: var(--card-bg); border: 2px solid var(--border-color); color: var(--text-muted); font-weight: 600; border-radius: 10px; cursor: pointer; transition: all 0.2s; min-width: 80px; }
+    .toggle-btn.active { background: rgba(187, 134, 252, 0.15); color: var(--accent-color); border-color: var(--accent-color); }
+    .day-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--card-bg); border: 2px solid var(--border-color); color: var(--text-muted); font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+    .day-btn.active-day { background: var(--accent-color); color: #fff; border-color: var(--accent-color); box-shadow: 0 4px 12px rgba(187, 134, 252, 0.3); }
+
+    /* 2. Signature Footer */
+    .footer-sig { 
+        position: fixed; 
+        bottom: var(--bottom-nav-height); /* Sits exactly on top of nav */
+        left: 0; width: 100%; 
+        text-align: center; 
+        padding: 8px; 
+        background: var(--bg-color); /* Matches body */
+        color: var(--text-muted); 
+        border-top: 1px solid var(--border-color); 
+        z-index: 180; 
+        font-size: 0.75rem; 
+    }
     .signature { color: var(--accent-color); font-weight: 700; }
+
+    /* 3. New Bottom Navigation Bar */
+    .bottom-nav {
+        position: fixed;
+        bottom: 0; left: 0; width: 100%;
+        height: var(--bottom-nav-height);
+        background: var(--header-bg);
+        border-top: 1px solid var(--border-color);
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 0 20px;
+        padding-bottom: env(safe-area-inset-bottom);
+        z-index: 200;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+    }
+
+    /* Status Text (Left) */
+    .nav-status {
+        display: flex; flex-direction: column;
+        justify-content: center;
+    }
+    .nav-batch { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .nav-day { font-size: 1.1rem; color: var(--accent-color); font-weight: 800; }
+
+    /* Filter Trigger (Right) */
+    .filter-fab {
+        background: var(--accent-color); color: #fff;
+        border: none; padding: 10px 20px; border-radius: 30px;
+        font-weight: 700; font-size: 0.9rem; cursor: pointer;
+        display: flex; align-items: center; gap: 8px;
+        box-shadow: 0 4px 15px rgba(187, 134, 252, 0.4);
+        transition: transform 0.2s;
+    }
+    .filter-fab:active { transform: scale(0.95); }
 
   </style>
 </head>
@@ -224,12 +241,22 @@
         <h1>Planner</h1>
     </div>
     <div class="header-controls">
-        <button class="filter-toggle-btn" onclick="toggleFilterPanel()">
-            FILTERS <span id="filter-arrow">🔽</span>
-        </button>
         <button class="icon-btn" onclick="toggleTheme()" id="theme-btn">☀</button>
     </div>
   </header>
+
+  <div id="timetable-container" class="view-container">
+      <div class="days-track" id="daysTrack"></div> 
+  </div>
+
+  <div id="compact-container" class="view-container hidden-view">
+      <table class="weekly-table">
+          <thead>
+              <tr><th>Time</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
+          </thead>
+          <tbody></tbody>
+      </table>
+  </div>
 
   <div id="filter-panel">
       <div class="filter-content">
@@ -240,7 +267,7 @@
                   <button class="toggle-btn" id="btn-A5" onclick="switchBatch('A5')">Batch A5</button>
               </div>
           </div>
-           <div class="filter-group">
+          <div class="filter-group">
               <div class="filter-label">View Mode</div>
               <div class="filter-options">
                   <button class="toggle-btn active" id="btn-swipe" onclick="setViewMode('swipe')">Swipe Cards</button>
@@ -261,38 +288,37 @@
       </div>
   </div>
 
-
-  <div id="timetable-container" class="view-container">
-      <div class="days-track" id="daysTrack"></div> 
-  </div>
-
-  <div id="compact-container" class="view-container hidden-view">
-      <table class="weekly-table">
-          <thead>
-              <tr><th>Time</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
-          </thead>
-          <tbody></tbody>
-      </table>
-  </div>
-
   <div class="footer-sig">
     Made by <span class="signature">Mass~MAHIT</span> | Swipe left/right for days
+  </div>
+
+  <div class="bottom-nav">
+      <div class="nav-status">
+          <span class="nav-batch" id="status-batch">BATCH A6</span>
+          <span class="nav-day" id="status-day">Monday</span>
+      </div>
+      <button class="filter-fab" onclick="toggleFilterPanel()">
+          FILTERS <span id="filter-arrow">🔼</span>
+      </button>
   </div>
 
   <script src="timetable.js"></script>
 
   <script>
+    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    
     // --- UI LOGIC ---
     function toggleFilterPanel() {
         const panel = document.getElementById('filter-panel');
         const arrow = document.getElementById('filter-arrow');
         panel.classList.toggle('expanded');
-        arrow.textContent = panel.classList.contains('expanded') ? '🔼' : '🔽';
+        arrow.textContent = panel.classList.contains('expanded') ? '🔽' : '🔼';
     }
     
+    // Close panel on click outside
     document.addEventListener('click', (e) => {
         const panel = document.getElementById('filter-panel');
-        const btn = document.querySelector('.filter-toggle-btn');
+        const btn = document.querySelector('.filter-fab');
         if (panel.classList.contains('expanded') && !panel.contains(e.target) && !btn.contains(e.target)) {
             toggleFilterPanel();
         }
@@ -302,6 +328,7 @@
         localStorage.setItem('selectedBatch', batchName);
         updateBatchUI(batchName);
         if (window.updateBatchData) window.updateBatchData(batchName);
+        updateFooterInfo();
     }
 
     function updateBatchUI(batchName) {
@@ -325,12 +352,22 @@
         localStorage.setItem('preferredView', mode);
     }
 
+    function updateFooterInfo() {
+        const batch = localStorage.getItem('selectedBatch') || 'A6';
+        const dayName = dayNames[currentDayIndex + 1]; // +1 because we use 0-5 index for Mon-Sat
+        
+        document.getElementById('status-batch').textContent = `BATCH ${batch}`;
+        document.getElementById('status-day').textContent = dayName;
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
         const savedBatch = localStorage.getItem('selectedBatch') || 'A6';
         updateBatchUI(savedBatch);
         if (window.updateBatchData) window.updateBatchData(savedBatch);
         const savedView = localStorage.getItem('preferredView') || 'swipe';
         setViewMode(savedView);
+        // Delay footer update slightly to allow jumpToDay to fire first
+        setTimeout(updateFooterInfo, 100);
     });
 
     function toggleTheme() {
@@ -344,55 +381,38 @@
       }
     }
 
-    // --- TOUCH & DRAG LOGIC (FIXED) ---
+    // --- SWIPE LOGIC ---
     const track = document.getElementById('daysTrack');
     const container = document.getElementById('timetable-container');
     let isDragging = false, startX = 0, startY = 0, currentTranslate = 0, prevTranslate = 0, currentDayIndex = 0; 
     const totalDays = 6;
     
-    function manualJumpToDay(dayIndex) { jumpToDay(dayIndex - 1); }
+    function manualJumpToDay(dayIndex) { 
+        jumpToDay(dayIndex - 1); 
+        // Optional: toggleFilterPanel(); 
+    }
 
     window.addEventListener('resize', () => { track.style.transition = 'none'; jumpToDay(currentDayIndex); });
 
-    // TOUCH EVENTS
-    track.addEventListener('touchstart', (e) => {
-        startDrag(e.touches[0].clientX, e.touches[0].clientY);
-    });
-
+    track.addEventListener('touchstart', (e) => { startDrag(e.touches[0].clientX, e.touches[0].clientY); });
     track.addEventListener('touchmove', (e) => {
         if (!isDragging) return;
-        const currentX = e.touches[0].clientX;
-        const currentY = e.touches[0].clientY;
-        
-        // DIRECTION LOCKING: Only horizontal swipe if X movement > Y movement
-        if (Math.abs(currentX - startX) > Math.abs(currentY - startY)) {
-            e.preventDefault(); // Stop vertical scroll
-            moveDrag(currentX);
-        }
+        const currentX = e.touches[0].clientX; const currentY = e.touches[0].clientY;
+        if (Math.abs(currentX - startX) > Math.abs(currentY - startY)) { e.preventDefault(); moveDrag(currentX); }
     }, { passive: false });
-
     track.addEventListener('touchend', endDrag);
 
-    // MOUSE EVENTS
     track.addEventListener('mousedown', (e) => { e.preventDefault(); startDrag(e.clientX, 0); });
     track.addEventListener('mousemove', (e) => { if (isDragging) { e.preventDefault(); moveDrag(e.clientX); } });
     track.addEventListener('mouseup', endDrag);
     track.addEventListener('mouseleave', () => { if(isDragging) endDrag(); });
 
     function startDrag(clientX, clientY) { 
-        isDragging = true; 
-        startX = clientX; 
-        startY = clientY; 
-        track.style.transition = 'none'; 
-        container.style.cursor = 'grabbing'; 
+        isDragging = true; startX = clientX; startY = clientY; track.style.transition = 'none'; container.style.cursor = 'grabbing'; 
     }
-
     function moveDrag(clientX) { 
-        const diffX = clientX - startX; 
-        currentTranslate = prevTranslate + diffX; 
-        track.style.transform = `translateX(${currentTranslate}px)`; 
+        const diffX = clientX - startX; currentTranslate = prevTranslate + diffX; track.style.transform = `translateX(${currentTranslate}px)`; 
     }
-
     function endDrag() {
         if (!isDragging) return; isDragging = false; container.style.cursor = 'grab';
         const movedBy = currentTranslate - prevTranslate; const threshold = window.innerWidth / 4; 
@@ -408,7 +428,8 @@
         prevTranslate = currentTranslate;
         track.style.transform = `translateX(${currentTranslate}px)`;
         updateActiveDayButton(index + 1);
-        highlightCurrentSlot(); 
+        highlightCurrentSlot();
+        updateFooterInfo(); // Update the new footer text!
     }
 
     function updateActiveDayButton(dayNum) {
