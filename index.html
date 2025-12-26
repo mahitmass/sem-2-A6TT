@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>A6 Batch Timetable | Mass~MAHIT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* --- CSS VARIABLES --- */
+    :root {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --text-main: #e0e0e0;
+      --text-muted: #a0a0a0;
+      --border-color: #333;
+      --accent-color: #bb86fc;
+      --header-bg: #2c2c2c;
+      --header-text: #fff;
+      --hover-row: #252525;
+      
+      /* Slot Colors (Dark Mode) */
+      --lec-color: #90caf9; /* Blue */
+      --tut-color: #ffcc80; /* Orange */
+      --lab-bg: #2c1b1b;
+      --lab-border: #ef9a9a; /* Red */
+      --lab-text: #ef9a9a;
+
+      --sticky-col-bg: #1e1e1e;
+      --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      
+      --btn-bg: #333;
+      --btn-text: #ffd700;
+    }
+
+    [data-theme="light"] {
+      --bg-color: #f0f2f5;
+      --card-bg: #ffffff;
+      --text-main: #333333;
+      --text-muted: #555555;
+      --border-color: #e0e0e0;
+      --accent-color: #6200ea;
+      --header-bg: #4caf50;
+      --header-text: #fff;
+      --hover-row: #f9f9f9;
+
+      /* Slot Colors (Light Mode) */
+      --lec-color: #0d47a1;
+      --tut-color: #e65100;
+      --lab-bg: #fff3e0;
+      --lab-border: #c62828;
+      --lab-text: #c62828;
+
+      --sticky-col-bg: #ffffff;
+      --shadow: 0 4px 12px rgba(0,0,0,0.1);
+      
+      --btn-bg: #fff;
+      --btn-text: #6200ea;
+    }
+
+    /* --- GLOBAL --- */
+    * { box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease; }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* --- HEADER --- */
+    header {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      padding: 0 10px;
+    }
+
+    h1 {
+      font-weight: 800;
+      font-size: 2rem;
+      margin: 0;
+      background: linear-gradient(90deg, var(--accent-color), #03dac6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .theme-toggle {
+      background: var(--btn-bg);
+      border: 2px solid var(--border-color);
+      color: var(--btn-text);
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    /* --- TABLE --- */
+    .table-wrapper {
+      width: 100%;
+      max-width: 1400px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .table-scroll { overflow-x: auto; width: 100%; padding-bottom: 5px; }
+
+    table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 1100px; }
+
+    th, td {
+      padding: 14px 10px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: var(--header-bg);
+      color: var(--header-text);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      height: 50px;
+    }
+
+    td:first-child, th:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 11;
+      background-color: var(--sticky-col-bg);
+      border-right: 3px solid var(--border-color);
+      font-weight: 800;
+      color: var(--accent-color);
+    }
+    th:first-child {
+      background-color: var(--header-bg);
+      color: var(--header-text);
+      z-index: 12;
+    }
+
+    /* --- CELLS --- */
+    .cell-content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.95rem;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .subject { font-weight: 800; font-size: 1.1rem; }
+    .details { font-size: 0.8rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 2px; }
+    .room { 
+      display: inline-block; 
+      background: rgba(128,128,128,0.15); 
+      padding: 2px 6px; 
+      border-radius: 4px; 
+      font-weight: 700;
+      font-size: 0.75rem;
+      align-self: center;
+      border: 1px solid rgba(128,128,128,0.3);
+      margin-bottom: 2px;
+    }
+
+    .lec .subject { color: var(--lec-color); }
+    .tut .subject { color: var(--tut-color); }
+    .lab { background-color: var(--lab-bg) !important; border-left: 5px solid var(--lab-text); }
+    .lab .subject { color: var(--lab-text); }
+
+    .lunch-col {
+      background-color: rgba(0,0,0,0.1);
+      color: var(--text-muted);
+      font-style: italic;
+      font-weight: 800;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      width: 45px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+
+    .footer { margin-top: 40px; color: var(--text-muted); text-align: center; }
+    .signature { color: var(--accent-color); font-weight: 700; font-family: 'Courier New', monospace; }
+
+    @media (max-width: 768px) {
+      .theme-toggle span:not(#theme-icon) { display: none; }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <header>
+    <h1>A6 Summer 2026</h1>
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">☀️</span> <span>Switch Theme</span>
+    </button>
+  </header>
+
+  <div class="table-wrapper">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>09:00 - 10:00</th>
+            <th>10:00 - 11:00</th>
+            <th>11:00 - 12:00</th>
+            <th style="background:#333;">12-1</th>
+            <th>01:00 - 02:00</th>
+            <th>02:00 - 03:00</th>
+            <th>03:00 - 04:00</th>
+            <th>04:00 - 05:00</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>MON</td>
+            <td></td>
+            <td colspan="2" class="lab">
+              <div class="cell-content">
+                <span class="subject">Physics Lab-2 (LAB)</span>
+                <div class="details">
+                   <span class="room">PL2</span> 
+                   <span>Dr. Navendu Goswami / Dr. Indrani Chakarborty</span>
+                </div>
+              </div>
+            </td>
+            <td class="lunch-col" rowspan="6">LUNCH</td>
+            <td></td>
+            <td class="lec">
+              <div class="cell-content">
+                <span class="subject">UHV (L)</span>
+                <div class="details">
+                  <span class="room">G1</span> 
+                  <span>Dr. Manoj Tripathi</span>
+                </div>
+              </div>
+            </td>
+            <td></td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>TUE</td>
+            <td class="tut">
+              <div class="cell-content">
+                <span class="subject">Workshop (T)</span>
+                <div class="details">
+                  <span class="room">TS16</span> 
+                  <span>GRP</span>
+                </div>
+              </div>
+            </td>
+            <td colspan="2" class="lab">
+              <div class="cell-content">
+                <span class="subject">Workshop (LAB)</span>
+                <div class="details">
+                  <span class="room">EW2</span> 
+                  <span>GRP</span>
+                </div>
+              </div>
+            </td>
+            <td class="lec">
+              <div class="cell-content">
+                <span class="subject">Mathematics-2 (L)</span>
+                <div class="details">
+                  <span class="room">G1</span> 
+                  <span>Dr. Arpita Nayek</span>
+                </div>
+              </div>
+            </td>
+            <td class="lec">
+              <div class="cell-content">
+                <span class="subject">Physics-2 (L)</span>
+                <div class="details">
+                  <span class="room">G1</span> 
+                  <span>Dr. Sandeep Mishra</span>
+                </div>
+              </div>
+            </td>
+            <td class="lec">
+              <div class="cell-content">
+                <span class="subject">SDF-2 (L)</span>
+                <div class="details">
+                  <span class="room">FF1</span> 
+                  <span>Rohit Kumar Sony</span>
+                </div>
+              </div>
+            </td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>WED</td>
+            <td class="tut">
+              <div class="cell-content">
+                <span class="subject">UHV (T)</span>
+                <div class="details">
+                  <span class="room">F10</span> 
+                  <span>Dr. Yogita Naruka</span>
+                </div>
+              </div>
+            </td>
+            <td></td>
+            <td></td>
+            <td class="lec">
+              <div class="cell-content">
+                <span class="subject">Physics-2 (L)</span>
+                <div class="details">
+                  <span class="room">CS5</span> 
+                  <span>Dr. Sandeep Mishra</span>
+                </div>
+              </div>
+            </td>
+            <td class="lec">
+              <div class="cell-content">
+                <span class="subject">Mathematics-2 (L)</span>
+                <div class="details">
+                  <span class="room">FF3</span> 
+                  <span>Dr. Arpita Nayek</span>
+                </div>
+              </div>
+            </td>
+            <td colspan="2" class="lab">
+              <div class="cell-content">
+                <span class="subject">SDF Lab (LAB)</span>
+                <div class="details">
+                  <span class="room">CL02</span> 
+                  <span>Meenal Jain / Prateek Kumar Soni</span>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td>THU</td>
+            <td></td>
+            <td class="lec">
+              <div class="cell-content">
+                <span class="subject">SDF-2 (L)</span>
+                <div class="details">
+                  <span class="room">G1</span> 
+                  <span>Rohit Kumar Sony</span>
+                </div>
+              </div>
+            </td>
+            <td class="lec">
+              <div class="cell-content">
+                <span class="subject">UHV (L)</span>
+                <div class="details">
+                  <span class="room">G1</span> 
+                  <span>Dr. Manoj Tripathi</span>
+                </div>
+              </div>
+            </td>
+            <td colspan="2" class="lab">
+              <div class="cell-content">
+                <span class="subject">Life Skills Lab</span>
+                <div class="details">
+                  <span class="room">LL</span> 
+                  <span>MM</span>
+                </div>
+              </div>
+            </td>
+            <td></td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>FRI</td>
+            <td></td>
+            <td></td>
+            <td class="lec">
+              <div class="cell-content">
+                <span class="subject">Physics-2 (L)</span>
+                <div class="details">
+                  <span class="room">FF4</span> 
+                  <span>Dr. Sandeep Mishra</span>
+                </div>
+              </div>
+            </td>
+            <td class="tut">
+              <div class="cell-content">
+                <span class="subject">Physics-2 (T)</span>
+                <div class="details">
+                  <span class="room">TS8</span> 
+                  <span>Dr. Bhubesh Chander Joshi</span>
+                </div>
+              </div>
+            </td>
+            <td class="tut">
+              <div class="cell-content">
+                <span class="subject">Mathematics-2 (T)</span>
+                <div class="details">
+                  <span class="room">TS8</span> 
+                  <span>Dr. Neha Singhal</span>
+                </div>
+              </div>
+            </td>
+            <td class="tut">
+              <div class="cell-content">
+                <span class="subject">SDF-2 (T)</span>
+                <div class="details">
+                  <span class="room">TS6</span> 
+                  <span>Shardha Porwal</span>
+                </div>
+              </div>
+            </td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>SAT</td>
+            <td></td>
+            <td class="lec">
+              <div class="cell-content">
+                <span class="subject">SDF-2 (L)</span>
+                <div class="details">
+                  <span class="room">FF1</span> 
+                  <span>Rohit Kumar Sony</span>
+                </div>
+              </div>
+            </td>
+            <td class="lec">
+              <div class="cell-content">
+                <span class="subject">Mathematics-2 (L)</span>
+                <div class="details">
+                  <span class="room">FF1</span> 
+                  <span>Dr. Arpita Nayek</span>
+                </div>
+              </div>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    Made by <span class="signature">Mass~MAHIT</span>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const currentTheme = body.getAttribute('data-theme');
+      const icon = document.getElementById('theme-icon');
+      
+      if (currentTheme === 'dark') {
+        body.setAttribute('data-theme', 'light');
+        icon.textContent = '🌙';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        icon.textContent = '☀️';
+      }
+    }
+  </script>
+</body>
+</html>
