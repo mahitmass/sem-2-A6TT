@@ -24,78 +24,69 @@ const scheduleA6 = [
   { day: 6, start: 11, duration: 1, title: "Mathematics-2", code: "FF1", teacher: "Dr. Arpita Nayek", type: "lec" },
 ];
 
+// BATCH A5 SCHEDULE
 const scheduleA5 = [
-  // MONDAY
   { day: 1, start: 10, duration: 2, title: "Physics Lab-2", code: "PL1", teacher: "Dr.Manoj Kumar / Dr.Manoj Tripathi", type: "lab" },
   { day: 1, start: 14, duration: 1, title: "UHV", code: "G1", teacher: "Dr. Manoj Tripathi", type: "lec" },
-
-  // TUESDAY
   { day: 2, start: 9, duration: 1, title: "Workshop", code: "TS13", teacher: "Mr. Shwetabh Singh", type: "tut" },
   { day: 2, start: 10, duration: 2, title: "Workshop Lab", code: "EW1", teacher: "Mr. Shwetabh Singh", type: "lab" },
   { day: 2, start: 13, duration: 1, title: "Mathematics-2", code: "G1", teacher: "Dr. Arpita Nayek", type: "lec" },
   { day: 2, start: 14, duration: 1, title: "Physics-2", code: "G1", teacher: "Dr. Sandeep Mishra", type: "lec" },
   { day: 2, start: 15, duration: 1, title: "SDF-2", code: "FF1", teacher: "Rohit Kumar Soni", type: "lec" },
-
-  // WEDNESDAY
   { day: 3, start: 9, duration: 1, title: "UHV", code: "TS6", teacher: "Dr. Priya", type: "tut" },
   { day: 3, start: 13, duration: 1, title: "Physics-2", code: "CS5", teacher: "Dr. Sandeep Mishra", type: "lec" },
   { day: 3, start: 14, duration: 1, title: "Mathematics-2", code: "FF3", teacher: "Dr. Arpita Nayek", type: "lec" },
   { day: 3, start: 15, duration: 2, title: "SDF Lab", code: "CL01", teacher: "Dr. Tanvee Gautam / Mr. Imran Rashid", type: "lab" },
-
-  // THURSDAY
   { day: 4, start: 10, duration: 1, title: "SDF-2", code: "G1", teacher: "Rohit Kumar Soni", type: "lec" },
   { day: 4, start: 11, duration: 1, title: "UHV", code: "G1", teacher: "Dr. Manoj Tripathi", type: "lec" },
   { day: 4, start: 13, duration: 2, title: "Life Skills Lab", code: "LL1", teacher: "Dr. Kanupriya Misra", type: "lab" },
-
-  // FRIDAY
   { day: 5, start: 9, duration: 1, title: "SDF-2", code: "TS8", teacher: "Dr. Amanpreet Kaur", type: "tut" },
   { day: 5, start: 11, duration: 1, title: "Physics-2", code: "FF4", teacher: "Dr. Sandeep Mishra", type: "lec" },
   { day: 5, start: 13, duration: 1, title: "Mathematics-2", code: "TS7", teacher: "Dr. Neha Singhal", type: "tut" },
   { day: 5, start: 14, duration: 1, title: "Physics-2", code: "TS7", teacher: "Dr. Ravi Gupta", type: "tut" },
-
-  // SATURDAY
   { day: 6, start: 10, duration: 1, title: "SDF-2", code: "FF1", teacher: "Rohit Kumar Soni", type: "lec" },
   { day: 6, start: 11, duration: 1, title: "Mathematics-2", code: "FF1", teacher: "Dr. Arpita Nayek", type: "lec" },
 ];
 
+// BATCH B12 SCHEDULE
 const scheduleB12 = [
-
   { day: 1, start: 10, duration: 1, title: "UHV", code: "TS10",  teacher: "Dr.Ila Joshi", type: "tut" },
-  { day: 1, start: 11,  duration: 1, title: "Physics-2", code: "TS10", teacher: "Rakesh Kumar Dwivedi", type: "tut" }, 
+  { day: 1, start: 11, duration: 1, title: "Physics-2", code: "TS10", teacher: "Rakesh Kumar Dwivedi", type: "tut" }, 
   { day: 1, start: 13, duration: 1, title: "Mathematics-2", code: "TS6",  teacher: "Dr.Himani Pant", type: "tut" },
   { day: 1, start: 15, duration: 1, title: "SDF-2", code: "G1", teacher: "Dr.Asish Mishra", type: "lec" },
-
   { day: 2, start: 9,  duration: 1, title: "SDF-2", code: "TS6", teacher: "Dr.Kavita Pandey", type: "tut" }, 
   { day: 2, start: 13, duration: 1, title: "Mathematics-2", code: "FF3", teacher: "Dr.Himani Pant", type: "lec" }, 
   { day: 2, start: 14, duration: 1, title: "SDF-2", code: "FF3", teacher: "Dr.Asish Mishra", type: "lec" }, 
   { day: 2, start: 15, duration: 1, title: "Physics-2",   code: "FF2", teacher: "Dr.Navendu Goswami", type: "lec" }, 
-
   { day: 3, start: 10,  duration: 2, title: "Physics Lab-2", code: "PL2", teacher: "Narinder Kaur/Anuraj Panwar", type: "lab" }, 
   { day: 3, start: 13, duration: 1, title: "Physics-2", code: "G1",  teacher: "Dr.Navendu Goswami", type: "lec" },
   { day: 3, start: 14, duration: 1, title: "Mathematics-2", code: "CS5", teacher: "Dr.Himani Pant", type: "lec" },
-
   { day: 4, start: 10, duration: 1, title: "SDF-2", code: "CS5", teacher: "Dr.Asish Mishra", type: "lec" },
-  { day: 4, start: 13, duration: 2, title: "SDF Lab",code: "CL07", teacher: "Ms.Anupama Padha/Dr.Anita Sahoo", type: "lab" },
-  { day: 4, start: 15, duration: 2, title: "Life Skills Lab", code: "LL1",teacher: "Mohua Dutta", type: "lab" },
-
+  { day: 4, start: 13, duration: 2, title: "SDF Lab", code: "CL07", teacher: "Ms.Anupama Padha/Dr.Anita Sahoo", type: "lab" },
+  { day: 4, start: 15, duration: 2, title: "Life Skills Lab", code: "LL1", teacher: "Mohua Dutta", type: "lab" },
   { day: 5, start: 10, duration: 1, title: "UHV", code: "FF3", teacher: "Dr.Amanpreet Kaur", type: "lec" },
   { day: 5, start: 11, duration: 1, title: "Physics-2", code: "FF3", teacher: "Dr.Navendu Goswami", type: "lec" },
-  { day: 5, start: 13, duration: 1, title: "Workshop",code: "TS11", teacher: "Ms.Madhu Jharia", type: "tut" },
+  { day: 5, start: 13, duration: 1, title: "Workshop", code: "TS11", teacher: "Ms.Madhu Jharia", type: "tut" },
   { day: 5, start: 15, duration: 2, title: "Workshop Lab", code: "EW2", teacher: "Ms.Madhu Jharia", type: "lab" },
-
   { day: 6, start: 9,  duration: 1, title: "UHV", code: "G1", teacher: "Dr.Amanpreet Kaur", type: "lec" },
   { day: 6, start: 11, duration: 1, title: "Mathematics-2", code: "LL1", teacher: "Dr.Himani Pant", type: "lec" },
-  
 ];
-
 
 const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 let currentSchedule = scheduleA6; 
 
 // --- 2. THE RENDER LOGIC ---
 
+// Updated to handle 3 batches: A6, A5, B12
 window.updateBatchData = function(batch) {
-    currentSchedule = (batch === 'A5') ? scheduleA5 : scheduleA6;
+    if (batch === 'A5') {
+        currentSchedule = scheduleA5;
+    } else if (batch === 'B12') {
+        currentSchedule = scheduleB12;
+    } else {
+        currentSchedule = scheduleA6;
+    }
+    
     requestAnimationFrame(() => {
         renderMobileView();
         renderDesktopView();
@@ -112,7 +103,6 @@ function renderMobileView() {
     dayView.className = 'day-view';
     dayView.setAttribute('data-day-index', d);
 
-    // --- RESTORED DAY HEADER ---
     const h2 = document.createElement('h2');
     h2.className = 'day-header';
     h2.innerText = dayNames[d];
