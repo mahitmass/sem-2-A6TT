@@ -1,4 +1,4 @@
-const CACHE_NAME = 'a6-planner-v4'; // Changed to v4 to force update
+const CACHE_NAME = 'a6-planner-v5'; 
 const TIMEOUT_MS = 3000; // 3 Seconds Timeout
 
 const ASSETS = [
