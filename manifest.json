@@ -1,10 +1,10 @@
 {
-  "name": "My Time Table",
-  "short_name": "My TT",
+  "name": "Mass Planner",
+  "short_name": "Planner",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "background_color": "#121212", 
+  "theme_color": "#bb86fc",
   "orientation": "portrait",
   "icons": [
     {
