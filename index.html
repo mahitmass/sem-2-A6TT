@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" href="Logo.png">
   <link rel="apple-touch-icon" href="Logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-  
+   
   <style>
     /* --- CSS VARIABLES --- */
     :root {
@@ -21,13 +21,13 @@
       --accent-color: #bb86fc;
       --accent-hover: #9965f4;
       --header-bg: #2c2c2c;
-      
+       
       /* Slot Type Markers */
       --lec-marker: #90caf9;
       --tut-marker: #ffcc80;
       --lab-marker: #ef9a9a;
       --break-marker: #424242; 
-      
+       
       --active-glow: 0 0 15px rgba(187, 134, 252, 0.5);
 
       /* Break Card Colors */
@@ -317,6 +317,8 @@
         if (mode === 'swipe') {
             swipeContainer.classList.remove('hidden-view');
             compactContainer.classList.add('hidden-view');
+            
+            // Jumps to the auto-calculated day
             setTimeout(() => jumpToDay(currentDayIndex), 50);
         } else {
             swipeContainer.classList.add('hidden-view');
@@ -329,8 +331,27 @@
         const savedBatch = localStorage.getItem('selectedBatch') || 'A6';
         updateBatchUI(savedBatch);
         if (window.updateBatchData) window.updateBatchData(savedBatch);
+        
+        // --- AUTO-SCROLL FIX ---
+        // Calculate index based on today's date
+        // JS getDay(): 0=Sun, 1=Mon, ..., 6=Sat
+        // Our Index: 0=Mon, ..., 5=Sat
+        const today = new Date().getDay(); 
+        
+        if (today === 0) {
+            // If Sunday (0), default to Monday (0)
+            currentDayIndex = 0; 
+        } else {
+            // Else subtract 1 (e.g. Sat(6) becomes 5)
+            currentDayIndex = today - 1;
+        }
+        
+        // Safety check to keep index within bounds (0 to 5)
+        if (currentDayIndex < 0) currentDayIndex = 0;
+        if (currentDayIndex > 5) currentDayIndex = 0;
+
         const savedView = localStorage.getItem('preferredView') || 'swipe';
-        setViewMode(savedView);
+        setViewMode(savedView); // This uses the calculated currentDayIndex
     });
 
     function toggleTheme() {
