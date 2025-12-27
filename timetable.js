@@ -26,26 +26,26 @@ const scheduleA6 = [
 
 // BATCH A5 SCHEDULE
 const scheduleA5 = [
-  { day: 1, start: 10, duration: 2, title: "Physics Lab-2", code: "PL1", teacher: "Dr.Manoj Kumar / Dr.Manoj Tripathi", type: "lab" },
-  { day: 1, start: 14, duration: 1, title: "UHV", code: "G1", teacher: "Dr. Manoj Tripathi", type: "lec" },
-  { day: 2, start: 9, duration: 1, title: "Workshop", code: "TS13", teacher: "Mr. Shwetabh Singh", type: "tut" },
-  { day: 2, start: 10, duration: 2, title: "Workshop Lab", code: "EW1", teacher: "Mr. Shwetabh Singh", type: "lab" },
-  { day: 2, start: 13, duration: 1, title: "Mathematics-2", code: "G1", teacher: "Dr. Arpita Nayek", type: "lec" },
-  { day: 2, start: 14, duration: 1, title: "Physics-2", code: "G1", teacher: "Dr. Sandeep Mishra", type: "lec" },
-  { day: 2, start: 15, duration: 1, title: "SDF-2", code: "FF1", teacher: "Rohit Kumar Soni", type: "lec" },
-  { day: 3, start: 9, duration: 1, title: "UHV", code: "TS6", teacher: "Dr. Priya", type: "tut" },
-  { day: 3, start: 13, duration: 1, title: "Physics-2", code: "CS5", teacher: "Dr. Sandeep Mishra", type: "lec" },
-  { day: 3, start: 14, duration: 1, title: "Mathematics-2", code: "FF3", teacher: "Dr. Arpita Nayek", type: "lec" },
-  { day: 3, start: 15, duration: 2, title: "SDF Lab", code: "CL01", teacher: "Dr. Tanvee Gautam / Mr. Imran Rashid", type: "lab" },
-  { day: 4, start: 10, duration: 1, title: "SDF-2", code: "G1", teacher: "Rohit Kumar Soni", type: "lec" },
-  { day: 4, start: 11, duration: 1, title: "UHV", code: "G1", teacher: "Dr. Manoj Tripathi", type: "lec" },
-  { day: 4, start: 13, duration: 2, title: "Life Skills Lab", code: "LL1", teacher: "Dr. Kanupriya Misra", type: "lab" },
-  { day: 5, start: 9, duration: 1, title: "SDF-2", code: "TS8", teacher: "Dr. Amanpreet Kaur", type: "tut" },
-  { day: 5, start: 11, duration: 1, title: "Physics-2", code: "FF4", teacher: "Dr. Sandeep Mishra", type: "lec" },
-  { day: 5, start: 13, duration: 1, title: "Mathematics-2", code: "TS7", teacher: "Dr. Neha Singhal", type: "tut" },
-  { day: 5, start: 14, duration: 1, title: "Physics-2", code: "TS7", teacher: "Dr. Ravi Gupta", type: "tut" },
-  { day: 6, start: 10, duration: 1, title: "SDF-2", code: "FF1", teacher: "Rohit Kumar Soni", type: "lec" },
-  { day: 6, start: 11, duration: 1, title: "Mathematics-2", code: "FF1", teacher: "Dr. Arpita Nayek", type: "lec" },
+  { day: 1, start: 10, duration: 2, title: "Physics Lab-2", code: "PL1", teacher: "NV / ID", type: "lab" },
+  { day: 1, start: 14, duration: 1, title: "UHV", code: "G1", teacher: "MT", type: "lec" },
+  { day: 2, start: 9, duration: 1, title: "Workshop", code: "TS13", teacher: "GP", type: "tut" },
+  { day: 2, start: 10, duration: 2, title: "Workshop Lab", code: "EW1", teacher: "SS", type: "lab" },
+  { day: 2, start: 13, duration: 1, title: "Mathematics-2", code: "G1", teacher: "AN", type: "lec" },
+  { day: 2, start: 14, duration: 1, title: "Physics-2", code: "G1", teacher: "AP", type: "lec" },
+  { day: 2, start: 15, duration: 1, title: "SDF-2", code: "FF1", teacher: "RKS", type: "lec" },
+  { day: 3, start: 9, duration: 1, title: "UHV", code: "TS6", teacher: "YN", type: "tut" },
+  { day: 3, start: 13, duration: 1, title: "Physics-2", code: "CS5", teacher: "AP", type: "lec" },
+  { day: 3, start: 14, duration: 1, title: "Mathematics-2", code: "FF3", teacher: "AN", type: "lec" },
+  { day: 3, start: 15, duration: 2, title: "SDF Lab", code: "CL01", teacher: "M / P", type: "lab" },
+  { day: 4, start: 10, duration: 1, title: "SDF-2", code: "G1", teacher: "RKS", type: "lec" },
+  { day: 4, start: 11, duration: 1, title: "UHV", code: "G1", teacher: "MT", type: "lec" },
+  { day: 4, start: 13, duration: 2, title: "Life Skills Lab", code: "LL1", teacher: "MM", type: "lab" },
+  { day: 5, start: 9, duration: 1, title: "SDF-2", code: "TS8", teacher: "SP", type: "tut" },
+  { day: 5, start: 11, duration: 1, title: "Physics-2", code: "FF4", teacher: "AP", type: "lec" },
+  { day: 5, start: 13, duration: 1, title: "Mathematics-2", code: "TS7", teacher: "NS", type: "tut" },
+  { day: 5, start: 14, duration: 1, title: "Physics-2", code: "TS7", teacher: "BCJ", type: "tut" },
+  { day: 6, start: 10, duration: 1, title: "SDF-2", code: "FF1", teacher: "RKS", type: "lec" },
+  { day: 6, start: 11, duration: 1, title: "Mathematics-2", code: "FF1", teacher: "AN", type: "lec" },
 ];
 
 // BATCH B12 SCHEDULE
@@ -57,7 +57,7 @@ const scheduleB12 = [
   { day: 2, start: 9,  duration: 1, title: "SDF-2", code: "TS6", teacher: "Dr.Kavita Pandey", type: "tut" }, 
   { day: 2, start: 13, duration: 1, title: "Mathematics-2", code: "FF3", teacher: "Dr.Himani Pant", type: "lec" }, 
   { day: 2, start: 14, duration: 1, title: "SDF-2", code: "FF3", teacher: "Dr.Asish Mishra", type: "lec" }, 
-  { day: 2, start: 15, duration: 1, title: "Physics-2",   code: "FF2", teacher: "Dr.Navendu Goswami", type: "lec" }, 
+  { day: 2, start: 15, duration: 1, title: "Physics-2", code: "FF2", teacher: "Dr.Navendu Goswami", type: "lec" }, 
   { day: 3, start: 10,  duration: 2, title: "Physics Lab-2", code: "PL2", teacher: "Narinder Kaur/Anuraj Panwar", type: "lab" }, 
   { day: 3, start: 13, duration: 1, title: "Physics-2", code: "G1",  teacher: "Dr.Navendu Goswami", type: "lec" },
   { day: 3, start: 14, duration: 1, title: "Mathematics-2", code: "CS5", teacher: "Dr.Himani Pant", type: "lec" },
@@ -77,7 +77,6 @@ let currentSchedule = scheduleA6;
 
 // --- 2. THE RENDER LOGIC ---
 
-// Updated to handle 3 batches: A6, A5, B12
 window.updateBatchData = function(batch) {
     if (batch === 'A5') {
         currentSchedule = scheduleA5;
