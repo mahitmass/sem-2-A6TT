@@ -315,6 +315,8 @@
         }
     });
 
+
+    
     function switchBatch(batchName) {
         localStorage.setItem('selectedBatch', batchName);
         updateBatchUI(batchName);
@@ -455,6 +457,16 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(err => console.log("SW Fail", err)));
     }
+
+window.addEventListener('load', () => {
+    // Initial render to show active classes
+    setTimeout(() => {
+        if (window.renderMobileView && window.renderDesktopView) {
+            window.renderMobileView();
+            window.renderDesktopView();
+        }
+    }, 100);
+});
   </script>
 </body>
 </html>
