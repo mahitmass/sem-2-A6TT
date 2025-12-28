@@ -201,6 +201,14 @@
     .type-tut::before { background-color: var(--tut-marker); }
     .type-lab::before { background-color: var(--lab-marker); }
     .class-card.active-now { border: 2px solid var(--accent-color); box-shadow: var(--active-glow); }
+    /* ADD THIS TO YOUR CSS TO MAKE THE TABLE HIGHLIGHT VISIBLE */
+.weekly-table td.active-now {
+    border: 2px solid var(--accent-color) !important;
+    background-color: rgba(187, 134, 252, 0.2) !important;
+    box-shadow: inset 0 0 10px var(--accent-color);
+    z-index: 5;
+    position: relative;
+}
 
     .time-slot { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 6px; }
     .time-slot::before { content: '•'; color: var(--accent-color); font-size: 1rem; }
@@ -482,4 +490,5 @@
 </script>
 </body>
 </html>
+
 
