@@ -1,4 +1,3 @@
-
 // --- 1. THE DATA ---
 
 // BATCH A6 SCHEDULE
@@ -69,8 +68,8 @@ const scheduleB12 = [
   { day: 5, start: 11, duration: 1, title: "Physics-2", code: "FF3", teacher: "Dr.Navendu Goswami", type: "lec" },
   { day: 5, start: 13, duration: 1, title: "Workshop", code: "TS11", teacher: "Ms.Madhu Jharia", type: "tut" },
   { day: 5, start: 15, duration: 2, title: "Workshop Lab", code: "EW2", teacher: "Ms.Madhu Jharia", type: "lab" },
-  { day: 6, start: 9, duration: 1, title: "UHV", code: "G1", teacher: "Dr.Amanpreet Kaur", type: "lec" },
-  { day: 6, start: 11, duration: 1, title: "Mathematics-2", code: "LL1", teacher: "Dr.Himani Pant", type: "lec" },
+  { day: 6, start: 9, duration: 1, title: "UHV", code: "FF1", teacher: "Dr.Amanpreet Kaur", type: "lec" },
+  { day: 6, start: 11, duration: 1, title: "Mathematics-2", code: "FF2", teacher: "Dr.Himani Pant", type: "lec" },
 ];
 
 const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -93,15 +92,47 @@ window.updateBatchData = function(batch) {
     });
 };
 
+// FIXED: Better time checking function
+function isClassActive(cls) {
+    const now = new Date();
+    const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    
+    // Convert your day format (1=Monday) to match Date.getDay() (1=Monday)
+    if (cls.day !== currentDay) return false;
+    
+    // Calculate class end hour (classes end 10 minutes before the hour)
+    const classEndHour = cls.start + cls.duration - 1;
+    const classEndMinute = 50; // Classes end at :50
+    
+    // For start hour comparison
+    if (currentHour < cls.start) return false;
+    
+    // For end hour comparison
+    if (currentHour > classEndHour) return false;
+    
+    // If current hour is exactly the end hour, check minutes
+    if (currentHour === classEndHour && currentMinute > classEndMinute) {
+        return false;
+    }
+    
+    return true;
+}
+
 function renderMobileView() {
     const track = document.getElementById('daysTrack');
     if (!track) return;
     track.innerHTML = '';
 
+    let activeClassFound = false;
+    let activeDayView = null;
+
     for (let d = 1; d <= 6; d++) {
         const dayView = document.createElement('div');
         dayView.className = 'day-view';
         dayView.setAttribute('data-day-index', d);
+        dayView.id = `day-${d}`; // Add ID for easy reference
 
         const h2 = document.createElement('h2');
         h2.className = 'day-header';
@@ -133,6 +164,62 @@ function renderMobileView() {
             });
         }
         track.appendChild(dayView);
+        
+        // Check if this day has an active class
+        const today = new Date().getDay();
+        if (d === today && !activeClassFound) {
+            activeDayView = dayView;
+        }
+    }
+    
+    // After rendering, scroll to today's view and active class
+    setTimeout(() => {
+        scrollToActiveClass();
+    }, 100);
+}
+function scrollToActiveClass() {
+    const now = new Date();
+    const currentDay = now.getDay(); // 0=Sunday, 1=Monday, etc.
+    
+    // Only auto-scroll if it's a weekday (Monday to Saturday)
+    if (currentDay >= 1 && currentDay <= 6) {
+        // First, scroll to today's view in the horizontal track
+        const track = document.getElementById('daysTrack');
+        if (!track) return;
+        
+        // Calculate the horizontal position for today
+        const dayIndex = currentDay - 1; // Convert to 0-based index
+        const viewportWidth = window.innerWidth;
+        const targetTranslate = dayIndex * -viewportWidth;
+        
+        track.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.8, 0.5, 1)';
+        track.style.transform = `translateX(${targetTranslate}px)`;
+        
+        // Update the currentDayIndex for the swipe functionality
+        if (typeof currentDayIndex !== 'undefined') {
+            currentDayIndex = dayIndex;
+            updateActiveDayButton(currentDay + 1);
+        }
+        
+        // Then, find and scroll to the active class card
+        setTimeout(() => {
+            const activeClassCard = document.querySelector('.class-card.active-now');
+            if (activeClassCard) {
+                // Scroll the day view container to show the active class
+                const dayView = activeClassCard.closest('.day-view');
+                if (dayView) {
+                    // Calculate position to scroll to (with some offset from top)
+                    const cardTop = activeClassCard.offsetTop;
+                    const headerHeight = 70; // Approximate header height
+                    const desiredScroll = cardTop - 100; // Scroll to 100px above the card
+                    
+                    dayView.scrollTo({
+                        top: desiredScroll,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        }, 600); // Wait for horizontal scroll to complete
     }
 }
 
@@ -145,8 +232,15 @@ function createClassCard(container, cls) {
         const endStr = `${endHr < 10 ? '0' + endHr : endHr}:50`;
         return `${startStr} - ${endStr} ${ampm}`;
     };
+    
     const card = document.createElement('div');
     card.className = `class-card type-${cls.type}`;
+    
+    // Add 'active-now' class if the class is currently happening
+    if (isClassActive(cls)) {
+        card.classList.add('active-now');
+    }
+    
     card.innerHTML = `
         <div class="time-slot">${formatTime(cls.start)}</div>
         <div class="subject-name">${cls.title}</div>
@@ -194,6 +288,12 @@ function renderDesktopView() {
             if (cls) {
                 const td = document.createElement('td');
                 td.className = `cell-${cls.type}`;
+                
+                // Add 'active-now' class for desktop view too
+                if (isClassActive(cls)) {
+                    td.classList.add('active-now');
+                }
+                
                 if (cls.duration > 1) td.rowSpan = cls.duration;
                 td.innerHTML = `<span class="cell-subject">${cls.title}</span><span class="cell-room">${cls.code}</span>`;
                 tr.appendChild(td);
@@ -204,4 +304,26 @@ function renderDesktopView() {
         }
         tbody.appendChild(tr);
     });
+}
+
+// Auto-refresh function
+function startAutoRefresh() {
+    // Refresh every minute to update active classes
+    setInterval(() => {
+        if (document.getElementById('timetable-container') && 
+            !document.getElementById('timetable-container').classList.contains('hidden-view')) {
+            renderMobileView();
+            // Also try to scroll to active class on refresh
+            setTimeout(scrollToActiveClass, 50);
+        }
+        if (document.getElementById('compact-container') && 
+            !document.getElementById('compact-container').classList.contains('hidden-view')) {
+            renderDesktopView();
+        }
+    }, 60000); // 60 seconds
+}
+
+// Start auto-refresh when page loads
+if (typeof window !== 'undefined') {
+    window.addEventListener('load', startAutoRefresh);
 }
