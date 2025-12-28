@@ -1,6 +1,6 @@
-// --- 1. THE DATA ---
+// ==================== 1. THE DATA ====================
 
-// BATCH A6 SCHEDULE
+// BATCH A6 SCHEDULE (From your update)
 const scheduleA6 = [
   { day: 1, start: 10, duration: 2, title: "Physics Lab-2", code: "PL2", teacher: "Dr. Navendu / Dr. Indrani", type: "lab" },
   { day: 1, start: 14, duration: 1, title: "UHV", code: "G1", teacher: "Dr. Manoj Tripathi", type: "lec" },
@@ -75,7 +75,7 @@ const scheduleB12 = [
 const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 let currentSchedule = scheduleA6;
 
-// --- 2. THE RENDER LOGIC ---
+// ==================== 2. THE RENDER LOGIC ====================
 
 window.updateBatchData = function(batch) {
     if (batch === 'A5') {
@@ -89,35 +89,52 @@ window.updateBatchData = function(batch) {
     requestAnimationFrame(() => {
         renderMobileView();
         renderDesktopView();
+        // TRIGGER HIGHLIGHT AFTER RENDER
+        setTimeout(highlightActiveClass, 100);
     });
 };
 
-// FIXED: Better time checking function
-function isClassActive(cls) {
+function highlightActiveClass() {
+    // 1. Clean up old highlights
+    document.querySelectorAll('.active-now').forEach(el => el.classList.remove('active-now'));
+    
     const now = new Date();
-    const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const currentDay = now.getDay(); 
     const currentHour = now.getHours();
-    const currentMinute = now.getMinutes();
     
-    // Convert your day format (1=Monday) to match Date.getDay() (1=Monday)
-    if (cls.day !== currentDay) return false;
-    
-    // Calculate class end hour (classes end 10 minutes before the hour)
-    const classEndHour = cls.start + cls.duration - 1;
-    const classEndMinute = 50; // Classes end at :50
-    
-    // For start hour comparison
-    if (currentHour < cls.start) return false;
-    
-    // For end hour comparison
-    if (currentHour > classEndHour) return false;
-    
-    // If current hour is exactly the end hour, check minutes
-    if (currentHour === classEndHour && currentMinute > classEndMinute) {
-        return false;
+    if (currentDay >= 1 && currentDay <= 6) {
+        // Find a class currently running
+        const activeClass = currentSchedule.find(cls => 
+            cls.day === currentDay && 
+            currentHour >= cls.start && 
+            currentHour < (cls.start + cls.duration)
+        );
+        
+        if (activeClass) {
+            // --- A. HIGHLIGHT MOBILE CARD ---
+            const dayView = document.querySelector(`#day-${currentDay}`);
+            if (dayView) {
+                const classCards = dayView.querySelectorAll('.class-card');
+                classCards.forEach(card => {
+                    const cardStart = parseInt(card.dataset.startHour);
+                    if (cardStart === activeClass.start) {
+                        card.classList.add('active-now');
+                    }
+                });
+            }
+            
+            // --- B. HIGHLIGHT TABLE CELL ---
+            // Look for the row with the correct hour
+            const targetRow = document.querySelector(`.weekly-table tr[data-hour="${activeClass.start}"]`);
+            if (targetRow) {
+                // Mon=2nd col, Tue=3rd col... so currentDay + 1
+                const targetCell = targetRow.querySelector(`td:nth-child(${currentDay + 1})`);
+                if (targetCell) {
+                    targetCell.classList.add('active-now');
+                }
+            }
+        }
     }
-    
-    return true;
 }
 
 function renderMobileView() {
@@ -125,14 +142,11 @@ function renderMobileView() {
     if (!track) return;
     track.innerHTML = '';
 
-    let activeClassFound = false;
-    let activeDayView = null;
-
     for (let d = 1; d <= 6; d++) {
         const dayView = document.createElement('div');
         dayView.className = 'day-view';
         dayView.setAttribute('data-day-index', d);
-        dayView.id = `day-${d}`; // Add ID for easy reference
+        dayView.id = `day-${d}`;
 
         const h2 = document.createElement('h2');
         h2.className = 'day-header';
@@ -164,62 +178,6 @@ function renderMobileView() {
             });
         }
         track.appendChild(dayView);
-        
-        // Check if this day has an active class
-        const today = new Date().getDay();
-        if (d === today && !activeClassFound) {
-            activeDayView = dayView;
-        }
-    }
-    
-    // After rendering, scroll to today's view and active class
-    setTimeout(() => {
-        scrollToActiveClass();
-    }, 100);
-}
-function scrollToActiveClass() {
-    const now = new Date();
-    const currentDay = now.getDay(); // 0=Sunday, 1=Monday, etc.
-    
-    // Only auto-scroll if it's a weekday (Monday to Saturday)
-    if (currentDay >= 1 && currentDay <= 6) {
-        // First, scroll to today's view in the horizontal track
-        const track = document.getElementById('daysTrack');
-        if (!track) return;
-        
-        // Calculate the horizontal position for today
-        const dayIndex = currentDay - 1; // Convert to 0-based index
-        const viewportWidth = window.innerWidth;
-        const targetTranslate = dayIndex * -viewportWidth;
-        
-        track.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.8, 0.5, 1)';
-        track.style.transform = `translateX(${targetTranslate}px)`;
-        
-        // Update the currentDayIndex for the swipe functionality
-        if (typeof currentDayIndex !== 'undefined') {
-            currentDayIndex = dayIndex;
-            updateActiveDayButton(currentDay + 1);
-        }
-        
-        // Then, find and scroll to the active class card
-        setTimeout(() => {
-            const activeClassCard = document.querySelector('.class-card.active-now');
-            if (activeClassCard) {
-                // Scroll the day view container to show the active class
-                const dayView = activeClassCard.closest('.day-view');
-                if (dayView) {
-                    // Calculate position to scroll to (with some offset from top)
-                    const cardTop = activeClassCard.offsetTop;
-                    const headerHeight = 70; // Approximate header height
-                    const desiredScroll = cardTop - 100; // Scroll to 100px above the card
-                    
-                    dayView.scrollTo({
-                        top: desiredScroll,
-                        behavior: 'smooth'
-                    });
-                }
-            }
-        }, 600); // Wait for horizontal scroll to complete
     }
 }
 
@@ -235,11 +193,8 @@ function createClassCard(container, cls) {
     
     const card = document.createElement('div');
     card.className = `class-card type-${cls.type}`;
-    
-    // Add 'active-now' class if the class is currently happening
-    if (isClassActive(cls)) {
-        card.classList.add('active-now');
-    }
+    // Add data attribute for easier finding
+    card.dataset.startHour = cls.start;
     
     card.innerHTML = `
         <div class="time-slot">${formatTime(cls.start)}</div>
@@ -268,62 +223,53 @@ function renderDesktopView() {
     const hours = [9, 10, 11, 12, 13, 14, 15, 16];
     hours.forEach(hour => {
         const tr = document.createElement('tr');
+        // IMPORTANT: Add data-hour for highlighter to find the row
+        tr.setAttribute('data-hour', hour); 
+
         const tdTime = document.createElement('td');
         const displayHour = hour % 12 || 12;
         tdTime.innerText = `${displayHour < 10 ? '0' + displayHour : displayHour}:00 - ${displayHour < 10 ? '0' + displayHour : displayHour}:50 ${hour >= 12 ? 'PM' : 'AM'}`;
         tr.appendChild(tdTime);
-
-        if (hour === 12) {
-            const tdLunch = document.createElement('td');
-            tdLunch.colSpan = 7;
-            tdLunch.className = 'cell-break';
-            tdLunch.innerHTML = '<span class="cell-subject">LUNCH BREAK</span>';
-            tr.appendChild(tdLunch);
-            tbody.appendChild(tr);
-            return;
-        }
 
         for (let d = 1; d <= 6; d++) {
             const cls = currentSchedule.find(s => s.day === d && s.start === hour);
             if (cls) {
                 const td = document.createElement('td');
                 td.className = `cell-${cls.type}`;
-                
-                // Add 'active-now' class for desktop view too
-                if (isClassActive(cls)) {
-                    td.classList.add('active-now');
-                }
-                
                 if (cls.duration > 1) td.rowSpan = cls.duration;
                 td.innerHTML = `<span class="cell-subject">${cls.title}</span><span class="cell-room">${cls.code}</span>`;
                 tr.appendChild(td);
             } else {
                 const isOccupied = currentSchedule.some(s => s.day === d && s.start < hour && (s.start + s.duration) > hour);
-                if (!isOccupied) tr.appendChild(document.createElement('td'));
+                if (!isOccupied) {
+                    const td = document.createElement('td');
+                    // Corrected Lunch Logic: Only add label if empty, don't force colspan
+                    if (hour === 12) {
+                        td.className = 'cell-break';
+                        td.innerHTML = '<span style="font-size:0.6rem; opacity:0.5;">LUNCH</span>';
+                    }
+                    tr.appendChild(td);
+                }
             }
         }
         tbody.appendChild(tr);
     });
+    
+    // Highlight after drawing
+    setTimeout(highlightActiveClass, 100);
 }
 
 // Auto-refresh function
 function startAutoRefresh() {
-    // Refresh every minute to update active classes
     setInterval(() => {
-        if (document.getElementById('timetable-container') && 
-            !document.getElementById('timetable-container').classList.contains('hidden-view')) {
-            renderMobileView();
-            // Also try to scroll to active class on refresh
-            setTimeout(scrollToActiveClass, 50);
-        }
-        if (document.getElementById('compact-container') && 
-            !document.getElementById('compact-container').classList.contains('hidden-view')) {
-            renderDesktopView();
-        }
-    }, 60000); // 60 seconds
+        highlightActiveClass();
+    }, 60000); 
 }
 
 // Start auto-refresh when page loads
 if (typeof window !== 'undefined') {
-    window.addEventListener('load', startAutoRefresh);
+    window.addEventListener('load', () => {
+        startAutoRefresh();
+        highlightActiveClass(); // Trigger immediately on load
+    });
 }
