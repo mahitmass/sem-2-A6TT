@@ -315,8 +315,6 @@
         }
     });
 
-
-    
     function switchBatch(batchName) {
         localStorage.setItem('selectedBatch', batchName);
         updateBatchUI(batchName);
@@ -326,7 +324,14 @@
 
         if (window.updateBatchData) window.updateBatchData(batchName);
         
-        setTimeout(fixTableTimes, 100); 
+        setTimeout(fixTableTimes, 100);
+        
+        // Scroll to active class after batch switch
+        setTimeout(() => {
+            if (window.scrollToActiveClass) {
+                window.scrollToActiveClass();
+            }
+        }, 300);
     }
 
     // FIXED: Corrected selector to remove highlight from B12
@@ -391,6 +396,13 @@
         setViewMode(savedView);
         
         setTimeout(fixTableTimes, 500);
+        
+        // Scroll to active class after everything loads
+        setTimeout(() => {
+            if (window.scrollToActiveClass) {
+                window.scrollToActiveClass();
+            }
+        }, 800);
     });
 
     function toggleTheme() {
@@ -458,15 +470,16 @@
       window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(err => console.log("SW Fail", err)));
     }
 
-window.addEventListener('load', () => {
-    // Initial render to show active classes
-    setTimeout(() => {
-        if (window.renderMobileView && window.renderDesktopView) {
-            window.renderMobileView();
-            window.renderDesktopView();
-        }
-    }, 100);
-});
-  </script>
+    window.addEventListener('load', () => {
+        // Initial render to show active classes
+        setTimeout(() => {
+            if (window.renderMobileView && window.renderDesktopView) {
+                window.renderMobileView();
+                window.renderDesktopView();
+            }
+        }, 100);
+    });
+</script>
 </body>
 </html>
+
