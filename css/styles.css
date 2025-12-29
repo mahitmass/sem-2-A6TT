@@ -412,7 +412,7 @@ h1 {
   );
   z-index: 10;
 }
-.light-mode .day-header {
+body[data-theme="light"] .day-header {
   background: linear-gradient(
     to bottom,
     rgba(255,255,255,0.95),
@@ -420,6 +420,7 @@ h1 {
     transparent
   );
 }
+
 
 
 
@@ -851,6 +852,7 @@ h1 {
   -moz-user-select: none;
   -ms-user-select: none;
 }
+
 
 
 
