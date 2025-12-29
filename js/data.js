@@ -374,7 +374,7 @@ const scheduleA16 = [
     { day: 1, start: 10, duration: 2, title: "GE112", code: "EW2", teacher: "NBH", type: "lab" },
     { day: 1, start: 13, duration: 1, title: "HS111", code: "TS7", teacher: "AMN", type: "tut" },
     { day: 1, start: 14, duration: 1, title: "PH211", code: "FF4", teacher: "INC", type: "lec" },
-    { day: 1, start: 15, duration: 1, title: "CI121", code: "FF4", teacher: "MAY", type: "lec" },
+    { day: 1, start: 15, duration: 1, title: "CI121", code: "FF4", teacher: "MAY", type: "lec" },    
     { day: 2, start: 13, duration: 1, title: "MA211", code: "CS5", teacher: "DGA", type: "lec" },
     { day: 2, start: 14, duration: 1, title: "CI121", code: "CS5", teacher: "MAY", type: "lec" },
     { day: 2, start: 15, duration: 2, title: "PH271", code: "PL2", teacher: "RKG/GPK", type: "lab" },
@@ -383,13 +383,14 @@ const scheduleA16 = [
     { day: 3, start: 13, duration: 1, title: "PH211", code: "FF2", teacher: "INC", type: "lec" },
     { day: 3, start: 14, duration: 1, title: "MA211", code: "FF2", teacher: "DGA", type: "lec" },
     { day: 3, start: 15, duration: 1, title: "PH211", code: "TS8", teacher: "EKY", type: "tut" },
-    { day: 4, start: 11, duration: 1, title: "PH211", code: "CS5", teacher: "INC", type: "lec" },
-    { day: 4, start: 13, duration: 2, title: "CS121", code: "CL05", teacher: "ASA/PRV", type: "lab" },
-    { day: 4, start: 15, duration: 1, title: "HS111", code: "FF1", teacher: "SHS", type: "lec" },
-    { day: 5, start: 9, duration: 1, title: "MA211", code: "TS8", teacher: "YG", type: "tut" },
-    { day: 5, start: 11, duration: 1, title: "MA211", code: "G1", teacher: "DGA", type: "lec" },
-    { day: 5, start: 12, duration: 1, title: "CI121", code: "TS7", teacher: "SUD", type: "tut" },
-    { day: 2, start: 9, duration: 1, title: "CI121", code: "TS8", teacher: "NIY", type: "tut" }
+    { day: 5, start: 10, duration: 1, title: "CI121", code: "G9", teacher: "NIY", type: "lec" }, 
+    { day: 5, start: 11, duration: 1, title: "PH211", code: "CS5", teacher: "INC", type: "lec" },
+    { day: 5, start: 15, duration: 1, title: "HS111", code: "FF1", teacher: "SHS", type: "lec" },
+    { day: 5, start: 13, duration: 2, title: "CS121", code: "CL05", teacher: "ASA/PRV", type: "lab" },
+    { day: 5, start: 16, duration: 1, title: "CI121", code: "TS7", teacher: "SUD", type: "tut" },
+    
+    { day: 6, start: 9, duration: 1, title: "MA211", code: "TS8", teacher: "YG", type: "tut" },
+    { day: 6, start: 11, duration: 1, title: "MA211", code: "G1", teacher: "DGA", type: "lec" }
 ];
 
 const scheduleA17 = [
