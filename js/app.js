@@ -273,6 +273,7 @@ const TimetableApp = (function() {
 
   function createTableCell(cls) {
     const cell = document.createElement('td');
+    cell.setAttribute('data-day', cls.day);
     cell.className = `cell-${cls.type}`;
     if (cls.duration > 1) cell.rowSpan = cls.duration;
     const displayTitle = getSubjectFullTitle(cls.title, cls.type) || cls.title;
@@ -282,6 +283,7 @@ const TimetableApp = (function() {
 
   function createEmptyTableCell(day, hour) {
     const cell = document.createElement('td');
+    cell.setAttribute('data-day', day);
     if (hour === 12) {
       cell.className = 'cell-break';
       cell.innerHTML = '<span style="font-size:0.6rem; opacity:0.5;">LUNCH</span>';
@@ -504,7 +506,7 @@ if (dayView) {
         // Highlight Table
         const row = document.querySelector(`.weekly-table tr[data-hour="${activeClass.start}"]`);
         if (row) {
-          const cell = row.querySelector(`td:nth-child(${currentDay + 1})`);
+         const cell = row.querySelector(`td[data-day="${currentDay}"]`);
           if (cell && !cell.classList.contains('cell-break')) {
               cell.classList.add('active-now');
           }
@@ -663,6 +665,7 @@ if (dayView) {
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
