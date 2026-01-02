@@ -239,14 +239,20 @@ const TimetableApp = (function() {
     const hours = [9, 10, 11, 12, 13, 14, 15, 16];
     const occupiedCells = new Set();
 
-    hours.forEach(hour => {
+   hours.forEach(hour => {
       const row = document.createElement('tr');
       row.setAttribute('data-hour', hour); 
 
       const timeCell = document.createElement('td');
       const displayHour = hour % 12 || 12;
       const ampm = hour >= 12 ? 'PM' : 'AM';
-      timeCell.textContent = `${displayHour < 10 ? '0'+displayHour : displayHour}:00 ${ampm}`;
+      const hStr = displayHour < 10 ? '0' + displayHour : displayHour;
+
+      // DELETE the old timeCell.textContent line and PASTE this instead:
+      timeCell.innerHTML = `
+        ${hStr}:00 - ${hStr}:50
+        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 2px;">${ampm}</div>
+      `;
       row.appendChild(timeCell);
 
       for (let day = 1; day <= 6; day++) {
@@ -665,6 +671,7 @@ if (dayView) {
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
