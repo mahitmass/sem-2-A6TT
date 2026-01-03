@@ -1028,8 +1028,7 @@ const scheduleG4 = [
 const scheduleF1 = [
     { day: 1, start: 9, duration: 3, title: "GE112", code: "WS04", teacher: "PRJ", type: "lab" },
     { day: 2, start: 9, duration: 2, title: "PH271", code: "027A", teacher: "AK", type: "lab" },
-    { day: 2, start: 13, duration: 1, title: "HS111", code: "121", teacher: "SHV", type: "tut" },
-    { day: 2, start: 14, duration: 1, title: "CI211", code: "116", teacher: "SSJ/ZUBAIR", type: "tut" },
+    { day: 2, start: 9, duration: 2, title: "PH271", code: "027A", teacher: "AK", type: "lab" },    
     { day: 4, start: 9, duration: 1, title: "PH211", code: "116", teacher: "VM", type: "tut" },
     { day: 4, start: 10, duration: 1, title: "MA211", code: "116", teacher: "PKS", type: "tut" },
     { day: 4, start: 13, duration: 1, title: "MA211", code: "3092", teacher: "SHP1", type: "lec" },
@@ -1745,6 +1744,7 @@ if (typeof module !== 'undefined' && module.exports) {
     // ... export other schedules if needed
   };
 }
+
 
 
 
