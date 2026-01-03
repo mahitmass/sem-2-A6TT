@@ -61,7 +61,7 @@ const facultyNames = {
     "AYS": "Mr. Ayush Sahoo", "KSA": "Mr. Kashav Ajmera", "MSI": "Mr. Megh Singhal",
     "MOS": "Mr. Mohit Singh", "NAC": "Mr. Naveen Chauhan", "PKU": "Mr. Prashant Kaushik",
     "PSO": "Mr. Prateek Soni", "RJM": "Mr. Rajeev Mishra", "ROH": "Mr. Rohit Soni",
-    "SHV": "Mr. Shivendra Singh", "SHO": "Mr. Shobhit", "AMK": "Ms. Amarjeet Kaur",
+    "SHO": "Mr. Shobhit", "AMK": "Ms. Amarjeet Kaur",
     "ANP": "Ms. Anupama Padha", "ATI": "Ms. Arti Goel", "ASI": "Ms. Astha Singh",
     "CHA": "Ms. Chanchal", "DSI": "Ms. Dipti Singh", "KJ": "Ms. Kirti Jain",
     "MAY": "Ms. Mayuri", "NEH": "Ms. Neha", "PRK1": "Ms. Purtee Kohli",
@@ -111,7 +111,7 @@ const facultyNames128 = {
     // FROM SCREENSHOT 1
     "ATH": "ALKA TRIPATHI", "PKS": "Pankaj Kumar Srivastava", "NEA": "Neha Ahlawat",
     "KKS": "Kamlesh Kumar Shukla", "UMK": "Umesh Khatri", "PKR": "Pankaj Kumar Rana",
-    "SKA": "Suneet Kumar Awasthi", "VM": "Vikas Malik", "AMV": "Amit Verma",
+    "SKA1": "Suneet Kumar Awasthi", "VM": "Vikas Malik", "AMV": "Amit Verma",
     "PKC": "Prashant Kumar Chauhan", "ADV": "Anshu Dhirendra Varshney", "URS": "Urbashi Satpathy",
     "ANK1": "Anuj Kumar", "SKH": "Sudip Kumar Haldar", "NAK": "Narender Khatri",
     "BHT": "Bharti Arora", "PRJ": "Prabhakar Jha", "HAB": "Harish Bishwakarma",
@@ -1028,7 +1028,8 @@ const scheduleG4 = [
 const scheduleF1 = [
     { day: 1, start: 9, duration: 3, title: "GE112", code: "WS04", teacher: "PRJ", type: "lab" },
     { day: 2, start: 9, duration: 2, title: "PH271", code: "027A", teacher: "AK", type: "lab" },
-    { day: 2, start: 9, duration: 2, title: "PH271", code: "027A", teacher: "AK", type: "lab" },    
+    { day: 2, start: 14, duration: 2, title: "CI271", code: "CL1", teacher: "MKS/SAP/SQP/Samarth Jain", type: "lab" },
+    { day: 3, start: 9, duration: 2, title: "HS111", code: "240", teacher: "HSS scholar", type: "lab" },    
     { day: 4, start: 9, duration: 1, title: "PH211", code: "116", teacher: "VM", type: "tut" },
     { day: 4, start: 10, duration: 1, title: "MA211", code: "116", teacher: "PKS", type: "tut" },
     { day: 4, start: 13, duration: 1, title: "MA211", code: "3092", teacher: "SHP1", type: "lec" },
@@ -1047,9 +1048,10 @@ const scheduleF1 = [
 ];
 
 const scheduleF2 = [
+    { day: 1, start: 9, duration: 3, title: "GE112", code: "WS04", teacher: "HAB", type: "lab" },    
     { day: 2, start: 9, duration: 2, title: "PH271", code: "256C", teacher: "SKH", type: "lab" },
-    { day: 2, start: 13, duration: 1, title: "HS111", code: "116", teacher: "DEV", type: "tut" },
-    { day: 2, start: 14, duration: 1, title: "CI211", code: "126", teacher: "SSJ/AVINASH", type: "tut" },
+    { day: 2, start: 14, duration: 2, title: "CI271", code: "CL1", teacher: "MKS/SAP/SQM/SAMARTH JAIN", type: "lab" },
+    { day: 3, start: 9, duration: 2, title: "HS111", code: "246", teacher: "Sanjay", type: "lab" },    
     { day: 4, start: 10, duration: 1, title: "PH211", code: "121", teacher: "VM", type: "tut" },
     { day: 4, start: 11, duration: 1, title: "MA211", code: "127", teacher: "AMB", type: "tut" },
     { day: 4, start: 13, duration: 1, title: "MA211", code: "3092", teacher: "SHP1", type: "lec" },
@@ -1060,7 +1062,6 @@ const scheduleF2 = [
     { day: 5, start: 10, duration: 1, title: "MA211", code: "3084", teacher: "SHP1", type: "lec" },
     { day: 5, start: 11, duration: 1, title: "CI211", code: "3084", teacher: "SHJ", type: "lec" },
     { day: 5, start: 13, duration: 1, title: "HS111", code: "116", teacher: "DEV", type: "tut" },
-    { day: 5, start: 14, duration: 2, title: "PH271", code: "41", teacher: "VM", type: "lab" },
     { day: 5, start: 14, duration: 1, title: "CI211", code: "126", teacher: "SSJ/AVINASH", type: "tut" },
     { day: 6, start: 9, duration: 1, title: "MA211", code: "3028", teacher: "SHP1", type: "lec" },
     { day: 6, start: 10, duration: 1, title: "PH211", code: "3028", teacher: "VM", type: "lec" },
@@ -1069,7 +1070,7 @@ const scheduleF2 = [
 ];
 
 const scheduleF3 = [
-    { day: 1, start: 9, duration: 2, title: "PH271", code: "041", teacher: "SKA", type: "lab" },
+    { day: 1, start: 9, duration: 2, title: "PH271", code: "041", teacher: "SKA1", type: "lab" },
     { day: 1, start: 13, duration: 3, title: "GE112", code: "WS06", teacher: "SUM", type: "lab" },
     { day: 1, start: 11, duration: 1, title: "HS111", code: "116", teacher: "SHV", type: "tut" },
     { day: 2, start: 9, duration: 2, title: "HS111", code: "240", teacher: "MEENAKSHI", type: "lab" },
@@ -1744,6 +1745,7 @@ if (typeof module !== 'undefined' && module.exports) {
     // ... export other schedules if needed
   };
 }
+
 
 
 
