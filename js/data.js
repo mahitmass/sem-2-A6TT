@@ -64,7 +64,7 @@ const facultyNames = {
     "SHV": "Mr. Shivendra Singh", "SHO": "Mr. Shobhit", "AMK": "Ms. Amarjeet Kaur",
     "ANP": "Ms. Anupama Padha", "ATI": "Ms. Arti Goel", "ASI": "Ms. Astha Singh",
     "CHA": "Ms. Chanchal", "DSI": "Ms. Dipti Singh", "KJ": "Ms. Kirti Jain",
-    "MAY": "Ms. Mayuri", "NEH": "Ms. Neha", "PRK": "Ms. Purtee Kohli",
+    "MAY": "Ms. Mayuri", "NEH": "Ms. Neha", "PRK1": "Ms. Purtee Kohli",
     "PHP": "Ms. Pushp", "RCA": "Ms. Richa", "RTK": "Ms. Ritika", "SRG": "Ms. Sarishty Gupta",
     "SYN": "Ms. Sayani", "SLK": "Ms. Silky", "SOS": "Ms. Sonal Sourabh",
     "AA": "Prof. Anuja Arora", "MKT": "Prof. Manish Kumar Thakur", "NSA": "Prof. Neetu Sardana",
@@ -120,7 +120,7 @@ const facultyNames128 = {
     "VIS": "Vikas Sharma", "KAS": "Kartik Samanta", "SHALU": "SHALU",
     "EKS1": "Ekta Srivastava", "AMA": "Amba Aggarwal", "ANB": "Anshu Banwari",
     "SHV": "Shweta Verma", "PRS": "Praveen Kumar Sharma", "DEV": "Deepak Verma",
-    "SAV": "Sakshi Varshney", "NIC": "Nilu Chaudhary",
+    "SAV": "Sakshi Varshney", "NIC": "Nilu Chaudhary", "PRK": "Priyanka Kwatra",
 
     // FROM SCREENSHOT 2
     "ARJ": "Arti Jain", "GAH": "Gaurav Sinha", "HMB": "Himani Bansal",
@@ -845,7 +845,7 @@ const scheduleC3 = [
     { day: 3, start: 10, duration: 2, title: "15BT111", code: "BT1", teacher: "PG/EKT/SHD/ANM/SBT", type: "lab" },
     { day: 3, start: 15, duration: 1, title: "B11CI121", code: "FF3", teacher: "ALK", type: "lec" },
     { day: 3, start: 16, duration: 1, title: "HS111", code: "FF3", teacher: "VGU", type: "lec" },
-    { day: 3, start: 13, duration: 2, title: "B15CI121", code: "CL17", teacher: "PK/PRK", type: "lab" },
+    { day: 3, start: 13, duration: 2, title: "B15CI121", code: "CL17", teacher: "PK/PRK1", type: "lab" },
     { day: 4, start: 9, duration: 1, title: "HS111", code: "TS12", teacher: "IJ", type: "tut" },
     { day: 4, start: 10, duration: 2, title: "HS111", code: "LL1", teacher: "NAM", type: "lab" },
     { day: 4, start: 13, duration: 1, title: "PH212", code: "FF2", teacher: "SDC", type: "lec" },
@@ -1745,6 +1745,7 @@ if (typeof module !== 'undefined' && module.exports) {
     // ... export other schedules if needed
   };
 }
+
 
 
 
