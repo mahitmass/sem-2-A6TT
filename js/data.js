@@ -39,7 +39,7 @@ const facultyNames = {
     "JC": "Jyoti Chauhan (GF)", "IMR": "Dr. Imran Rashid", "SNG": "Shagun Gupta",
     "NM": "Noor Mohammad", "RCN": "Dr. Ruchin Gupta", "AKB": "Ms. Aakriti Bhardwaj",
     "AST": "Dr. Aastha Maheshwari", "ALK": "Dr. Alka Singhal", "APR": "Dr. Amanpreet Kaur",
-    "AJP": "Dr. Amarjeet Prajapati", "AMS": "Dr. Amit Mishra", "ASA": "Dr. Anita Sahoo",
+    "AJP": "Dr. Amarjeet Prajapati", "ASA": "Dr. Anita Sahoo",
     "ANV": "Dr. Ankit Vidyarthi", "AJS": "Dr. Ankita Jaiswal", "AVR": "Dr. Ankita Verma",
     "AW": "Dr. Ankita Wadhwa", "ASK": "Dr. Anuja Shukla", "APJ": "Dr. Arpita Jadav Bhatt",
     "AM": "Dr. Asish Mishra", "ASY": "Dr. Asmita Yadav",
@@ -72,7 +72,7 @@ const facultyNames = {
 
     // ECE
     "AB": "Dr. Ankur Bhardwaj", "AGO": "Dr. Ashish Goel", "AJK": "Dr. Ajay Kumar",
-    "ABY": "Dr. Abhay Kumar", "ALJ": "Dr. Alok Joshi", "AKS": "Mr. Atul K. Srivastava",
+    "ABY": "Dr. Abhay Kumar", "ALJ": "Dr. Alok Joshi",
     "APN": "Dr. Archana Pandey", "BHG": "Ms Bhawna Gupta", "GK": "Dr. Garima Kapoor",
     "GV": "Dr. Gaurav Verma", "JAS": "Dr. Jasmine Saini", "JG": "Dr. Juhi Gupta",
     "KUL": "Dr. Kuldeep Baderia", "MJ": "Dr. Madhu Jain", "MN": "Mandeep Narula",
@@ -116,16 +116,16 @@ const facultyNames128 = {
     "ANK1": "Anuj Kumar", "SKH": "Sudip Kumar Haldar", "NAK": "Narender Khatri",
     "BHT": "Bharti Arora", "PRJ": "Prabhakar Jha", "HAB": "Harish Bishwakarma",
     "SUM": "Sumit Mahajan", "PSH": "Piyush Sharma", "RAK": "Rahul Kumar",
-    "NIK": "Niraj Kumar", "ASP": "Asim Patra", "SHP1": "Shivani Pant",
-    "VIS": "Vikas Sharma", "KAS": "Kartik Samanta", "SHALU": "SHALU",
+    "NIK": "Niraj Kumar", "ASP": "Asim Patra", "SHP1": "Shivani Pant", "AKS": "Akansha Singh",
+    "VIS": "Vikas Sharma", "KAS": "Kartik Samanta", "SHALU": "SHALU", "AMS": "Ambalika Sarkar",
     "EKS1": "Ekta Srivastava", "AMA": "Amba Aggarwal", "ANB": "Anshu Banwari",
-    "SHV": "Shweta Verma", "PRS": "Praveen Kumar Sharma", "DEV": "Deepak Verma",
-    "SAV": "Sakshi Varshney", "NIC": "Nilu Chaudhary", "PRK": "Priyanka Kwatra",
+    "SHV": "Shweta Verma", "PRS": "Praveen Kumar Sharma", "DEV": "Deepak Verma", "SGU": "Shruti Gupta",
+    "SAV": "Sakshi Varshney", "NIC": "Nilu Chaudhary", "PRK": "Priyanka Kwatra", "ANK1": "Anuj Kumar", 
 
     // FROM SCREENSHOT 2
-    "ARJ": "Arti Jain", "GAH": "Gaurav Sinha", "HMB": "Himani Bansal",
+    "ARJ": "Arti Jain", "GAH": "Gaurav Sinha", "HMB": "Himani Bansal", "JRD": "Janardhan",
     "MKS": "Mukesh Saraswat", "NMD": "Noor Mohammad", "RSK": "Rashmi Kushwah",
-    "SAP": "SatyaPrakash Patel", "SHM": "Shariq Murtuza", "SGU": "Shruti Gupta",
+    "SAP": "SatyaPrakash Patel", "SHM": "Shariq Murtuza",
     "SHJ": "Shruti Jaiswal", "ADS": "Aditi Sharma", "AKB": "Akanksha Bhardwaj",
     "KKL": "Kakul", "ANG": "Avinash Gupta", "LKK": "Lakhveer Kaur"
 };
@@ -1132,7 +1132,7 @@ const scheduleF5 = [
     { day: 4, start: 10, duration: 1, title: "PH211", code: "3045", teacher: "ADV", type: "lec" },
     { day: 4, start: 11, duration: 1, title: "MA211", code: "3045", teacher: "UMK", type: "lec" },
     { day: 4, start: 13, duration: 1, title: "PH211", code: "121", teacher: "PKC", type: "tut" },
-    { day: 4, start: 14, duration: 2, title: "PH271", code: "256C", teacher: "ANK", type: "lab" },
+    { day: 4, start: 14, duration: 2, title: "PH271", code: "256C", teacher: "ANK1", type: "lab" },
     { day: 4, start: 16, duration: 1, title: "HS111", code: "116", teacher: "SHV", type: "tut" }
 ];
 
@@ -1160,7 +1160,7 @@ const scheduleF6 = [
 ];
 
 const scheduleF7 = [
-    { day: 1, start: 9, duration: 2, title: "CI271", code: "CL1", teacher: "SGU, Arti Jain, Jatin", type: "lab" },
+    { day: 1, start: 9, duration: 2, title: "CI271", code: "CL1", teacher: "SGU/ Arti Jain/ Jatin", type: "lab" },
     { day: 1, start: 11, duration: 1, title: "CI211", code: "217", teacher: "MKS", type: "lec" },
     { day: 2, start: 9, duration: 1, title: "CI211", code: "3084", teacher: "MKS, ZUBAIR", type: "tut" },
     { day: 2, start: 11, duration: 1, title: "MA211", code: "127", teacher: "Pankaj Kumar Srivastava", type: "tut" },
@@ -1182,7 +1182,7 @@ const scheduleF7 = [
 ];
 
 const scheduleF8 = [
-    { day: 1, start: 9, duration: 2, title: "CI271", code: "CL1", teacher: "SGU, Arti Jain, Jatin", type: "lab" },
+    { day: 1, start: 9, duration: 2, title: "CI271", code: "CL1", teacher: "SGU/ Arti Jain/ Jatin", type: "lab" },
     { day: 1, start: 11, duration: 1, title: "CI211", code: "217", teacher: "MKS", type: "lec" },
     { day: 2, start: 9, duration: 1, title: "MA211", code: "116", teacher: "Pankaj Kumar Rana", type: "tut" },
     { day: 2, start: 9, duration: 1, title: "CI211", code: "3092", teacher: "MKS, AVINASH", type: "tut" },
@@ -1204,7 +1204,7 @@ const scheduleF8 = [
 ];
 
 const scheduleF9 = [
-    { day: 1, start: 9, duration: 2, title: "CI271", code: "CL1", teacher: "SGU, Arti Jain, Jatin", type: "lab" },
+    { day: 1, start: 9, duration: 2, title: "CI271", code: "CL1", teacher: "SGU/ Arti Jain/ Jatin", type: "lab" },
     { day: 1, start: 12, duration: 1, title: "MA211", code: "226", teacher: "Asim Patra", type: "lec" },
     { day: 1, start: 14, duration: 1, title: "PH211", code: "121", teacher: "Anuj Kumar", type: "tut" },
     { day: 1, start: 15, duration: 1, title: "MA211", code: "121", teacher: "ATH", type: "tut" },
@@ -1227,7 +1227,7 @@ const scheduleF9 = [
 
 const scheduleF10 = [
     { day: 1, start: 12, duration: 1, title: "MA211", code: "226", teacher: "Asim Patra", type: "lec" },
-    { day: 1, start: 14, duration: 2, title: "CI271", code: "CL1", teacher: "SGU, SHJ, Arti Jain", type: "lab" },
+    { day: 1, start: 14, duration: 2, title: "CI271", code: "CL1", teacher: "SGU/ SHJ/ Arti Jain", type: "lab" },
     { day: 1, start: 16, duration: 1, title: "HS111", code: "121", teacher: "Praveen Kumar Sharma", type: "tut" },
     { day: 2, start: 9, duration: 1, title: "HS111", code: "3045", teacher: "AMS", type: "lec" },
     { day: 2, start: 10, duration: 1, title: "MA211", code: "3045", teacher: "Asim Patra", type: "lec" },
@@ -1251,7 +1251,7 @@ const scheduleF11 = [
     { day: 1, start: 9, duration: 1, title: "HS111", code: "3023", teacher: "JRD", type: "lec" },
     { day: 1, start: 10, duration: 1, title: "PH211", code: "3023", teacher: "Sudip Kumar Haldar", type: "lec" },
     { day: 1, start: 11, duration: 1, title: "MA211", code: "3023", teacher: "UMK", type: "lec" },
-    { day: 1, start: 14, duration: 2, title: "CI271", code: "CL1", teacher: "SGU, SHJ, Arti Jain", type: "lab" },
+    { day: 1, start: 14, duration: 2, title: "CI271", code: "CL1", teacher: "SGU/ SHJ/ Arti Jain", type: "lab" },
     { day: 2, start: 10, duration: 1, title: "MA211", code: "3084", teacher: "UMK", type: "lec" },
     { day: 2, start: 11, duration: 1, title: "PH211", code: "3084", teacher: "Sudip Kumar Haldar", type: "lec" },
     { day: 2, start: 13, duration: 1, title: "HS111", code: "3045", teacher: "JRD", type: "lec" },
@@ -1273,7 +1273,7 @@ const scheduleF12 = [
     { day: 1, start: 9, duration: 1, title: "HS111", code: "3023", teacher: "JRD", type: "lec" },
     { day: 1, start: 10, duration: 1, title: "PH211", code: "3023", teacher: "Sudip Kumar Haldar", type: "lec" },
     { day: 1, start: 11, duration: 1, title: "MA211", code: "3023", teacher: "UMK", type: "lec" },
-    { day: 1, start: 14, duration: 2, title: "CI271", code: "CL1", teacher: "SGU, SHJ, Arti Jain", type: "lab" },
+    { day: 1, start: 14, duration: 2, title: "CI271", code: "CL1", teacher: "SGU/ SHJ/ Arti Jain", type: "lab" },
     { day: 2, start: 10, duration: 1, title: "MA211", code: "3084", teacher: "UMK", type: "lec" },
     { day: 2, start: 11, duration: 1, title: "PH211", code: "3084", teacher: "Sudip Kumar Haldar", type: "lec" },
     { day: 2, start: 13, duration: 1, title: "HS111", code: "3045", teacher: "JRD", type: "lec" },
@@ -1748,6 +1748,7 @@ if (typeof module !== 'undefined' && module.exports) {
     // ... export other schedules if needed
   };
 }
+
 
 
 
