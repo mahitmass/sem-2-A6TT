@@ -283,6 +283,23 @@ const TimetableApp = (function() {
       }
       dom.tableBody.appendChild(row);
     });
+     const hintRow = document.createElement('tr');
+    const hintCell = document.createElement('td');
+    hintCell.colSpan = "7"; // Spans Time + Mon-Sat
+    hintCell.style.cssText = `
+        text-align: center; 
+        padding: 12px; 
+        color: var(--accent-color); 
+        font-size: 0.8rem; 
+        border: none; 
+        opacity: 0.8; 
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    `;
+    hintCell.innerHTML = "👇 Tap any class block for details";
+    
+    hintRow.appendChild(hintCell);
+    dom.tableBody.appendChild(hintRow);
   }
 
   function createTableCell(cls) {
@@ -990,6 +1007,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
