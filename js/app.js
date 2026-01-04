@@ -296,7 +296,7 @@ const TimetableApp = (function() {
         font-weight: 600;
         letter-spacing: 0.5px;
     `;
-    hintCell.innerHTML = "👇 Tap any class block for details";
+    hintCell.innerHTML = "☝️ Tap any class block for details";
     
     hintRow.appendChild(hintCell);
     dom.tableBody.appendChild(hintRow);
@@ -1007,6 +1007,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
