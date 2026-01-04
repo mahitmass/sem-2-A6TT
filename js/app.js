@@ -17,6 +17,7 @@ const TimetableApp = (function() {
     isVerticalScroll: false,
     isVerticalScrollPossible: false,
     initialScrollTop: 0,
+    isTeacherMode: false,
     wheelCooldown: false
   };
 
@@ -43,7 +44,8 @@ const TimetableApp = (function() {
     loadSavedPreferences();
     setupEventListeners();
     initializeBatchDropdown();
-    
+    document.getElementById('teacher-mode-btn').addEventListener('click', toggleTeacherMode);
+    initTeacherSearch();
     // RENDER
     renderInitialViews();
     
@@ -114,8 +116,7 @@ const TimetableApp = (function() {
       dom.daysTrack.addEventListener('mouseleave', handleMouseLeave);
     }
     if (dom.timetableContainer) {
-       
-        dom.timetableContainer.addEventListener('wheel', handleWheel, { passive: false });
+        dom.timetableContainer.addEventListener('wheel', handleWheel, { passive: false }); 
     }
     window.addEventListener('resize', debounce(handleResize, 200));
     document.addEventListener('click', handleOutsideClick);
@@ -237,7 +238,7 @@ const TimetableApp = (function() {
   }
 
   // --- DESKTOP VIEW ---
-  function renderDesktopView() {
+   function renderDesktopView() {
     if (!dom.tableBody) return;
     dom.tableBody.innerHTML = '';
     const hours = [9, 10, 11, 12, 13, 14, 15, 16];
@@ -288,9 +289,23 @@ const TimetableApp = (function() {
     const cell = document.createElement('td');
     cell.setAttribute('data-day', cls.day);
     cell.className = `cell-${cls.type}`;
+    
+    // Add Click Listener for Modal
+    cell.style.cursor = 'pointer'; // Visual cue
+    cell.onclick = () => openDetailsModal(cls); // <--- THIS IS NEW
+
     if (cls.duration > 1) cell.rowSpan = cls.duration;
+    
+    // Display Logic
+    // If it's teacher mode, the title might be long, so we might want to truncate or show code
+    // For now, we use the standard display logic
     const displayTitle = getSubjectFullTitle(cls.title, cls.type) || cls.title;
-    cell.innerHTML = `<span class="cell-subject" title="${displayTitle}">${displayTitle}</span><span class="cell-room">${cls.code}</span>`;
+    
+    // Clean up title for the small cell if it's too long (Teacher Mode specific)
+    // If title has parenthesis (Teacher Mode), split and take the first part
+    const shortTitle = displayTitle.includes('(') ? displayTitle.split('(')[0].trim() : displayTitle;
+
+    cell.innerHTML = `<span class="cell-subject" title="${displayTitle}">${shortTitle}</span><span class="cell-room">${cls.code}</span>`;
     return cell;
   }
 
@@ -616,6 +631,56 @@ if (dayView) {
     jumpToDay(state.currentDayIndex);
   }
 
+  // ==================== MODAL LOGIC ====================
+  function openDetailsModal(cls) {
+      const modal = document.getElementById('details-modal');
+      if(!modal) return;
+
+      // 1. Get Data
+      // For title: If it's teacher mode, the title is already formatted. 
+      // If student mode, we need to look it up.
+      const rawTitle = cls.title;
+      // If the title contains '(', it's likely already formatted by our Teacher Mode logic
+      const isFormatted = rawTitle.includes('('); 
+      const displayTitle = isFormatted ? rawTitle : (getSubjectFullTitle(rawTitle, cls.type) || rawTitle);
+      
+      const displayTeacher = getTeacherDisplayName(cls.teacher);
+      const displayTime = formatTimeRange(cls.start, cls.duration);
+      
+      // Batches Logic
+      let displayBatch = state.currentBatch;
+      if (cls.batchNames && Array.isArray(cls.batchNames)) {
+          // Teacher Mode: Join the batches (e.g., "A1, A2")
+          displayBatch = cls.batchNames.join(', ');
+      }
+
+      // 2. Populate UI
+      document.getElementById('modal-subject').textContent = displayTitle;
+      document.getElementById('modal-time').textContent = displayTime;
+      document.getElementById('modal-type').textContent = cls.type.charAt(0).toUpperCase() + cls.type.slice(1); // Capitalize
+      document.getElementById('modal-teacher').textContent = displayTeacher;
+      document.getElementById('modal-batch').textContent = displayBatch;
+      document.getElementById('modal-room').textContent = cls.code; // Assuming 'code' is the Venue/Room
+
+      // 3. Show Modal
+      modal.classList.remove('hidden-modal');
+      modal.setAttribute('aria-hidden', 'false');
+      
+      // Close Logic
+      const closeBtn = document.getElementById('modal-close-btn');
+      closeBtn.onclick = closeModal;
+      modal.onclick = (e) => {
+          if (e.target === modal) closeModal();
+      };
+  }
+
+  function closeModal() {
+      const modal = document.getElementById('details-modal');
+      if(modal) {
+          modal.classList.add('hidden-modal');
+          modal.setAttribute('aria-hidden', 'true');
+      }
+  }
   // ==================== UI CONTROLS ====================
   function toggleFilterPanel() {
     // 1. Toggle the main panel
@@ -633,14 +698,16 @@ if (dayView) {
   function handleOutsideClick(e) {
     const filterPanel = dom.filterPanel;
     const toggleBtn = document.querySelector('.filter-toggle-btn'); // The "FILTERS" button
-
+    const teacherBtn = document.getElementById('teacher-mode-btn');
     // Check if the panel is currently OPEN
     if (filterPanel && filterPanel.classList.contains('expanded')) {
       
       // logic: If the click is NOT inside the panel AND NOT on the button itself...
-      if (!filterPanel.contains(e.target) && !toggleBtn.contains(e.target)) {
-        toggleFilterPanel(); // ...then close it.
-      }
+      if (!filterPanel.contains(e.target) && 
+    !toggleBtn.contains(e.target) && 
+    !teacherBtn.contains(e.target)) {
+    toggleFilterPanel();
+}
     }
   }
 
@@ -661,6 +728,157 @@ if (dayView) {
     if (state.currentView !== 'swipe') return;
     if (e.key === 'ArrowRight') jumpToDay(state.currentDayIndex < 5 ? state.currentDayIndex + 1 : 0);
     if (e.key === 'ArrowLeft') jumpToDay(state.currentDayIndex > 0 ? state.currentDayIndex - 1 : 5);
+  }
+// ==================== TEACHER MODE LOGIC ====================
+
+  // ==================== IMPROVED TEACHER MODE LOGIC ====================
+
+  function toggleTeacherMode() {
+    state.isTeacherMode = !state.isTeacherMode;
+    const btn = document.getElementById('teacher-mode-btn');
+    const studentControls = document.getElementById('student-controls');
+    const teacherControls = document.getElementById('teacher-controls');
+
+    // 1. Visual Toggle
+    if (btn) btn.classList.toggle('active-mode', state.isTeacherMode);
+
+   if (state.isTeacherMode) {
+    // ENTER TEACHER MODE
+    if (studentControls) studentControls.classList.add('hidden');
+    if (teacherControls) teacherControls.classList.remove('hidden');
+    
+    // FIX: Explicitly OPEN the panel with proper timing
+    if (dom.filterPanel) {
+        dom.filterPanel.classList.add('expanded');
+        dom.filterPanel.style.zIndex = '100'; // Ensure it's on top
+        if(dom.filterArrow) dom.filterArrow.textContent = '▲';
+    }
+    
+    // Focus search with slight delay to ensure CSS animation is done
+    setTimeout(() => {
+        const searchInput = document.getElementById('teacher-search');
+        if (searchInput) searchInput.focus();
+    }, 300);
+
+    } else {
+      // EXIT TEACHER MODE
+     if (studentControls) studentControls.classList.remove('hidden');
+if (teacherControls) teacherControls.classList.add('hidden');
+
+// RESTORE button containers visibility
+const viewModeButtons = document.querySelector('.filter-group:nth-child(2) .filter-options');
+const jumpToDayButtons = document.querySelector('.filter-group:nth-child(3) .filter-options');
+if (viewModeButtons) {
+    viewModeButtons.style.visibility = 'visible';
+    viewModeButtons.style.opacity = '1';
+}
+if (jumpToDayButtons) {
+    jumpToDayButtons.style.visibility = 'visible';
+    jumpToDayButtons.style.opacity = '1';
+}
+
+// Clear inputs
+const searchInput = document.getElementById('teacher-search');
+const searchList = document.getElementById('search-suggestions');
+if (searchInput) searchInput.value = '';
+if (searchList) searchList.innerHTML = '';
+
+selectBatch(state.currentBatch);
+    }
+  }
+
+  function initTeacherSearch() {
+    const input = document.getElementById('teacher-search');
+    const list = document.getElementById('search-suggestions');
+    if (!input || !list) return;
+
+    // Helper to toggle visibility of the other groups
+    const toggleOtherGroups = (show) => {
+        // We target the entire group div (Label + Buttons)
+        // Group 2 is View Mode, Group 3 is Jump to Day
+        const group2 = document.querySelector('.filter-group:nth-child(2)');
+        const group3 = document.querySelector('.filter-group:nth-child(3)');
+        
+        const displayValue = show ? 'flex' : 'none';
+        
+        if (group2) group2.style.display = displayValue;
+        if (group3) group3.style.display = displayValue;
+        
+        // CRITICAL: Switch suggestions from absolute to relative 
+        // so they take up real space and allow scrolling
+        if (!show) {
+            list.style.position = 'relative';
+            list.style.boxShadow = 'none'; // Optional: remove shadow when inline
+            list.style.border = 'none';
+        } else {
+            // Reset to default CSS values
+            list.style.position = ''; 
+            list.style.boxShadow = '';
+            list.style.border = '';
+        }
+    };
+
+    input.addEventListener('input', (e) => {
+        const val = e.target.value.toLowerCase().trim();
+        list.innerHTML = ''; // Clear previous
+
+        if (val.length < 1) {
+            toggleOtherGroups(true); // Show buttons again
+            return;
+        }
+
+        // HIDE buttons to make room
+        toggleOtherGroups(false);
+
+        // 1. Prepare Data
+        let allFaculty = [];
+        if (typeof facultyNames !== 'undefined') {
+            Object.entries(facultyNames).forEach(([code, name]) => 
+                allFaculty.push({ code, name, source: '62' }));
+        }
+        if (typeof facultyNames128 !== 'undefined') {
+            Object.entries(facultyNames128).forEach(([code, name]) => 
+                allFaculty.push({ code, name, source: '128' }));
+        }
+
+        // 2. Filter Matches
+        let matches = allFaculty.filter(f => 
+            f.code.toLowerCase().includes(val) || f.name.toLowerCase().includes(val)
+        );
+
+        // 3. Sort
+        matches.sort((a, b) => {
+             const aCodeStart = a.code.toLowerCase().startsWith(val);
+             const bCodeStart = b.code.toLowerCase().startsWith(val);
+             if (aCodeStart && !bCodeStart) return -1;
+             if (!aCodeStart && bCodeStart) return 1;
+             return a.name.localeCompare(b.name);
+        });
+
+        // 4. Render
+        if (matches.length === 0) {
+            list.innerHTML = '<div style="padding:15px; opacity:0.6;">No teachers found</div>';
+        } else {
+             matches.slice(0, 15).forEach(f => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                const codeDisplay = f.source === '128' ? `${f.code} (128)` : f.code;
+                
+                div.innerHTML = `<span class="s-code">${codeDisplay}</span> <span class="s-name">${f.name}</span>`;
+                
+                div.onclick = () => {
+                    loadTeacherSchedule(f.code, f.name);
+                    input.value = `${f.name} (${codeDisplay})`;
+                    list.innerHTML = '';
+                    toggleFilterPanel(); // Close panel
+                    
+                    // Restore buttons after selection
+                    setTimeout(() => toggleOtherGroups(true), 300);
+                };
+                list.appendChild(div);
+            });
+        }
+    });
   }
 // ==================== TRACKPAD SWIPE LOGIC ====================
   function handleWheel(e) {
@@ -686,14 +904,76 @@ if (dayView) {
       // Determine Direction
       if (e.deltaX > 0) {
         // Swiping Right -> Go to Next Day
-        // Logic: (Current + 1) or Loop back to 0
         jumpToDay(state.currentDayIndex < state.totalDays - 1 ? state.currentDayIndex + 1 : 0);
       } else {
         // Swiping Left -> Go to Prev Day
-        // Logic: (Current - 1) or Loop to last day
         jumpToDay(state.currentDayIndex > 0 ? state.currentDayIndex - 1 : state.totalDays - 1);
       }
     }
+  }
+  function loadTeacherSchedule(targetCode, teacherName) {
+    // UI Updates
+    if (dom.selectedBatchLabel) dom.selectedBatchLabel.textContent = `Teacher: ${targetCode}`;
+    if (dom.floatingBatch) dom.floatingBatch.textContent = `PROF. ${targetCode}`;
+
+    const slotMap = new Map(); // Key: "day-start", Value: Merged Class Object
+
+    if (typeof scheduleMap !== 'undefined') {
+      Object.keys(scheduleMap).forEach(batchName => {
+        const batchClasses = scheduleMap[batchName];
+        
+        batchClasses.forEach(cls => {
+           // 1. Check if Teacher Matches (Strict)
+           const teachers = cls.teacher.split('/').map(t => t.trim());
+           if (teachers.includes(targetCode)) {
+               
+               // Create a unique key for this time slot
+               const key = `${cls.day}-${cls.start}`;
+
+               if (!slotMap.has(key)) {
+                   // First time seeing this slot -> Add it
+                   slotMap.set(key, {
+                       ...cls, // Copy all original properties
+                       batchNames: [batchName] // Start a list of batches
+                   });
+               } else {
+                   // Slot exists! -> Merge this batch into it
+                   const existing = slotMap.get(key);
+                   // Avoid duplicates if data is messy
+                   if (!existing.batchNames.includes(batchName)) {
+                       existing.batchNames.push(batchName);
+                   }
+               }
+           }
+        });
+      });
+    }
+
+    // Convert Map back to Array & Format Titles
+    const aggregatedSchedule = Array.from(slotMap.values()).map(cls => {
+        // 1. Get the REAL Subject Name (e.g., HS111 -> UHV)
+        // We use the helper function directly here
+        const fullName = getSubjectFullTitle(cls.title, cls.type) || cls.title;
+
+        // 2. Sort Batches naturally (A1, A2... not A1, A10)
+        const uniqueBatches = cls.batchNames.sort((a, b) => 
+            a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
+        );
+        
+        // 3. Create the Display Title: "UHV (A5, A6)"
+        const finalTitle = `${fullName} (${uniqueBatches.join(', ')})`;
+
+        return {
+            ...cls,
+            title: finalTitle 
+            // We update 'title' so the renderer just displays it as-is
+        };
+    });
+
+    state.currentSchedule = aggregatedSchedule;
+    renderMobileView();
+    renderDesktopView();
+    jumpToDay(state.currentDayIndex);
   }
  // Public API
   return {
@@ -710,20 +990,6 @@ if (dayView) {
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
