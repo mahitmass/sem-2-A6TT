@@ -20,6 +20,9 @@
       <h1>Planner</h1>
     </div>
     <div class="header-controls">
+      <button id="teacher-mode-btn" class="icon-btn" aria-label="Teacher Mode">
+    👨‍🏫
+  </button>
       <button class="filter-toggle-btn" onclick="TimetableApp.toggleFilterPanel()" aria-expanded="false" aria-controls="filter-panel">
         FILTERS <span id="filter-arrow">🔽</span>
       </button>
@@ -29,22 +32,31 @@
 
   <div id="filter-panel" role="region" aria-label="Filter panel">
     <div class="filter-content">
-      
+  
+  <div id="student-controls">
       <div class="filter-group bring-to-front">
         <div class="filter-label">Select Batch</div>
         <div class="batch-selector-row">
           <button id="series-trigger-btn" class="dropdown-trigger half-width" onclick="TimetableApp.toggleSeries()">
             <span id="series-text">62 Series</span> ⇄
           </button>
-
           <button id="batch-trigger-btn" class="dropdown-trigger half-width" onclick="TimetableApp.toggleBatchGrid()">
             <span id="trigger-text">Select Batch</span> ▼
           </button>
         </div>
-
-        <div id="floating-batch-grid" class="floating-grid hidden">
-          </div>
+        <div id="floating-batch-grid" class="floating-grid hidden"></div>
       </div>
+  </div>
+
+  <div id="teacher-controls" class="hidden">
+      <div class="filter-group">
+        <div class="filter-label">Find Teacher</div>
+        <div class="search-wrapper">
+          <input type="text" id="teacher-search" placeholder="Type name (e.g. RS, Anubha)..." autocomplete="off">
+          <div id="search-suggestions" class="suggestions-list"></div>
+        </div>
+      </div>
+  </div>
       
       <div class="filter-group">
         <div class="filter-label">View Mode</div>
@@ -99,7 +111,34 @@
 
   <!-- Screen reader announcements -->
   <div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-
+  
+<div id="details-modal" class="modal-overlay hidden-modal" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="modal-close-btn">&times;</button>
+      
+      <h2 id="modal-subject" class="modal-title">Subject Name</h2>
+      <div id="modal-time" class="modal-subtitle">00:00 AM - 00:00 AM</div>
+      
+      <div class="modal-grid">
+        <div class="modal-row">
+          <span class="modal-label">Type:</span>
+          <span id="modal-type" class="modal-value">Lecture</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-label">Teacher:</span>
+          <span id="modal-teacher" class="modal-value">Dr. Name</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-label">Batches:</span>
+          <span id="modal-batch" class="modal-value">A1</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-label">Venue:</span>
+          <span id="modal-room" class="modal-value">LT-1</span>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- JavaScript Files -->
   <script src="js/data.js"></script>
   <script src="js/utils.js"></script>
