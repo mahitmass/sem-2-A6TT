@@ -124,8 +124,8 @@ const facultyNames128 = {
 
     // FROM SCREENSHOT 2
     "ARJ": "Arti Jain", "GAH": "Gaurav Sinha", "HMB": "Himani Bansal", "JRD": "Janardhan",
-    "MKS": "Mukesh Saraswat", "NMD": "Noor Mohammad", "RSK": "Rashmi Kushwah",
-    "SAP": "SatyaPrakash Patel", "SHM": "Shariq Murtuza",
+    "MKS": "Mukesh Saraswat", "NMD": "Noor Mohammad", "RSK": "Rashmi Kushwah", "HIB": "Himanshi Bansal",
+    "SAP": "SatyaPrakash Patel", "SHM": "Shariq Murtuza", "DVG": "Dhruv Garg",
     "SHJ": "Shruti Jaiswal", "ADS": "Aditi Sharma", "AKB": "Akanksha Bhardwaj",
     "KKL": "Kakul", "ANG": "Avinash Gupta", "LKK": "Lakhveer Kaur"
 };
@@ -1526,14 +1526,16 @@ const scheduleH3 = [
     { day: 2, start: 9, duration: 1, title: "CI211", code: "3092", teacher: "DVG", type: "lec" },
     { day: 2, start: 10, duration: 1, title: "MA211", code: "3092", teacher: "NEA/ATH", type: "lec" },
     { day: 2, start: 13, duration: 1, title: "MA211", code: "3028", teacher: "NEA/ATH", type: "lec" },
-    { day: 2, start: 14, duration: 1, title: "MA211", code: "3028", teacher: "NEA/ATH", type: "lec" },
-    { day: 2, start: 15, duration: 1, title: "PH211", code: "3028", teacher: "SKH", type: "lec" },
+    { day: 2, start: 14, duration: 1, title: "PH211", code: "3028", teacher: "SKH", type: "lec" },    
+    { day: 2, start: 15, duration: 1, title: "CI211", code: "3028", teacher: "DVG", type: "lec" },
     { day: 2, start: 16, duration: 1, title: "MA211", code: "126", teacher: "ASP", type: "tut" },
     { day: 3, start: 9, duration: 1, title: "CI211", code: "3092", teacher: "DVG", type: "lec" },
     { day: 3, start: 10, duration: 1, title: "MA211", code: "3092", teacher: "NEA/ATH", type: "lec" },
     { day: 3, start: 11, duration: 1, title: "PH211", code: "3092", teacher: "SKH", type: "lec" },
+    { day: 3, start: 13, duration: 2, title: "HS111", code: "240", teacher: "ANB", type: "lab" },  
     { day: 3, start: 15, duration: 1, title: "CI211", code: "3023", teacher: "DVG/JATIN", type: "tut" },
     { day: 4, start: 9, duration: 3, title: "GE112", code: "WS06", teacher: "HAB", type: "lab" },
+    { day: 5, start: 9, duration: 2, title: "CI271", code: "CL1", teacher: "HIB/SHJ/GAH/Samarth", type: "lab" },  
     { day: 5, start: 9, duration: 1, title: "HS111", code: "3045", teacher: "PRS", type: "lec" },
     { day: 5, start: 10, duration: 1, title: "CI211", code: "3045", teacher: "DVG", type: "lec" },
     { day: 5, start: 11, duration: 1, title: "HS111", code: "116", teacher: "DEV", type: "tut" },
@@ -1546,8 +1548,7 @@ const scheduleH3 = [
 const scheduleH4 = [
     { day: 1, start: 13, duration: 1, title: "MA211", code: "3023", teacher: "NEA/ATH", type: "lec" },
     { day: 1, start: 14, duration: 2, title: "PH271", code: "256C", teacher: "URS", type: "lab" },
-    { day: 2, start: 9, duration: 1, title: "CI211", code: "3092", teacher: "DVG", type: "lec" },
-    { day: 2, start: 11, duration: 1, title: "HS111", code: "121", teacher: "SHV", type: "tut" },
+    { day: 2, start: 9, duration: 2, title: "CI271", code: "CL1", teacher: "MKS/NMD/GAH/Baibhav", type: "lab" },      
     { day: 2, start: 13, duration: 1, title: "MA211", code: "3028", teacher: "NEA/ATH", type: "lec" },
     { day: 2, start: 14, duration: 1, title: "PH211", code: "3028", teacher: "SKH", type: "lec" },
     { day: 2, start: 15, duration: 1, title: "CI211", code: "3028", teacher: "DVG", type: "lec" },
@@ -1555,6 +1556,8 @@ const scheduleH4 = [
     { day: 3, start: 9, duration: 1, title: "CI211", code: "3092", teacher: "DVG", type: "lec" },
     { day: 3, start: 10, duration: 1, title: "MA211", code: "3092", teacher: "NEA/ATH", type: "lec" },
     { day: 3, start: 11, duration: 1, title: "PH211", code: "3092", teacher: "SKH", type: "lec" },
+    { day: 3, start: 13, duration: 2, title: "HS111", code: "246", teacher: "Himanshi", type: "lab" },  
+    
     { day: 4, start: 11, duration: 1, title: "PH211", code: "126", teacher: "KAS", type: "tut" },
     { day: 5, start: 9, duration: 1, title: "HS111", code: "3045", teacher: "PRS", type: "lec" },
     { day: 5, start: 10, duration: 1, title: "CI211", code: "3045", teacher: "DVG", type: "lec" },
@@ -1766,6 +1769,7 @@ if (typeof module !== 'undefined' && module.exports) {
     // ... export other schedules if needed
   };
 }
+
 
 
 
