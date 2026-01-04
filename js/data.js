@@ -51,7 +51,7 @@ const facultyNames = {
     "MGR": "Dr. Megha Rathi", "MSH": "Dr. Mradula Sharma", "NIY": "Dr. Niyati Agarwal",
     "PAR": "Dr. Parmeet Kaur", "PAG": "Dr. Parul Agarwal", "PU": "Dr. Pawan Upadhyay",
     "PK": "Dr. Prakash Kumar", "PTK": "Dr. Pratik Shrivastava", "PRV": "Dr. Raghu Vamsi",
-    "SAA": "Dr. Sakshi Gupta", "SHG": "Dr. Sherry Garg", "SHJ": "Dr. Shikha Jain",
+    "SAA": "Dr. Sakshi Gupta", "SHG": "Dr. Sherry Garg", 
     "SHP": "Dr. Shraddha Porwal", "SHB": "Dr. Shulabh Tyagi", "SHR": "Dr. Shweta Rani",
     "SJA": "Dr. Somya Jain", "SON": "Dr. Sonal", "SUD": "Dr. Suma Dawn",
     "SMS": "Dr. Sumeshwar Singh", "TAJ": "Dr. Taj Alam", "TNV": "Dr. Tanvee Gautam",
@@ -1486,7 +1486,7 @@ const scheduleH1 = [
   { day: 4, start: 12, duration: 1, title: "CI211", code: "3028", teacher: "Himika Verma", type: "lec" },
 
   // FRIDAY (Day 5)
-  { day: 5, start: 9, duration: 2, title: "CI271", code: "CL1", teacher: "HMB / SHJ, GAH, SAMARTH", type: "lab" },
+  { day: 5, start: 9, duration: 2, title: "CI271", code: "CL1", teacher: "HMB/ SHJ /GAH, SAMARTH", type: "lab" },
   { day: 5, start: 11, duration: 1, title: "CI211", code: "3045", teacher: "Himika Verma", type: "lec" },
   { day: 5, start: 13, duration: 3, title: "GE112", code: "WS06", teacher: "PSH", type: "lab" },
   { day: 5, start: 16, duration: 1, title: "HS111", code: "116", teacher: "DEV", type: "tut" },
@@ -1766,6 +1766,7 @@ if (typeof module !== 'undefined' && module.exports) {
     // ... export other schedules if needed
   };
 }
+
 
 
 
