@@ -141,6 +141,27 @@ const TimetableApp = (function() {
   function updateBatchLabels(batchName) {
       if (dom.selectedBatchLabel) dom.selectedBatchLabel.textContent = `Batch ${batchName}`;
       if (dom.floatingBatch) dom.floatingBatch.textContent = `BATCH ${batchName}`;
+    const cornerLabel = document.getElementById('table-corner-label');
+      if (cornerLabel) {
+          cornerLabel.innerHTML = `
+              <div style="
+                  display: inline-block;
+                  font-size: 0.9rem; 
+                  color: var(--accent-color); 
+                  font-weight: 800;
+                  border: 1px solid var(--accent-color);
+                  background: rgba(187, 134, 252, 0.1); 
+                  border-radius: 6px;
+                  padding: 1px 8px;
+                  margin-bottom: 2px;
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                  letter-spacing: 0.5px;
+              ">
+                  ${batchName}
+              </div>
+              <div style="font-size: 0.65rem; opacity: 0.6; font-weight: 600; letter-spacing: 1px;">TIME</div>
+          `;
+      }
   }
 
   function renderMobileView() {
@@ -1007,8 +1028,3 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
-
-
-
-
-
