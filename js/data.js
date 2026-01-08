@@ -747,7 +747,7 @@ const scheduleB12 = [
     { day: 1, start: 13, duration: 1, title: "MA211", code: "TS6", teacher: "HPT", type: "tut" },
     { day: 1, start: 15, duration: 1, title: "CI121", code: "G1", teacher: "AM", type: "lec" },
     { day: 2, start: 11, duration: 1, title: "CI121", code: "TS6", teacher: "KP", type: "tut" },
-    { day: 2, start: 13, duration: 1, title: "MA211", code: "FF3", teacher: "HPT", type: "lec" },
+    { day: 2, start: 13, duration: 1, title: "MA211", code: "G9", teacher: "HPT", type: "lec" },
     { day: 2, start: 14, duration: 1, title: "CI121", code: "FF3", teacher: "AM", type: "lec" },
     { day: 2, start: 15, duration: 1, title: "PH211", code: "FF2", teacher: "NG", type: "lec" },
     { day: 3, start: 10, duration: 2, title: "PH271", code: "PL2", teacher: "NAR/ANU", type: "lab" },
@@ -1769,6 +1769,7 @@ if (typeof module !== 'undefined' && module.exports) {
     // ... export other schedules if needed
   };
 }
+
 
 
 
