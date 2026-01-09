@@ -1,3 +1,63 @@
+// ==================== ROOM POPUP LOGIC ====================
+// 1. Create the popup element once and add to body
+const roomPopup = document.createElement('div');
+roomPopup.id = 'room-info-popup';
+document.body.appendChild(roomPopup);
+
+// 2. Function to Show Popup
+window.showRoomPopup = function(event, code) {
+    // Stop the tap from immediately triggering the "hide" listener
+    event.stopPropagation();
+
+    // Get Data
+    // Ensure ROOM_LOCATIONS is defined (from data.js)
+    const location = (typeof ROOM_LOCATIONS !== 'undefined' && ROOM_LOCATIONS[code]) 
+                     ? ROOM_LOCATIONS[code] 
+                     : "Location details not available";
+
+    // Set Content
+    roomPopup.innerHTML = `<div><span style="color:var(--accent-color)">${code}:</span> ${location}</div>`;
+    
+    // Position it
+    const rect = event.currentTarget.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+    roomPopup.style.display = 'block';
+    roomPopup.style.top = `${rect.bottom + scrollTop + 8}px`; // 8px below the badge
+    roomPopup.style.left = `${rect.left + scrollLeft}px`;
+
+    // Handle right edge overflow
+    if (rect.left + 220 > window.innerWidth) {
+        roomPopup.style.left = 'auto';
+        roomPopup.style.right = '10px';
+    }
+};
+
+// 3. Global Listener to HIDE on ANY interaction
+function hidePopup() {
+    if (roomPopup.style.display === 'block') {
+        roomPopup.style.display = 'none';
+    }
+}
+
+// Hide on tap, click, or scroll start
+document.addEventListener('click', hidePopup);
+document.addEventListener('touchstart', hidePopup);
+document.addEventListener('wheel', hidePopup);
+document.addEventListener('scroll', hidePopup, {capture: true});
+
+// ==================== GLOBAL HELPERS ====================
+window.showRoomLocation = function(code) {
+    if (typeof ROOM_LOCATIONS === 'undefined') {
+        alert("Room data is loading...");
+        return;
+    }
+    const location = ROOM_LOCATIONS[code] || "Location details not available.";
+    
+    // Simple, clean alert
+    alert(`📍 Classroom Location:\n\n${code}\n${location}`);
+};
 // ==================== TIMETABLE APPLICATION ====================
 const TimetableApp = (function() {
   // Private state
@@ -225,7 +285,7 @@ const TimetableApp = (function() {
     return card;
   }
 
-  function createClassCard(cls) {
+ function createClassCard(cls) {
     const displayTeacher = getTeacherDisplayName(cls.teacher);
     const displayTitle = getSubjectFullTitle(cls.title, cls.type) || cls.title;
     
@@ -236,11 +296,15 @@ const TimetableApp = (function() {
     card.dataset.startHour = cls.start.toString();
     card.dataset.day = cls.day.toString();
     
+    // UPDATED HTML: Added onclick event for the floating popup
     card.innerHTML = `
       <div class="time-slot">${formatTimeRange(cls.start, cls.duration)}</div>
       <div class="subject-name">${displayTitle}</div>
       <div class="card-footer">
-        <span class="info-badge">🏛 ${cls.code}</span>
+        <span class="info-badge" style="cursor:pointer; display:inline-flex; align-items:center;" 
+              onclick="window.showRoomPopup(event, '${cls.code}')">
+            🏛 ${cls.code} <span class="info-icon">i</span>
+        </span>
         <span class="info-badge">👨‍🏫 ${displayTeacher}</span>
         <span class="info-badge">${cls.type.toUpperCase()}</span>
       </div>
@@ -675,8 +739,6 @@ if (dayView) {
       if(!modal) return;
 
       // 1. Get Data
-      // For title: If it's teacher mode, the title is already formatted. 
-      // If student mode, we need to look it up.
       const rawTitle = cls.title;
       // If the title contains '(', it's likely already formatted by our Teacher Mode logic
       const isFormatted = rawTitle.includes('('); 
@@ -698,7 +760,17 @@ if (dayView) {
       document.getElementById('modal-type').textContent = cls.type.charAt(0).toUpperCase() + cls.type.slice(1); // Capitalize
       document.getElementById('modal-teacher').textContent = displayTeacher;
       document.getElementById('modal-batch').textContent = displayBatch;
-      document.getElementById('modal-room').textContent = cls.code; // Assuming 'code' is the Venue/Room
+      
+      // --- UPDATED ROOM SECTION ---
+      // We use innerHTML to add the Room Code + The Clickable 'i' Icon
+      const roomEl = document.getElementById('modal-room');
+      roomEl.innerHTML = `
+        ${cls.code} 
+        <span class="modal-glow-btn" onclick="window.showRoomPopup(event, '${cls.code}')">
+          i
+        </span>
+      `;
+      // ----------------------------
 
       // 3. Show Modal
       modal.classList.remove('hidden-modal');
@@ -1028,6 +1100,8 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
+
 
 
 
