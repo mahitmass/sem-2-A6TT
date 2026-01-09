@@ -821,7 +821,7 @@ body[data-theme="light"] .day-header {
 }
 
 /* --- RESPONSIVE ADJUSTMENTS --- */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .batch-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1031,26 +1031,51 @@ select:focus {
 
 /* The Circular Button */
 #teacher-mode-btn {
-  width: 40px;
   height: 40px;
-  border-radius: 50%;
+  padding: 0 16px;           /* More padding for text */
+  border-radius: 20px;       /* Pill shape, not circle */
   border: 1px solid var(--border-color);
   background: var(--card-bg);
-  font-size: 1.2rem;
-  margin-right: 8px; /* Space between this and FILTERS btn */
+  color: var(--text-main);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-right: 8px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;                  /* Space between Icon and Text */
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  width: auto;
 }
 
+.t-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
 /* Glowing Active State */
 #teacher-mode-btn.active-mode {
   background: var(--accent-color);
   border-color: var(--accent-color);
+  color: #fff;               /* White text when active */
   box-shadow: 0 0 15px var(--accent-color);
-  transform: scale(1.1);
-  z-index: 101; /* Above other elements */
+  transform: scale(1.05);
+  z-index: 101;
+}
+
+@media (max-width: 480px) {
+  #teacher-mode-btn {
+    width: 40px;             /* Fixed width */
+    padding: 0;              /* Remove padding */
+    justify-content: center; /* Center the icon */
+    border-radius: 50%;      /* Back to circle */
+  }
+
+  .t-label {
+    display: none;           /* Hide the text "Find Teacher" */
+  }
+  
+  .t-icon {
+    margin: 0;
+  }
 }
 
 /* Hide Elements Class */
@@ -1216,3 +1241,56 @@ select:focus {
   font-size: 1rem;
   text-align: right;
 }
+/* --- TEACHER MODE HINT --- */
+.teacher-hint {
+  position: absolute;
+  top: 10px;
+  right: 140px; /* Positions it nicely under the buttons */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-color);
+  font-weight: 700;
+  font-size: 0.9rem;
+  pointer-events: none; /* Allows clicking through it */
+  animation: bounceHint 1.5s infinite alternate ease-in-out;
+  z-index: 20;
+}
+
+/* Curved Arrow Styling */
+.hint-arrow {
+  font-size: 1.4rem;
+  line-height: 1;
+  /* Flip the arrow so it curves UP and LEFT towards the Teacher button */
+  transform: scaleX(-1) rotate(-10deg); 
+  display: inline-block;
+}
+
+/* Bouncing Animation */
+@keyframes bounceHint {
+  from { transform: translateY(0); opacity: 0.6; }
+  to { transform: translateY(-5px); opacity: 1; }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .teacher-hint {
+    right: 95px; /* Move closer for smaller screens */
+    font-size: 0.8rem;
+  }
+}
+
+/* --- FIX FOR BLANK SCREEN (Critical) --- */
+#student-controls {
+  display: block;
+  width: 100%;
+}
+
+.filter-content {
+  position: relative;
+  background-color: var(--header-bg);
+  min-height: 200px; /* Ensures panel is never 0px height */
+}
+
+
+
