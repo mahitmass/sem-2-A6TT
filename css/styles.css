@@ -1292,5 +1292,102 @@ select:focus {
   min-height: 200px; /* Ensures panel is never 0px height */
 }
 
+/* --- CLICKABLE BADGE --- */
+.clickable-badge {
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  position: relative;
+  z-index: 10; /* Ensures it sits above other card clicks if any */
+}
 
+.clickable-badge:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+.clickable-badge:active {
+  transform: scale(0.95);
+}
+/* --- ROOM INFO POPUP --- */
+#room-info-popup {
+  position: absolute;
+  background-color: var(--card-bg); /* Matches your card theme */
+  color: var(--text-main);
+  border: 1px solid var(--accent-color);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 9999; /* Sits on top of everything */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  display: none; /* Hidden by default */
+  max-width: 220px;
+  pointer-events: none; /* Allows touches to pass through (helps with quick dismissal) */
+  line-height: 1.4;
+  backdrop-filter: blur(5px);
+}
+
+/* Add a tiny arrow (optional, looks nice) */
+#room-info-popup::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 10px;
+  width: 10px;
+  height: 10px;
+  background: var(--card-bg);
+  border-left: 1px solid var(--accent-color);
+  border-top: 1px solid var(--accent-color);
+  transform: rotate(45deg);
+}
+/* --- CARD VIEW ICON (Bordered & Larger) --- */
+.info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;       /* Fixed width for circle */
+  height: 22px;      /* Fixed height for circle */
+  border: 2px solid var(--accent-color); /* The Border */
+  border-radius: 50%; /* Make it a circle */
+  margin-left: 8px;
+  
+  font-family: serif; /* Serif font makes the 'i' look better */
+  font-style: italic;
+  font-weight: 900;
+  font-size: 14px;
+  color: var(--accent-color);
+  background: rgba(0,0,0,0.2); /* Slight contrast background */
+}
+
+/* --- TABLE MODAL ICON (Glowing Button) --- */
+.modal-glow-btn {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-left: 10px;
+  border-radius: 50%;
+  vertical-align: middle;
+  
+  /* The Glow Look */
+  background: rgba(187, 134, 252, 0.15); /* Low opacity accent bg */
+  border: 1px solid var(--accent-color);
+  color: #fff; /* White text to stand out from accent color */
+  box-shadow: 0 0 8px var(--accent-color); /* The Glow */
+  font-family: serif;
+  font-style: italic;
+  font-weight: bold;
+  font-size: 1.1rem;
+  
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-glow-btn:hover {
+  transform: scale(1.15);
+  background: var(--accent-color);
+  box-shadow: 0 0 15px var(--accent-color), 0 0 25px var(--accent-color); /* Stronger glow on hover */
+  text-shadow: none;
+}
 
