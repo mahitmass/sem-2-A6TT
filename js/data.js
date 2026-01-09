@@ -1792,7 +1792,7 @@ const ROOM_LOCATIONS = {
     "JBSPL": "ABB-II, Ground Floor",
 
     // ABB-I First Floor
-    "FF1": "ABB-I, 1st Floor", "FF2": "ABB-I, 1st Floor", "FF4": "ABB-I, 1st Floor",
+    "FF1": "ABB-I, 1st Floor", "FF2": "ABB-I , 1st Floor" , "FF3": "ABB-I , 1st Floor", "FF4": "ABB-I, 1st Floor",
     "FF5": "ABB-I, 1st Floor", "FF6": "ABB-I, 1st Floor", "FF7": "ABB-I, 1st Floor",
     "FF8": "ABB-I, 1st Floor", "FF9": "ABB-I, 1st Floor",
     
@@ -1859,3 +1859,4 @@ const ROOM_LOCATIONS = {
     
     "Executive Room - I": "ABB-II", "Executive Room - II": "ABB-II"
 };
+
