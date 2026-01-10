@@ -584,7 +584,7 @@ const TimetableApp = (function() {
         state.currentSchedule = scheduleMap[batchName];
     }
     Storage.set('selectedBatch', batchName);
-    
+    GTM.logCampus(batchName);
     updateBatchLabels(batchName);
     updateTriggerText(); 
     updateGridSelection();
@@ -1147,6 +1147,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
