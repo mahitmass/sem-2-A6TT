@@ -1470,13 +1470,16 @@ const scheduleF25 = [
 ];
 
 const scheduleH1 = [
+    { day: 1, start: 13, duration: 1, title: "HS111", code: "3048", teacher: "NIC", type: "lec" },
+    { day: 4, start: 16, duration: 1, title: "HS111", code: "3048", teacher: "NIC", type: "lec" },
+
   { day: 2, start: 9, duration: 1, title: "PH211", code: "3023", teacher: "SKA1", type: "lec" },
   { day: 2, start: 10, duration: 1, title: "MA211", code: "3023", teacher: "KKS", type: "lec" },
   { day: 2, start: 15, duration: 2, title: "HS111", code: "240", teacher: "SANJAY", type: "lab" },
 
   // WEDNESDAY (Day 3)
   { day: 3, start: 9, duration: 1, title: "PH211", code: "3084", teacher: "SKA1", type: "lec" },
-  { day: 3, start: 10, duration: 1, title: "CI211", code: "3092", teacher: "Himika Verma", type: "lec" },
+  { day: 3, start: 10, duration: 1, title: "CI211", code: "3092", teacher: "HMB", type: "lec" },
   { day: 3, start: 11, duration: 2, title: "PH271", code: "027A", teacher: "PKC", type: "lab" },
   { day: 3, start: 13, duration: 1, title: "MA211", code: "3023", teacher: "KKS", type: "lec" },
 
@@ -1498,19 +1501,22 @@ const scheduleH1 = [
 ];
 
 const scheduleH2 = [
+    { day: 1, start: 13, duration: 1, title: "HS111", code: "3048", teacher: "NIC", type: "lec" },
+    { day: 4, start: 16, duration: 1, title: "HS111", code: "3048", teacher: "NIC", type: "lec" },
+
     { day: 2, start: 15, duration: 2, title: "HS111", code: "246", teacher: "Chandershekhar", type: "lab" },
     { day: 2, start: 9, duration: 1, title: "PH211", code: "3023", teacher: "Suneet Kumar Awasthi", type: "lec" },
     { day: 2, start: 10, duration: 1, title: "MA211", code: "3023", teacher: "Kamlesh Kumar Shukla", type: "lec" },
     { day: 2, start: 11, duration: 1, title: "HS111", code: "121", teacher: "Akansha Singh", type: "tut" },
     { day: 3, start: 9, duration: 1, title: "PH211", code: "3084", teacher: "Suneet Kumar Awasthi", type: "lec" },
-    { day: 3, start: 10, duration: 1, title: "CI211", code: "3092", teacher: "Himika  Verma", type: "lec" },
-    { day: 3, start: 11, duration: 2, title: "PH271", code: "41", teacher: "Anshu Dhirendra Varshney", type: "lab" },
+    { day: 3, start: 10, duration: 1, title: "CI211", code: "3092", teacher: "HMB", type: "lec" },
+    { day: 3, start: 11, duration: 2, title: "PH271", code: "41", teacher: "PKC", type: "lab" },
     { day: 3, start: 13, duration: 1, title: "MA211", code: "3023", teacher: "Kmalesh Kumar Shukla", type: "lec" },
-    { day: 3, start: 13, duration: 3, title: "GE112", code: "WS04", teacher: "Sumit Mahajan", type: "lab" },
+    { day: 3, start: 14, duration: 2, title: "GE112", code: "WS04", teacher: "Sumit Mahajan", type: "lab" },
     { day: 3, start: 16, duration: 1, title: "MA211", code: "121", teacher: "LKK", type: "tut" },
     { day: 4, start: 9, duration: 1, title: "PH211", code: "3028", teacher: "Suneet Kumar Awasthi", type: "lec" },
     { day: 4, start: 10, duration: 1, title: "MA211", code: "3028", teacher: "Kamlesh Kumar Shukla", type: "lec" },
-    { day: 4, start: 12, duration: 1, title: "CI211", code: "3028", teacher: "Himika  Verma", type: "lec" },
+    { day: 4, start: 12, duration: 1, title: "CI211", code: "3028", teacher: "HMB", type: "lec" },
     { day: 5, start: 9, duration: 2, title: "CI271", code: "CL1", teacher: "Himani Bansal/SHJ/Gaurav Sinha/Samarth", type: "lab" },
     { day: 5, start: 11, duration: 1, title: "CI211", code: "3045", teacher: "Himika  Verma", type: "lec" },
     { day: 5, start: 13, duration: 1, title: "CI211", code: "3045", teacher: "Vaibhav", type: "tut" }
@@ -1859,6 +1865,7 @@ const ROOM_LOCATIONS = {
     
     "Executive Room - I": "ABB-II", "Executive Room - II": "ABB-II"
 };
+
 
 
 
