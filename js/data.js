@@ -1048,7 +1048,7 @@ const scheduleF1 = [
 ];
 
 const scheduleF2 = [
-    { day: 1, start: 9, duration: 3, title: "GE112", code: "WS04", teacher: "HAB", type: "lab" },    
+    { day: 1, start: 9, duration: 3, title: "GE112", code: "WS05", teacher: "HAB", type: "lab" },    
     { day: 2, start: 9, duration: 2, title: "PH271", code: "256C", teacher: "SKH", type: "lab" },
     { day: 2, start: 14, duration: 2, title: "CI271", code: "CL1", teacher: "MKS/SAP/SQM/SAMARTH JAIN", type: "lab" },
     { day: 3, start: 9, duration: 2, title: "HS111", code: "246", teacher: "Sanjay", type: "lab" },    
@@ -1213,7 +1213,7 @@ const scheduleF9 = [
     { day: 2, start: 10, duration: 1, title: "MA211", code: "3045", teacher: "Asim Patra", type: "lec" },
     { day: 2, start: 11, duration: 1, title: "PH211", code: "3045", teacher: "Anuj Kumar", type: "lec" },
     { day: 2, start: 13, duration: 1, title: "CI211", code: "226", teacher: "Akanksha Bhardwaj", type: "lec" },
-    { day: 2, start: 14, duration: 2, title: "PH271", code: "256C", teacher: "SHALU", type: "lab" },
+    { day: 2, start: 14, duration: 2, title: "PH271", code: "41", teacher: "SHALU", type: "lab" },
     { day: 2, start: 16, duration: 1, title: "CI211", code: "3023", teacher: "Akanksha Bhardwaj, KAKUL", type: "tut" },
     { day: 4, start: 10, duration: 1, title: "CI211", code: "3092", teacher: "Akanksha Bhardwaj", type: "lec" },
     { day: 4, start: 11, duration: 1, title: "PH211", code: "3092", teacher: "Anuj Kumar", type: "lec" },
@@ -1295,8 +1295,8 @@ const scheduleF13 = [
     { day: 1, start: 10, duration: 1, title: "MA211", code: "3045", teacher: "Pankaj Kumar Rana", type: "lec" },
     { day: 1, start: 11, duration: 1, title: "PH211", code: "3045", teacher: "KAS", type: "lec" },
     { day: 1, start: 13, duration: 1, title: "CI211", code: "3045", teacher: "Gaurav Sinha", type: "lec" },
-    { day: 1, start: 14, duration: 1, title: "PH211", code: "126", teacher: "KAS", type: "tut" },
-    { day: 1, start: 15, duration: 1, title: "MA211", code: "116", teacher: "Asim Patra", type: "tut" },
+    { day: 1, start: 14, duration: 1, title: "PH211", code: "126", teacher: "VM", type: "tut" },
+    { day: 1, start: 15, duration: 1, title: "MA211", code: "116", teacher: "KKS", type: "tut" },
     { day: 1, start: 16, duration: 1, title: "CI211", code: "126", teacher: "Gaurav Sinha, KAKUL", type: "tut" },
     { day: 2, start: 13, duration: 1, title: "PH211", code: "3023", teacher: "KAS", type: "lec" },
     { day: 2, start: 14, duration: 1, title: "MA211", code: "3023", teacher: "Pankaj Kumar Rana", type: "lec" },
@@ -1380,7 +1380,7 @@ const scheduleF18 = [
 
 const scheduleF21 = [
     { day: 1, start: 9, duration: 3, title: "GE112", code: "WS06", teacher: "Niraj Kumar", type: "lab" },
-    { day: 1, start: 13, duration: 1, title: "PH211", code: "116", teacher: "Vikas Malik", type: "tut" },
+    { day: 1, start: 13, duration: 1, title: "PH211", code: "116", teacher: "KAS", type: "tut" },
     { day: 2, start: 9, duration: 1, title: "PH211", code: "3028", teacher: "Narender Khatri", type: "lec" },
     { day: 2, start: 10, duration: 1, title: "MA211", code: "3028", teacher: "Pankaj Kumar Rana", type: "lec" },
     { day: 2, start: 11, duration: 1, title: "CI211", code: "127", teacher: "JYR", type: "tut" },
@@ -1450,7 +1450,7 @@ const scheduleF25 = [
     { day: 1, start: 9, duration: 1, title: "HS111", code: "3028", teacher: "RSK", type: "lec" },
     { day: 1, start: 10, duration: 1, title: "PH211", code: "3028", teacher: "NAK", type: "lec" },
     { day: 1, start: 11, duration: 1, title: "CI211", code: "3028", teacher: "SQM", type: "lec" },
-    { day: 1, start: 13, duration: 1, title: "MA211", code: "126", teacher: "ASP", type: "tut" },
+    { day: 1, start: 13, duration: 1, title: "MA211", code: "126", teacher: "ATH", type: "tut" },
     { day: 1, start: 14, duration: 1, title: "MA211", code: "3028", teacher: "NEA", type: "lec" },
     { day: 1, start: 15, duration: 2, title: "HS111", code: "246", teacher: "Sanjay", type: "lab" },
     { day: 2, start: 9, duration: 2, title: "CI271", code: "CL1", teacher: "MKS/NMD/GAH/Baibhav", type: "lab" },
@@ -1526,7 +1526,7 @@ const scheduleH2 = [
 ];
 
 const scheduleH3 = [
-    { day: 1, start: 13, duration: 1, title: "MA211", code: "3023", teacher: "NEA/ATH", type: "lec" },
+    { day: 1, start: 13, duration: 1, title: "MA211", code: "3023", teacher: "PKR/ATH", type: "lec" },
     { day: 1, start: 14, duration: 2, title: "PH271", code: "027A", teacher: "ADV", type: "lab" },
     { day: 1, start: 16, duration: 1, title: "CI211", code: "3023", teacher: "DVG/BAIBHAV", type: "tut" },
     { day: 2, start: 9, duration: 1, title: "CI211", code: "3092", teacher: "DVG", type: "lec" },
@@ -1552,7 +1552,7 @@ const scheduleH3 = [
 ];
 
 const scheduleH4 = [
-    { day: 1, start: 13, duration: 1, title: "MA211", code: "3023", teacher: "NEA/ATH", type: "lec" },
+    { day: 1, start: 13, duration: 1, title: "MA211", code: "3023", teacher: "PKR/ATH", type: "lec" },
     { day: 1, start: 14, duration: 2, title: "PH271", code: "256C", teacher: "URS", type: "lab" },
     { day: 2, start: 9, duration: 2, title: "CI271", code: "CL1", teacher: "MKS/NMD/GAH/Baibhav", type: "lab" },      
     { day: 2, start: 13, duration: 1, title: "MA211", code: "3028", teacher: "NEA/ATH", type: "lec" },
@@ -1575,6 +1575,8 @@ const scheduleH4 = [
 ];
 
 const scheduleE1 = [
+    { day: 1, start: 15, duration: 2, title: "CI271", code: "CL1", teacher: "HMB/SAP/NMD/JATIN", type: "lab" },
+    
     { day: 1, start: 9, duration: 1, title: "HS111", code: "116", teacher: "Shweta Verma", type: "tut" },
     { day: 1, start: 10, duration: 1, title: "CI211", code: "SR05", teacher: "NMD", type: "lec" },
     { day: 1, start: 11, duration: 1, title: "HS111", code: "SR05", teacher: "Nilu Chaudhary", type: "lec" },
@@ -1598,6 +1600,8 @@ const scheduleE1 = [
 ];
 
 const scheduleE2 = [
+    { day: 1, start: 15, duration: 2, title: "CI271", code: "CL1", teacher: "HMB/SAP/NMD/JATIN", type: "lab" },
+    
     { day: 1, start: 9, duration: 1, title: "HS111", code: "121", teacher: "Praveen Kumar Sharma", type: "tut" },
     { day: 1, start: 10, duration: 1, title: "CI211", code: "SR05", teacher: "NMD", type: "lec" },
     { day: 1, start: 11, duration: 1, title: "HS111", code: "SR05", teacher: "Nilu Chaudhary", type: "lec" },
@@ -1621,6 +1625,8 @@ const scheduleE2 = [
 ];
 
 const scheduleE3 = [
+    { day: 1, start: 15, duration: 2, title: "CI271", code: "CL1", teacher: "HMB/SAP/NMD/JATIN", type: "lab" },
+    
     { day: 1, start: 9, duration: 1, title: "HS111", code: "3092", teacher: "Nilu Chaudhary", type: "lec" },
     { day: 1, start: 10, duration: 1, title: "PH211", code: "3092", teacher: "Urbashi Satpathy", type: "lec" },
     { day: 1, start: 11, duration: 1, title: "MA211", code: "3092", teacher: "AMB", type: "lec" },
@@ -1865,6 +1871,7 @@ const ROOM_LOCATIONS = {
     
     "Executive Room - I": "ABB-II", "Executive Room - II": "ABB-II"
 };
+
 
 
 
