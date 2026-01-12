@@ -1,4 +1,4 @@
-const CACHE_NAME = 'a6-planner-v5'; 
+const CACHE_NAME = 'a6-planner-v6'; 
 const TIMEOUT_MS = 3000; // 3 Seconds Timeout
 
 const ASSETS = [
