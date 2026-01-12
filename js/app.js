@@ -863,20 +863,23 @@ if (dayView) {
   function toggleFilterPanel() {
     const isExpanded = dom.filterPanel.classList.toggle('expanded');
     
-    // 1. FORCE PANEL ON TOP: Set Z-Index higher than the backdrop
+    // 1. FORCE PANEL ON TOP (Z-Index Fix)
+    // Ensures the panel is always clickable and above the backdrop
     if (isExpanded) {
-        dom.filterPanel.style.zIndex = '1001'; // Higher than backdrop (1000)
+        const computedStyle = window.getComputedStyle(dom.filterPanel);
+        if (computedStyle.position === 'static') dom.filterPanel.style.position = 'relative';
+        dom.filterPanel.style.zIndex = '1001';
     } else {
-        // Optional: Reset it when closed, or leave it
         dom.filterPanel.style.zIndex = ''; 
+        dom.filterPanel.style.position = ''; 
     }
 
-    // 2. Update arrow
+    // 2. Update Arrow Icon
     if (dom.filterArrow) {
       dom.filterArrow.textContent = isExpanded ? '▲' : '▼';
     }
 
-    // 3. THE BACKDROP (Z-Index 1000)
+    // 3. THE "CATCH-ALL" BACKDROP
     let backdrop = document.getElementById('filter-backdrop');
     
     if (isExpanded) {
@@ -884,20 +887,35 @@ if (dayView) {
             backdrop = document.createElement('div');
             backdrop.id = 'filter-backdrop';
             backdrop.style.cssText = `
-                position: fixed;
-                top: 0; left: 0; 
+                position: fixed; top: 0; left: 0; 
                 width: 100vw; height: 100vh;
-                z-index: 1000; /* High, but strictly LOWER than the panel (1001) */
-                background: transparent;
+                z-index: 1000; background: transparent;
+                touch-action: none; /* Helps prevent browser scrolling */
             `;
-            backdrop.onclick = toggleFilterPanel; 
+            
+            // This helper function closes the panel immediately on ANY interaction
+            const closeAndBlock = (e) => {
+                if (e.cancelable) e.preventDefault(); // Stop the touch/click from passing through
+                e.stopPropagation(); // Stop global listeners
+                toggleFilterPanel();
+            };
+
+            // A. Catch Taps (Clicks)
+            backdrop.addEventListener('click', closeAndBlock);
+            
+            // B. Catch Swipes (Touchstart fires immediately when finger touches screen)
+            backdrop.addEventListener('touchstart', closeAndBlock, { passive: false });
+            
+            // C. Catch Scrolls (Mouse wheel or Trackpad)
+            backdrop.addEventListener('wheel', closeAndBlock, { passive: false });
+
             document.body.appendChild(backdrop);
         }
     } else {
         if (backdrop) backdrop.remove();
     }
 
-    // 4. Close batch grid if open
+    // 4. Close the other grid if open
     toggleBatchGrid(false);
   }
 
@@ -1196,6 +1214,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
