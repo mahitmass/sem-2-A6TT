@@ -274,7 +274,7 @@ const scheduleA5 = [
 const scheduleA6 = [
     { day: 1, start: 10, duration: 2, title: "PH271", code: "PL2", teacher: "NG/INC", type: "lab" },
     { day: 1, start: 14, duration: 1, title: "HS111", code: "G1", teacher: "MTR", type: "lec" },
-    { day: 1, start: 15, duration: 1, title: "GE112", code: "TS16", teacher: "GRP", type: "tut" },
+    { day: 1, start: 15, duration: 1, title: "GE112", code: "near CADLAB", teacher: "GRP", type: "tut" },
     { day: 2, start: 10, duration: 2, title: "GE112", code: "EW2", teacher: "GRP", type: "lab" },
     { day: 2, start: 13, duration: 1, title: "MA211", code: "G1", teacher: "ANK", type: "lec" },
     { day: 2, start: 14, duration: 1, title: "PH211", code: "G1", teacher: "SND", type: "lec" },
@@ -1854,7 +1854,7 @@ const ROOM_LOCATIONS = {
     "TR502": "ABB-III, 5th Floor", "TR505": "ABB-III, 5th Floor", "TR524": "ABB-III, 5th Floor", "TR525": "ABB-III, 5th Floor",
     "MLL": "ABB-III, 5th Floor", "SPL": "ABB-III, 5th Floor", "MOD": "ABB-III, 5th Floor",
 
-    "EDD": "ABB-III, 6th Floor",
+    "EDD": "ABB-III, 6th Floor", "near CADLAB": "ABB-III, 6th Floor",
 
     "CR701": "ABB-III, 7th Floor", "CR702": "ABB-III, 7th Floor", "CR703": "ABB-III, 7th Floor",
     "CR704": "ABB-III, 7th Floor", "CR705": "ABB-III, 7th Floor",
@@ -1871,6 +1871,7 @@ const ROOM_LOCATIONS = {
     
     "Executive Room - I": "ABB-II", "Executive Room - II": "ABB-II"
 };
+
 
 
 
