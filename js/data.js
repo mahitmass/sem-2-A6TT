@@ -409,7 +409,7 @@ const scheduleA16 = [
     { day: 1, start: 13, duration: 1, title: "HS111", code: "TS7", teacher: "AMN", type: "tut" },
     { day: 1, start: 14, duration: 1, title: "PH211", code: "FF4", teacher: "INC", type: "lec" },
     { day: 1, start: 15, duration: 1, title: "CI121", code: "FF4", teacher: "MAY", type: "lec" },    
-    { day: 2, start: 13, duration: 1, title: "MA211", code: "CS5", teacher: "DGA", type: "lec" },
+    { day: 2, start: 13, duration: 1, title: "MA211", code: "CS5", teacher: "shikha pandey", type: "lec" },
     { day: 2, start: 14, duration: 1, title: "CI121", code: "CS5", teacher: "MAY", type: "lec" },
     { day: 2, start: 15, duration: 2, title: "PH271", code: "PL2", teacher: "RKG/GPK", type: "lab" },
     { day: 3, start: 9, duration: 1, title: "HS111", code: "CR425", teacher: "SHS", type: "lec" },
@@ -1871,6 +1871,7 @@ const ROOM_LOCATIONS = {
     
     "Executive Room - I": "ABB-II", "Executive Room - II": "ABB-II"
 };
+
 
 
 
