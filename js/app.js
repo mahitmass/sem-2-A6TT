@@ -232,7 +232,28 @@ const TimetableApp = (function() {
 
   function setupServiceWorker() {
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./sw.js").catch(err => console.log("SW Fail", err));
+      navigator.serviceWorker.register("./sw.js").then(registration => {
+        
+        // OPTIONAL: Check for updates on load
+        registration.onupdatefound = () => {
+          const installingWorker = registration.installing;
+          installingWorker.onstatechange = () => {
+            if (installingWorker.state === 'installed') {
+              if (navigator.serviceWorker.controller) {
+                console.log('New update available.');
+              }
+            }
+          };
+        };
+
+      }).catch(err => console.log("SW Fail", err));
+
+      // THE FIX: Listen for the "controllerchange" event
+      // This fires when self.skipWaiting() runs in sw.js and the new SW takes control.
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        // Reload the page immediately so the user sees the new data
+        window.location.reload();
+      });
     }
   }
 
@@ -1172,6 +1193,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
