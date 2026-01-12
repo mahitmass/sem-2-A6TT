@@ -861,40 +861,43 @@ if (dayView) {
   }
   // ==================== UI CONTROLS ====================
   function toggleFilterPanel() {
-    // 1. Toggle the main panel state
     const isExpanded = dom.filterPanel.classList.toggle('expanded');
     
-    // 2. Update the arrow icon
+    // 1. FORCE PANEL ON TOP: Set Z-Index higher than the backdrop
+    if (isExpanded) {
+        dom.filterPanel.style.zIndex = '1001'; // Higher than backdrop (1000)
+    } else {
+        // Optional: Reset it when closed, or leave it
+        dom.filterPanel.style.zIndex = ''; 
+    }
+
+    // 2. Update arrow
     if (dom.filterArrow) {
       dom.filterArrow.textContent = isExpanded ? '▲' : '▼';
     }
 
-    // 3. THE BACKDROP FIX (This detects clicks on the table/outside)
+    // 3. THE BACKDROP (Z-Index 1000)
     let backdrop = document.getElementById('filter-backdrop');
     
     if (isExpanded) {
-        // If opening, create the backdrop
         if (!backdrop) {
             backdrop = document.createElement('div');
             backdrop.id = 'filter-backdrop';
-            // CSS to make it cover everything but sit behind the filter
             backdrop.style.cssText = `
                 position: fixed;
                 top: 0; left: 0; 
                 width: 100vw; height: 100vh;
-                z-index: 98; /* High, but below the filter panel (which is usually 100) */
-                background: transparent; /* Invisible, or use rgba(0,0,0,0.1) for dimming */
+                z-index: 1000; /* High, but strictly LOWER than the panel (1001) */
+                background: transparent;
             `;
-            // The Logic: Clicking the backdrop closes the panel
             backdrop.onclick = toggleFilterPanel; 
             document.body.appendChild(backdrop);
         }
     } else {
-        // If closing, remove the backdrop
         if (backdrop) backdrop.remove();
     }
 
-    // 4. Close the Batch Grid if it's open (Keep this from your original code)
+    // 4. Close batch grid if open
     toggleBatchGrid(false);
   }
 
@@ -1193,6 +1196,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
