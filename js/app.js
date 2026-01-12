@@ -840,7 +840,7 @@ if (dayView) {
   }
   // ==================== UI CONTROLS ====================
   function toggleFilterPanel() {
-    // 1. Toggle the main panel
+    // 1. Toggle the main panel state
     const isExpanded = dom.filterPanel.classList.toggle('expanded');
     
     // 2. Update the arrow icon
@@ -848,8 +848,33 @@ if (dayView) {
       dom.filterArrow.textContent = isExpanded ? '▲' : '▼';
     }
 
-    // 3. THE FIX: Use 'toggleBatchGrid', NOT 'toggleBatchDropdown'
-    toggleBatchGrid(false); 
+    // 3. THE BACKDROP FIX (This detects clicks on the table/outside)
+    let backdrop = document.getElementById('filter-backdrop');
+    
+    if (isExpanded) {
+        // If opening, create the backdrop
+        if (!backdrop) {
+            backdrop = document.createElement('div');
+            backdrop.id = 'filter-backdrop';
+            // CSS to make it cover everything but sit behind the filter
+            backdrop.style.cssText = `
+                position: fixed;
+                top: 0; left: 0; 
+                width: 100vw; height: 100vh;
+                z-index: 98; /* High, but below the filter panel (which is usually 100) */
+                background: transparent; /* Invisible, or use rgba(0,0,0,0.1) for dimming */
+            `;
+            // The Logic: Clicking the backdrop closes the panel
+            backdrop.onclick = toggleFilterPanel; 
+            document.body.appendChild(backdrop);
+        }
+    } else {
+        // If closing, remove the backdrop
+        if (backdrop) backdrop.remove();
+    }
+
+    // 4. Close the Batch Grid if it's open (Keep this from your original code)
+    toggleBatchGrid(false);
   }
 
   function handleOutsideClick(e) {
@@ -1147,6 +1172,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
