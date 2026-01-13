@@ -1836,6 +1836,7 @@ const ROOM_LOCATIONS = {
     
     "CS5": "ABB-II, 2nd Floor", "CS6": "ABB-II, 2nd Floor", "CS7": "ABB-II, 2nd Floor", "CS8": "ABB-II, 2nd Floor",
     "CS13": "ABB-II, 2nd Floor", "CS14": "ABB-II, 2nd Floor", "CS15": "ABB-II, 2nd Floor", "CS16": "ABB-II, 2nd Floor",
+    "LL1": "ABB-II, 2nd Floor",
     
     // ABB-II Third Floor
     "BEL1": "ABB-II, 3rd Floor", "BEL2": "ABB-II, 3rd Floor", "ADE": "ABB-II, 3rd Floor",
@@ -1871,6 +1872,7 @@ const ROOM_LOCATIONS = {
     
     "Executive Room - I": "ABB-II", "Executive Room - II": "ABB-II"
 };
+
 
 
 
