@@ -29,44 +29,32 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 3. STALE-WHILE-REVALIDATE (Instant Load + Background Update)
+// 3. FETCH (The Race Logic)
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
-  event.respondWith(
-    caches.open(CACHE_NAME).then(async (cache) => {
-      // 1. Try to get it from the cache FIRST
-      const cachedResponse = await cache.match(event.request);
+  // Create a promise that rejects after 3 seconds
+  const timeoutPromise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject(new Error('Network timed out'));
+    }, TIMEOUT_MS);
+  });
 
-      // 2. Start a network fetch in the background
-      const networkFetch = fetch(event.request).then((networkResponse) => {
-        // If the network works and gives us valid data...
-        if (networkResponse && networkResponse.status === 200) {
-          // Update the cache with the new data
-          cache.put(event.request, networkResponse.clone());
-          
-          // NOTIFY THE APP that new data is here
-          notifyClients(event.request.url);
+  event.respondWith(
+    // Race the Network vs The Timer
+    Promise.race([fetch(event.request), timeoutPromise])
+      .then((networkResponse) => {
+        // NETWORK WON & IS GOOD
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
         }
         return networkResponse;
-      }).catch(() => {
-        // Network failed? That's fine, we handled it.
-      });
-
-      // 3. Return the cached response IMMEDIATELY (if we have it)
-      // If cache is empty (first visit), wait for the network.
-      return cachedResponse || networkFetch;
-    })
+      })
+      .catch(() => {
+        // NETWORK FAILED OR TIMED OUT -> USE CACHE
+        console.log('[SW] Network failed or too slow, using Cache');
+        return caches.match(event.request);
+      })
   );
 });
-
-// Helper to tell the frontend "Hey, I updated something!"
-async function notifyClients(url) {
-  const clients = await self.clients.matchAll();
-  clients.forEach(client => {
-    client.postMessage({
-      type: 'UPDATE_AVAILABLE',
-      url: url
-    });
-  });
-}
