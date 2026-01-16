@@ -232,31 +232,32 @@ const TimetableApp = (function() {
 
   function setupServiceWorker() {
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./sw.js").then(registration => {
-        
-        // OPTIONAL: Check for updates on load
-        registration.onupdatefound = () => {
-          const installingWorker = registration.installing;
-          installingWorker.onstatechange = () => {
-            if (installingWorker.state === 'installed') {
-              if (navigator.serviceWorker.controller) {
-                console.log('New update available.');
-              }
-            }
-          };
-        };
-
+      navigator.serviceWorker.register("./sw.js").then(reg => {
+         // (Optional) Your existing install logic here
       }).catch(err => console.log("SW Fail", err));
 
-      // THE FIX: Listen for the "controllerchange" event
-      // This fires when self.skipWaiting() runs in sw.js and the new SW takes control.
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        // Reload the page immediately so the user sees the new data
-        window.location.reload();
+      // --- NEW: LISTEN FOR UPDATES ---
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
+            
+            // Filter: Only reload for important files (like your schedule data)
+            // Adjust 'timetable.js' or 'data.js' to match your actual file names
+            const isImportant = event.data.url.includes('timetable.js') || 
+                                event.data.url.includes('data.js') ||
+                                event.data.url.includes('index.html');
+
+            if (isImportant) {
+                // SAFETY CHECK: Only auto-reload once per session to prevent loops
+                if (!sessionStorage.getItem('dataUpdated')) {
+                    console.log("🔄 New data found! Force updating...");
+                    sessionStorage.setItem('dataUpdated', 'true');
+                    window.location.reload(); 
+                }
+            }
+        }
       });
     }
   }
-
   // ==================== RENDERING ====================
   function renderInitialViews() {
     updateBatchLabels(state.currentBatch);
@@ -1214,6 +1215,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
