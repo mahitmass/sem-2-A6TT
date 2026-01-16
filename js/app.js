@@ -442,7 +442,7 @@ const TimetableApp = (function() {
     hintCell.colSpan = "7"; // Spans Time + Mon-Sat
     hintCell.style.cssText = `
         text-align: center; 
-        padding: -5px 12px 12px 12px;  
+        padding: 0px 12px 12px 12px;  
         color: var(--accent-color); 
         font-size: 0.8rem; 
         border: none; 
@@ -1215,6 +1215,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
