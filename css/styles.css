@@ -1495,7 +1495,7 @@ body {
 .day-header {
   font-size: 1.8rem !important;
   font-weight: 800 !important;
-  margin-bottom: 20px !important;
+  margin-bottom: 10px !important;
   color: var(--accent-color);
 }
 
@@ -1534,5 +1534,6 @@ body {
 /* 6. Break Card */
 .break-card { padding: 20px !important; }
 .break-header { font-size: 1.2rem !important; }
+
 
 
