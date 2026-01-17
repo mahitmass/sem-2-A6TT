@@ -930,7 +930,14 @@ const TimetableApp = (function() {
     renderDesktopView();
     jumpToDay(state.currentDayIndex);
   }
-
+// --- NEW: Force Check Function ---
+  function forceUpdateCheck() {
+    console.log("Checking for updates...");
+    // We add ?t=Timestamp to force the browser to actually ask the network
+    fetch(`./js/data.js?t=${Date.now()}`)
+        .then(() => console.log("Check complete"))
+        .catch(() => console.log("Check failed (offline)"));
+  }
   // Public API
   return {
     init,
@@ -940,10 +947,21 @@ const TimetableApp = (function() {
     setViewMode,
     manualJumpToDay,
     toggleSeries,
-    toggleBatchGrid
+    toggleBatchGrid,
+      forceUpdateCheck
   };
 })();
 
 // Start
-document.addEventListener('DOMContentLoaded', TimetableApp.init);
+document.addEventListener('DOMContentLoaded', () => {
+    TimetableApp.init();
+    
+    // Check for updates immediately on load
+    setTimeout(() => TimetableApp.forceUpdateCheck(), 1000); 
+});
 
+// Check for updates whenever internet comes back
+window.addEventListener('online', () => {
+    console.log("Back online! Checking for data...");
+    TimetableApp.forceUpdateCheck();
+});
