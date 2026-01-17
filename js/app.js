@@ -2,8 +2,8 @@
 // Keep this at the VERY TOP (Line 1)
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.addEventListener('message', (event) => {
+        // If the SW says "FORCE_RELOAD", we obey immediately.
         if (event.data && event.data.type === 'FORCE_RELOAD') {
-            console.log("Force Update Triggered");
             window.location.reload();
         }
     });
@@ -946,3 +946,4 @@ const TimetableApp = (function() {
 
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
