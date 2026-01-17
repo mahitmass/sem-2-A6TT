@@ -1390,39 +1390,6 @@ select:focus {
   box-shadow: 0 0 15px var(--accent-color), 0 0 25px var(--accent-color); /* Stronger glow on hover */
   text-shadow: none;
 }
-/* ================= UPDATE NOTIFICATION TOAST ================= */
-#update-toast {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px); /* Start hidden below screen */
-  background-color: var(--accent-color);
-  color: #fff;
-  padding: 12px 24px;
-  border-radius: 50px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  font-weight: 600;
-  font-size: 0.9rem;
-  z-index: 2000;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  white-space: nowrap;
-}
-
-#update-toast.show {
-  transform: translateX(-50%) translateY(0); /* Slide up */
-}
-
-.refresh-icon {
-  font-size: 1.2rem;
-  animation: spin 2s linear infinite;
-}
-
-@keyframes spin { 100% { transform: rotate(360deg); } }
-
 /* ================= FONT SIZE FIXES ================= */
 
 /* 1. Swipe Cards: Make Subject Bigger & Bolder */
@@ -1534,6 +1501,7 @@ body {
 /* 6. Break Card */
 .break-card { padding: 20px !important; }
 .break-header { font-size: 1.2rem !important; }
+
 
 
 
