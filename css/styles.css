@@ -1455,27 +1455,29 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.5;
 }
-/* ================= COMPACT TABLE FIX ================= */
+/* ================= FINAL TABLE LAYOUT (Balanced) ================= */
 
-/* 1. Squeeze the Table Cells Vertically */
+/* 1. The Cells: Comfortable but not huge */
 .weekly-table td {
-  padding-top: 2px !important;    /* Reduce top padding (was likely 8px) */
-  padding-bottom: 2px !important; /* Reduce bottom padding */
-  height: auto !important;        /* Allow row to shrink */
+  padding-top: 5px !important;    /* RELAXED: 5px gives breathing room */
+  padding-bottom: 5px !important; /* RELAXED: 5px */
+  height: auto !important;        /* Let row shrink to fit content */
 }
 
-/* 2. Fix the Time Column (Left Side) */
-/* This keeps the time readable but takes less vertical space */
+/* 2. The Time Column (Left Side) */
+/* Keeps 09:00 and 09:50 close, but not touching */
 .weekly-table td:first-child div {
-  margin: 0 !important; 
-  line-height: 1.1 !important;    /* Tighten the spacing between 09:00 and 09:50 */
+  line-height: 1.3 !important;    
+  margin-bottom: 2px !important;  
+  font-size: 0.9rem !important;   /* Slightly smaller to save height */
 }
 
-/* 3. Tighten the Subject and Room Code */
+/* 3. Subject & Room Text */
+/* Ensures text is readable but doesn't waste vertical space */
 .cell-subject {
-  margin-bottom: 0px !important;  /* Remove gap between Subject and Room */
-  line-height: 1.1 !important;    /* Tighter text lines */
-  display: block;                 /* Ensure it stacks cleanly */
+  line-height: 1.2 !important;
+  margin-bottom: 2px !important;
+  display: block;
 }
 
 .cell-room {
@@ -1483,19 +1485,61 @@ body {
   margin-top: 1px !important;
 }
 
-/* 4. Shrink the "Tap on block..." Hint at the bottom */
-/* This row usually wastes a lot of space. Let's make it tiny. */
+/* 4. The Bottom Hint ("Tap on block...") */
+/* This is the most important part for saving space! */
+/* We make this row very short so it doesn't push off screen. */
 .weekly-table tr:last-child td {
-  padding: 4px !important;        /* Very small padding */
-  font-size: 0.75rem !important;  /* Smaller text size for the hint */
+  padding: 4px !important;        
+  font-size: 0.75rem !important;  
   line-height: 1 !important;
 }
+/* ================= SWIPE VIEW BOOSTER ================= */
 
-/* 5. (Optional) Safety Tweak for Small Screens */
-/* If the Time Column is still too tall, slightly reduce the '09:00' size */
-.weekly-table td:first-child div {
-  font-size: 0.9rem !important;   /* Changed from 0.95rem to 0.9rem (Imperceptible but saves space) */
+/* 1. Day Header (e.g., "Monday") */
+.day-header {
+  font-size: 1.8rem !important;   /* Much bigger */
+  font-weight: 800 !important;    /* Extra bold */
+  letter-spacing: -0.5px;         /* Tight & Modern */
+  margin-bottom: 20px !important;
+  color: var(--accent-color);     /* Ensure it pops */
 }
 
+/* 2. The Card Container */
+.class-card {
+  padding: 16px 18px !important;  /* More breathing room inside */
+  margin-bottom: 16px !important; /* More space between cards */
+}
+
+/* 3. Subject Name (The most important part) */
+.subject-name {
+  font-size: 1.45rem !important;  /* Huge text for subject */
+  font-weight: 750 !important;    /* Very bold */
+  line-height: 1.2 !important;
+  margin: 6px 0 10px 0 !important; /* Space above and below */
+}
+
+/* 4. Time Slot (Top of card) */
+.time-slot {
+  font-size: 0.95rem !important;  /* Bigger time */
+  font-weight: 600 !important;
+  opacity: 0.9 !important;        /* Make it darker/clearer */
+  letter-spacing: 0.5px;
+}
+
+/* 5. The Badges (Room, Teacher, Type) */
+.info-badge {
+  font-size: 0.85rem !important;  /* Bigger text inside badges */
+  padding: 6px 10px !important;   /* Larger click area */
+  font-weight: 500 !important;
+}
+
+/* 6. No Classes / Break Card */
+.break-card {
+  padding: 20px !important;
+}
+.break-header {
+  font-size: 1.2rem !important;
+  font-weight: 600 !important;
+}
 
 
