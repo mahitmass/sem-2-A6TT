@@ -494,15 +494,19 @@ const TimetableApp = (function() {
     const isCurrently62 = seriesText.textContent.includes("62");
     const newType = isCurrently62 ? "128" : "62";
 
+    // 1.5. Update the Global Switch (Hides Rooms for 128)
+    if (newType === "128") {
+        document.body.classList.add('series-128');
+    } else {
+        document.body.classList.remove('series-128');
+    }
+
     // 2. Update the Button Text
     seriesText.textContent = `${newType} Series`;
 
     // 3. Update the Grid Data silently (DO NOT OPEN)
     populateBatchGrid(newType);
-    
-    // (Removed the line that forced it to open)
-  }
-
+}
   function toggleBatchGrid(forceState) {
     const grid = document.getElementById('floating-batch-grid');
     if (!grid) return;
@@ -1187,6 +1191,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
