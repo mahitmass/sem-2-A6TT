@@ -1,12 +1,10 @@
-const CACHE_NAME = 'a6-planner-v6'; 
-const TIMEOUT_MS = 3000; // 3 Seconds Timeout
-
+const CACHE_NAME = 'a6-planner-v7'; // Updated version
 const ASSETS = [
   './',
   './index.html',
   './timetable.js',
   './manifest.json',
-  './Logo.png'
+  './Logo.png' 
 ];
 
 // 1. INSTALL
@@ -17,7 +15,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// 2. ACTIVATE (Cleanup)
+// 2. ACTIVATE (Cleanup old versions)
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => Promise.all(
@@ -29,32 +27,42 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 3. FETCH (The Race Logic)
+// 3. FETCH (Stale-While-Revalidate Strategy)
 self.addEventListener('fetch', (event) => {
+  // RULE: Only handle GET requests
   if (event.request.method !== 'GET') return;
 
-  // Create a promise that rejects after 3 seconds
-  const timeoutPromise = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      reject(new Error('Network timed out'));
-    }, TIMEOUT_MS);
-  });
+  // RULE: IGNORE external requests (Google, APIs, etc.)
+  // This prevents the "Failed to convert value to Response" error
+  const url = new URL(event.request.url);
+  if (url.origin !== location.origin) return;
 
   event.respondWith(
-    // Race the Network vs The Timer
-    Promise.race([fetch(event.request), timeoutPromise])
-      .then((networkResponse) => {
-        // NETWORK WON & IS GOOD
-        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-          const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+    caches.open(CACHE_NAME).then(async (cache) => {
+      // A. Try Cache First (Instant Load)
+      const cachedResponse = await cache.match(event.request);
+
+      // B. Fetch Network in Background (To Update Cache)
+      const networkFetch = fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          cache.put(event.request, networkResponse.clone());
+          notifyClients(event.request.url); // Tell App to reload if needed
         }
         return networkResponse;
-      })
-      .catch(() => {
-        // NETWORK FAILED OR TIMED OUT -> USE CACHE
-        console.log('[SW] Network failed or too slow, using Cache');
-        return caches.match(event.request);
-      })
+      }).catch(() => {
+        // Network failed? No problem, we have cache.
+      });
+
+      // C. Return Cache if available, otherwise wait for Network
+      return cachedResponse || networkFetch;
+    })
   );
 });
+
+// Helper to notify app of updates
+async function notifyClients(url) {
+  const clients = await self.clients.matchAll();
+  clients.forEach(client => {
+    client.postMessage({ type: 'UPDATE_AVAILABLE', url: url });
+  });
+}
