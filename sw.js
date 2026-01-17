@@ -1,5 +1,5 @@
-const CACHE_NAME = 'a6-planner-v19'; // Bump version
-const TIMEOUT_MS = 2000; // Give it 2 seconds to try fast network
+const CACHE_NAME = 'a6-planner-v20'; // Version Bump
+const TIMEOUT_MS = 2000; 
 
 const ASSETS = [
   './',
@@ -13,7 +13,7 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
-  self.skipWaiting();
+  self.skipWaiting(); // Activate immediately
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
 });
 
@@ -25,7 +25,7 @@ self.addEventListener('activate', (event) => {
       })
     ))
   );
-  self.clients.claim();
+  self.clients.claim(); // Take control immediately
 });
 
 self.addEventListener('fetch', (event) => {
@@ -35,33 +35,31 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     (async () => {
-      // 1. Network Promise (No Store = Force Check)
+      // 1. Network Promise (No Store)
       const networkPromise = fetch(event.request.url, { cache: 'no-store' })
         .catch(() => null);
 
-      // 2. Timeout Promise
+      // 2. Timeout
       const timeoutPromise = new Promise(resolve => 
         setTimeout(() => resolve('TIMEOUT'), TIMEOUT_MS)
       );
 
-      // 3. Cache Promise
+      // 3. Cache
       const cachePromise = caches.match(event.request);
 
-      // 4. RACE
+      // 4. Race
       const raceResult = await Promise.race([networkPromise, timeoutPromise]);
 
-      // SCENARIO A: Fast Internet (Update Instant)
+      // Fast Network: Update Cache & Return
       if (raceResult && raceResult !== 'TIMEOUT' && raceResult.status === 200) {
         const cache = await caches.open(CACHE_NAME);
         cache.put(event.request, raceResult.clone());
         return raceResult;
       }
 
-      // SCENARIO B: Slow Internet (Serve Cache First)
+      // Slow Network: Return Cache, but check background
       const cachedResponse = await cachePromise;
       if (cachedResponse) {
-        // Serve cache immediately
-        // BUT check for updates in background
         checkForSilentUpdate(event.request, networkPromise, cachedResponse);
         return cachedResponse;
       }
@@ -79,19 +77,17 @@ async function checkForSilentUpdate(request, networkPromise, cachedResponse) {
       const networkText = await networkResponse.clone().text();
 
       if (cachedText !== networkText) {
-        // Data Changed!
         const cache = await caches.open(CACHE_NAME);
         cache.put(request, networkResponse.clone());
-        
-        // FORCE RELOAD COMMAND
-        notifyClientsOfForceUpdate();
+        notifyClientsOfForceUpdate(); // <--- Data Changed!
       }
     }
   } catch (e) { /* Ignore */ }
 }
 
 async function notifyClientsOfForceUpdate() {
-  const clients = await self.clients.matchAll();
+  // MATCH ALL CLIENTS (The fix)
+  const clients = await self.clients.matchAll({ includeUncontrolled: true, type: 'window' });
   clients.forEach(client => {
     client.postMessage({ type: 'FORCE_RELOAD' });
   });
