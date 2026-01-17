@@ -1,4 +1,4 @@
-const CACHE_NAME = 'a6-planner-v26'; // Bump Version to 26
+const CACHE_NAME = 'a6-planner-v27'; // Bump Version to 27
 const ASSETS = [
   './',
   './index.html',
@@ -36,8 +36,9 @@ self.addEventListener('fetch', (event) => {
     (async () => {
       const cache = await caches.open(CACHE_NAME);
       
-      // 1. Get Clean URL (Strip timestamps for cache matching)
-      const cleanUrl = new URL(event.request.url); // <--- FIXED: Was 'request.url'
+      // 1. Get Clean URL (Strip all params so we store it cleanly)
+      // Example: "data.js?t=123" becomes "data.js"
+      const cleanUrl = new URL(event.request.url);
       cleanUrl.search = ''; 
       const cleanRequest = new Request(cleanUrl);
 
@@ -45,8 +46,8 @@ self.addEventListener('fetch', (event) => {
       const cachedResponse = await cache.match(cleanRequest);
 
       if (cachedResponse) {
-        // If we have cache, return it immediately!
-        // But kick off a background update if it's the data file
+        // Return cache immediately!
+        // But if it's data.js, check for updates in the background
         if (isDataFile) {
           event.waitUntil(
             updateInBackground(event.request, cache, cleanRequest, cachedResponse)
@@ -55,34 +56,42 @@ self.addEventListener('fetch', (event) => {
         return cachedResponse;
       }
 
-      // 3. No Cache? (First Visit) -> Fetch from Network
+      // 3. No Cache? Fetch from Network
       return fetch(event.request);
     })()
   );
 });
 
-async function updateInBackground(request, cache, cleanRequest, cachedResponse) {
+async function updateInBackground(originalRequest, cache, cleanRequest, cachedResponse) {
   try {
-    // Check network for fresh data (Bypass browser cache)
-    const networkResponse = await fetch(request, { cache: 'no-store' });
+    // 1. CREATE A UNIQUE NETWORK REQUEST
+    // We append ?sw_bust=timestamp to FORCE the server to give us a fresh file.
+    // This bypasses Vercel/CDN caching.
+    const networkUrl = new URL(originalRequest.url);
+    networkUrl.searchParams.set('sw_bust', Date.now());
+    
+    const networkRequest = new Request(networkUrl);
+
+    // 2. Fetch fresh data
+    const networkResponse = await fetch(networkRequest, { cache: 'no-store' });
     
     if (networkResponse && networkResponse.status === 200) {
       const cachedText = await cachedResponse.text();
       const networkText = await networkResponse.clone().text();
 
-      // Compare: Has data changed?
+      // 3. Compare
       if (cachedText !== networkText) {
-        console.log("[SW] Data changed! Updating cache & reloading...");
+        console.log("[SW] New data detected! Updating cache...");
         
-        // Update Cache
+        // Update Cache (using the CLEAN request, so next load gets this version)
         await cache.put(cleanRequest, networkResponse.clone());
         
-        // Shout to the App: "RELOAD NOW!"
+        // Trigger Reload
         notifyClients();
       }
     }
   } catch (err) {
-    // Offline? Ignore it. User stays on cached version.
+    // Offline? Ignore.
   }
 }
 
