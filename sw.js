@@ -1,13 +1,14 @@
-const CACHE_NAME = 'a6-planner-v7'; // Updated version
+const CACHE_NAME = 'a6-planner-v8'; // I bumped the version for you
 const ASSETS = [
   './',
   './index.html',
-  './timetable.js',
+  './app.js',       // MAKE SURE this matches your actual JS file name!
+  './data.js',      // You MUST cache your data file
   './manifest.json',
-  './Logo.png' 
+  './Logo.png'
 ];
 
-// 1. INSTALL
+// 1. INSTALL (Fixes the "addAll" error)
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
@@ -15,7 +16,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// 2. ACTIVATE (Cleanup old versions)
+// 2. ACTIVATE (Cleanup)
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => Promise.all(
@@ -27,39 +28,31 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 3. FETCH (Stale-While-Revalidate Strategy)
+// 3. FETCH (Stale-While-Revalidate + GTM Fix)
 self.addEventListener('fetch', (event) => {
-  // RULE: Only handle GET requests
   if (event.request.method !== 'GET') return;
 
-  // RULE: IGNORE external requests (Google, APIs, etc.)
-  // This prevents the "Failed to convert value to Response" error
+  // RULE: IGNORE external requests (like Google Tag Manager)
+  // This fixes the "Failed to convert value to Response" error
   const url = new URL(event.request.url);
   if (url.origin !== location.origin) return;
 
   event.respondWith(
     caches.open(CACHE_NAME).then(async (cache) => {
-      // A. Try Cache First (Instant Load)
       const cachedResponse = await cache.match(event.request);
-
-      // B. Fetch Network in Background (To Update Cache)
       const networkFetch = fetch(event.request).then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
           cache.put(event.request, networkResponse.clone());
-          notifyClients(event.request.url); // Tell App to reload if needed
+          notifyClients(event.request.url);
         }
         return networkResponse;
-      }).catch(() => {
-        // Network failed? No problem, we have cache.
-      });
+      }).catch(() => { /* Network error is fine now */ });
 
-      // C. Return Cache if available, otherwise wait for Network
       return cachedResponse || networkFetch;
     })
   );
 });
 
-// Helper to notify app of updates
 async function notifyClients(url) {
   const clients = await self.clients.matchAll();
   clients.forEach(client => {
