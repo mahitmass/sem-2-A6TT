@@ -1,4 +1,4 @@
-const CACHE_NAME = 'a6-planner-v22'; // Bump version
+const CACHE_NAME = 'a6-planner-v24'; // Bump version
 const ASSETS = [
   './',
   './index.html',
@@ -11,12 +11,12 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
-  self.skipWaiting(); // Take over immediately
+  self.skipWaiting(); 
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
 });
 
 self.addEventListener('activate', (event) => {
-  self.clients.claim(); // Control open pages immediately
+  self.clients.claim();
   event.waitUntil(
     caches.keys().then((keys) => Promise.all(
       keys.map((key) => {
@@ -29,64 +29,53 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
-  
-  // We strictly filter for data.js to apply the special logic
   const isDataFile = url.pathname.endsWith('data.js');
 
-  if (isDataFile) {
-      event.respondWith(handleDataUpdate(event.request));
-  } else {
-      // Standard Cache First strategy for everything else (CSS, Images)
-      event.respondWith(
-        caches.match(event.request).then(cached => {
-            return cached || fetch(event.request);
-        })
-      );
-  }
+  event.respondWith(
+    (async () => {
+        // 1. OPEN CACHE
+        const cache = await caches.open(CACHE_NAME);
+        const cleanUrl = new URL(request.url);
+        cleanUrl.search = ''; 
+        const cleanRequest = new Request(cleanUrl);
+        const cachedResponse = await cache.match(cleanRequest);
+
+        // 2. THE "INSTANT" PART
+        // If we have cache, return it IMMEDIATELY. Do not wait for network.
+        if (cachedResponse) {
+            // Trigger the background update safely
+            if (isDataFile) {
+                event.waitUntil(updateInBackground(request, cache, cleanRequest, cachedResponse));
+            }
+            return cachedResponse;
+        }
+
+        // 3. NO CACHE? (First install) -> Must use network
+        return fetch(request);
+    })()
+  );
 });
 
-// The Special Logic for data.js
-async function handleDataUpdate(request) {
-    const cache = await caches.open(CACHE_NAME);
-    
-    // 1. Get the "Clean" Request (without timestamp ?t=...)
-    // We need this so we save it to the cache correctly
-    const cleanUrl = new URL(request.url);
-    cleanUrl.search = ''; 
-    const cleanRequest = new Request(cleanUrl);
-
-    // 2. Try to fetch from Network (bypass ALL caches)
+async function updateInBackground(request, cache, cleanRequest, cachedResponse) {
     try {
-        const networkResponse = await fetch(request, { 
-            cache: 'no-store',
-            headers: { 'Cache-Control': 'no-cache' } 
-        });
-
+        // Fetch fresh data from network (bypass browser cache)
+        const networkResponse = await fetch(request, { cache: 'no-store' });
+        
         if (networkResponse && networkResponse.status === 200) {
-            // 3. Compare with what we have in Cache
-            const cachedResponse = await cache.match(cleanRequest);
-            
-            if (cachedResponse) {
-                const cachedText = await cachedResponse.text();
-                const networkText = await networkResponse.clone().text();
+            const cachedText = await cachedResponse.text();
+            const networkText = await networkResponse.clone().text();
 
-                if (cachedText !== networkText) {
-                    console.log("[SW] Data changed! Updating cache & reloading...");
-                    await cache.put(cleanRequest, networkResponse.clone());
-                    notifyClients(); // TRIGGER RELOAD
-                }
-            } else {
-                // First time? Just save it.
+            // Compare: Did the schedule change?
+            if (cachedText !== networkText) {
+                // Update Cache
                 await cache.put(cleanRequest, networkResponse.clone());
+                // Trigger Reload
+                notifyClients();
             }
-            return networkResponse;
         }
-    } catch (error) {
-        // Network failed? Fall back to cache
+    } catch (err) {
+        // Offline? No problem. User is already seeing the cached app.
     }
-
-    // 4. Return Cached Version if network failed
-    return cache.match(cleanRequest);
 }
 
 async function notifyClients() {
