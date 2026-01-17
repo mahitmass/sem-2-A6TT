@@ -1,51 +1,3 @@
-
-// ==================== GOOGLE TAG MANAGER ENGINE ====================
-const GTM = {
-  CONTAINER_ID: 'GTM-MVCXKMGL', // Your specific ID
-
-  init: function() {
-    // 1. Initialize the Data Layer
-    window.dataLayer = window.dataLayer || [];
-    
-    // 2. Push the GTM Start Event
-    window.dataLayer.push({
-      'gtm.start': new Date().getTime(),
-      event: 'gtm.js'
-    });
-
-    // 3. Inject the GTM Script
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtm.js?id=${this.CONTAINER_ID}`;
-    
-    // Insert it as the first script in the head
-    const firstScript = document.getElementsByTagName('script')[0];
-    firstScript.parentNode.insertBefore(script, firstScript);
-
-    console.log("🚀 GTM Initialized");
-  },
-
-  // 4. Custom Function to Track Campus
-  logCampus: function(batchName) {
-    // Detect 128 vs 62
-    // Logic: Batches starting with F, E, H are usually 128
-    const is128 = /^[FEH]/.test(batchName); 
-    const campusLocation = is128 ? "Sector 128" : "Sector 62";
-
-    // Push specific event to Data Layer
-    window.dataLayer.push({
-      'event': 'select_batch',       // The Trigger Name
-      'batch_name': batchName,       // Variable 1
-      'campus_location': campusLocation // Variable 2
-    });
-    
-    console.log(`📊 GTM Event Pushed: ${campusLocation} (${batchName})`);
-  }
-};
-
-// Start GTM immediately
-GTM.init();
-
 // ==================== ROOM POPUP LOGIC ====================
 // 1. Create the popup element once and add to body
 const roomPopup = document.createElement('div');
@@ -1215,6 +1167,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
