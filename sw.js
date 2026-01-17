@@ -1,14 +1,16 @@
-const CACHE_NAME = 'a6-planner-v9'; // I bumped the version for you
+const CACHE_NAME = 'a6-planner-v10'; // I bumped the version for you
 const ASSETS = [
   './',
   './index.html',
-  './app.js',       // MAKE SURE this matches your actual JS file name!
-  './data.js',      // You MUST cache your data file
   './manifest.json',
-  './Logo.png'
+  './Logo.png',
+  './js/app.js',
+  './js/data.js',
+  './js/utils.js', 
+  './css/style.css' 
 ];
 
-// 1. INSTALL (Fixes the "addAll" error)
+// 1. INSTALL
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
@@ -16,7 +18,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// 2. ACTIVATE (Cleanup)
+// 2. ACTIVATE (Cleanup old caches)
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => Promise.all(
@@ -28,12 +30,10 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 3. FETCH (Stale-While-Revalidate + GTM Fix)
+// 3. FETCH (Stale-While-Revalidate)
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
-  // RULE: IGNORE external requests (like Google Tag Manager)
-  // This fixes the "Failed to convert value to Response" error
   const url = new URL(event.request.url);
   if (url.origin !== location.origin) return;
 
@@ -46,7 +46,7 @@ self.addEventListener('fetch', (event) => {
           notifyClients(event.request.url);
         }
         return networkResponse;
-      }).catch(() => { /* Network error is fine now */ });
+      }).catch(() => { /* Offline fallback */ });
 
       return cachedResponse || networkFetch;
     })
