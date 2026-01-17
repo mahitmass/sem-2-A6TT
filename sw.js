@@ -1,4 +1,4 @@
-const CACHE_NAME = 'a6-planner-v25'; // Bump Version
+const CACHE_NAME = 'a6-planner-v26'; // Bump Version to 26
 const ASSETS = [
   './',
   './index.html',
@@ -35,56 +35,54 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
-      const cachedResponse = await cache.match(event.request);
+      
+      // 1. Get Clean URL (Strip timestamps for cache matching)
+      const cleanUrl = new URL(event.request.url); // <--- FIXED: Was 'request.url'
+      cleanUrl.search = ''; 
+      const cleanRequest = new Request(cleanUrl);
 
-      // 1. INSTANT LOAD: If we have it, give it to the user IMMEDIATELY.
+      // 2. Try Cache First (INSTANT LOAD)
+      const cachedResponse = await cache.match(cleanRequest);
+
       if (cachedResponse) {
-        // If it's the data file, check for updates in the background
+        // If we have cache, return it immediately!
+        // But kick off a background update if it's the data file
         if (isDataFile) {
-          event.waitUntil(checkNetworkForUpdates(event.request, cache, cachedResponse));
+          event.waitUntil(
+            updateInBackground(event.request, cache, cleanRequest, cachedResponse)
+          );
         }
         return cachedResponse;
       }
 
-      // 2. NO CACHE? (First time visit): Go to network
-      try {
-        return await fetch(event.request);
-      } catch (error) {
-        // If offline and no cache, we can't do anything.
-        // But for data.js, we return nothing to prevent the "ERR_FAILED" crash
-        return new Response('', { status: 408, statusText: 'Offline' });
-      }
+      // 3. No Cache? (First Visit) -> Fetch from Network
+      return fetch(event.request);
     })()
   );
 });
 
-// The Background Worker (Safety Net Added)
-async function checkNetworkForUpdates(request, cache, cachedResponse) {
+async function updateInBackground(request, cache, cleanRequest, cachedResponse) {
   try {
-    // 1. Fetch fresh data (bypass browser cache)
+    // Check network for fresh data (Bypass browser cache)
     const networkResponse = await fetch(request, { cache: 'no-store' });
     
-    // 2. If network works...
     if (networkResponse && networkResponse.status === 200) {
       const cachedText = await cachedResponse.text();
       const networkText = await networkResponse.clone().text();
 
-      // 3. Compare: Is the new data different?
+      // Compare: Has data changed?
       if (cachedText !== networkText) {
-        console.log("[SW] Data changed! Updating cache & refreshing...");
+        console.log("[SW] Data changed! Updating cache & reloading...");
         
-        // Update the cache
-        await cache.put(request, networkResponse.clone());
+        // Update Cache
+        await cache.put(cleanRequest, networkResponse.clone());
         
-        // Tell the App to Reload
+        // Shout to the App: "RELOAD NOW!"
         notifyClients();
       }
     }
   } catch (err) {
-    // NETWORK FAILED (Offline)? 
-    // Do nothing. The user is already seeing the cached app. 
-    // This prevents the crash!
-    console.log("[SW] Background check failed (likely offline). Ignoring.");
+    // Offline? Ignore it. User stays on cached version.
   }
 }
 
