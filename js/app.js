@@ -457,9 +457,19 @@ const TimetableApp = (function() {
 
   function initializeBatchDropdown() {
     const current = state.currentBatch;
-    // Auto-detect series (128 if starts with F, E, H)
-    const is128 = /^[FEH]/.test(current);
     
+    // Auto-detect series (128 if starts with F, E, H)
+    // Adjust this regex if your 128 batches start with numbers or other letters!
+    const is128 = /^[FEH]/.test(current); 
+    
+    // --- NEW: Apply the class immediately on load ---
+    if (is128) {
+        document.body.classList.add('series-128');
+    } else {
+        document.body.classList.remove('series-128');
+    }
+    // ------------------------------------------------
+
     const seriesBtn = document.getElementById('series-text');
     if (seriesBtn) seriesBtn.textContent = is128 ? "128 Series" : "62 Series";
     
@@ -475,15 +485,19 @@ const TimetableApp = (function() {
     const isCurrently62 = seriesText.textContent.includes("62");
     const newType = isCurrently62 ? "128" : "62";
 
-    // 2. Update the Button Text
+    // 2. THE MISSING PART: Update the Global Switch
+    if (newType === "128") {
+        document.body.classList.add('series-128'); // <--- Hides the rooms
+    } else {
+        document.body.classList.remove('series-128'); // <--- Shows the rooms
+    }
+
+    // 3. Update the Button Text
     seriesText.textContent = `${newType} Series`;
 
-    // 3. Update the Grid Data silently (DO NOT OPEN)
+    // 4. Update the Grid Data silently
     populateBatchGrid(newType);
-    
-    // (Removed the line that forced it to open)
   }
-
   function toggleBatchGrid(forceState) {
     const grid = document.getElementById('floating-batch-grid');
     if (!grid) return;
@@ -1168,6 +1182,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
