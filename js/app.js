@@ -1,21 +1,39 @@
 // ================= IMMEDIATE UPDATE LISTENER =================
 // Keep this at the VERY TOP (Line 1)
+// ================= IMMEDIATE UPDATE LISTENER =================
+// Keep this at the VERY TOP of app.js (Line 1)
 if ("serviceWorker" in navigator) {
+    
+    // 1. Listen for the "Reload" command from the Service Worker
     navigator.serviceWorker.addEventListener('message', (event) => {
-        // If the SW says "FORCE_RELOAD", we obey immediately.
         if (event.data && event.data.type === 'FORCE_RELOAD') {
+            console.log("Force Update Triggered");
             window.location.reload();
         }
     });
+
+    // 2. Listen for a new Service Worker taking control
+    // (This ensures the "Rename Trick" refreshes the page instantly)
     navigator.serviceWorker.addEventListener('controllerchange', () => {
+        console.log("New Service Worker active. Reloading...");
         window.location.reload();
     });
-    navigator.serviceWorker.register("./sw.js").catch(() => {});
+
+    // 3. Register the NEW filename
+    navigator.serviceWorker.register("./service-worker.js") // <--- NEW NAME
+        .then(reg => {
+             // Force a check immediately on load
+             reg.update();
+             console.log("SW Registered");
+        })
+        .catch(err => console.log("SW Fail", err));
+        
+    // 4. Check connection recovery
     window.addEventListener('online', () => {
          fetch('./js/data.js', { cache: 'no-store' }).catch(() => {});
     });
 }
-
+// ================= END SERVICE WORKER SETUP =================
 // ==================== ROOM POPUP LOGIC ====================
 // Define the global function immediately
 window.showRoomPopup = function(event, code) {
@@ -965,3 +983,4 @@ window.addEventListener('online', () => {
     console.log("Back online! Checking for data...");
     TimetableApp.forceUpdateCheck();
 });
+
