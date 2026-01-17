@@ -1,4 +1,4 @@
-const CACHE_NAME = 'a6-planner-v16'; // Version bump
+const CACHE_NAME = 'a6-planner-v17'; // Version bump
 const ASSETS = [
   './',
   './index.html',
@@ -7,7 +7,9 @@ const ASSETS = [
   './js/app.js',
   './js/data.js',
   './js/utils.js',
-  './css/styles.css'
+  './css/styles.css',
+  
+  // Font files (if you added them later, otherwise ignore)
 ];
 
 // 1. INSTALL
@@ -30,7 +32,7 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 3. FETCH (The Loop Fix)
+// 3. FETCH (The "No-Store" Fix)
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
@@ -40,34 +42,34 @@ self.addEventListener('fetch', (event) => {
     caches.open(CACHE_NAME).then(async (cache) => {
       const cachedResponse = await cache.match(event.request);
 
-      const networkFetch = fetch(event.request).then(async (networkResponse) => {
-        // Only process if we got a valid file
+      // --- THE FIX IS HERE ---
+      // We add { cache: 'no-store' } to force the browser to go to the internet
+      const networkFetch = fetch(event.request.url, { cache: 'no-store' }).then(async (networkResponse) => {
+        
         if (networkResponse && networkResponse.status === 200) {
           
-          // --- NEW: COMPARE CONTENT BEFORE NOTIFYING ---
           let shouldNotify = true;
           
           if (cachedResponse) {
-            // Clone buffers to read text without consuming the main response
             const cachedText = await cachedResponse.clone().text();
             const networkText = await networkResponse.clone().text();
             
-            // If the content is exactly the same, DO NOT notify
+            // Compare content
             if (cachedText === networkText) {
               shouldNotify = false;
             }
           }
 
-          // Update the cache with the new version (to keep headers fresh)
           cache.put(event.request, networkResponse.clone());
 
-          // Only send message if file actually CHANGED
           if (shouldNotify) {
              notifyClients(event.request.url);
           }
         }
         return networkResponse;
-      }).catch(() => { /* Offline fallback */ });
+      }).catch(() => { 
+        // If offline, 'no-store' fails, so we just fall back to cache. Perfect.
+      });
 
       return cachedResponse || networkFetch;
     })
