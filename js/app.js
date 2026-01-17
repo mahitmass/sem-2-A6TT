@@ -1,3 +1,33 @@
+// ================= IMMEDIATE UPDATE LISTENER =================
+// Keep this at the VERY TOP of app.js (Line 1)
+if ("serviceWorker" in navigator) {
+    
+    // 1. Listen for the "Reload" command
+    navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'FORCE_RELOAD') {
+            console.log("Force Update Triggered");
+            window.location.reload();
+        }
+    });
+
+    // 2. Listen for a new Service Worker taking control (Version update)
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        console.log("New Service Worker active. Reloading...");
+        window.location.reload();
+    });
+
+    // 3. Register
+    navigator.serviceWorker.register("./sw.js")
+        .then(reg => console.log("SW Registered"))
+        .catch(err => console.log("SW Fail", err));
+        
+    // 4. Check connection recovery
+    window.addEventListener('online', () => {
+         fetch('./js/data.js', { cache: 'no-store' }).catch(() => {});
+    });
+}
+// ================= END SERVICE WORKER SETUP =================
+
 // ==================== ROOM POPUP LOGIC ====================
 // 1. Create the popup element once and add to body
 const roomPopup = document.createElement('div');
@@ -183,28 +213,6 @@ const TimetableApp = (function() {
     document.addEventListener('keydown', handleKeyboardNavigation);
   }
   
-
-  function setupServiceWorker() {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./sw.js")
-        .then(reg => console.log("SW Registered"))
-        .catch(err => console.log("SW Fail", err));
-
-      // LISTEN FOR THE FORCED RELOAD COMMAND
-      navigator.serviceWorker.addEventListener('message', (event) => {
-        if (event.data && event.data.type === 'FORCE_RELOAD') {
-            console.log("New data found. Force reloading...");
-            // Reload the page automatically to show new data
-            window.location.reload();
-        }
-      });
-
-      // Check for updates when coming back online
-      window.addEventListener('online', () => {
-          fetch('./js/data.js', { cache: 'no-store' }).catch(() => {});
-      });
-    }
-  }
   // ==================== RENDERING ====================
   function renderInitialViews() {
     updateBatchLabels(state.currentBatch);
@@ -1160,6 +1168,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
