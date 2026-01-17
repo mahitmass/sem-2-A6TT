@@ -1,4 +1,4 @@
-const CACHE_NAME = 'a6-planner-v22'; // Bump version
+const CACHE_NAME = 'a6-planner-v25'; // Bump Version
 const ASSETS = [
   './',
   './index.html',
@@ -11,12 +11,12 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
-  self.skipWaiting(); // Take over immediately
+  self.skipWaiting();
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
 });
 
 self.addEventListener('activate', (event) => {
-  self.clients.claim(); // Control open pages immediately
+  self.clients.claim();
   event.waitUntil(
     caches.keys().then((keys) => Promise.all(
       keys.map((key) => {
@@ -28,65 +28,64 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  const url = new URL(event.request.url);
   
-  // We strictly filter for data.js to apply the special logic
+  const url = new URL(event.request.url);
   const isDataFile = url.pathname.endsWith('data.js');
 
-  if (isDataFile) {
-      event.respondWith(handleDataUpdate(event.request));
-  } else {
-      // Standard Cache First strategy for everything else (CSS, Images)
-      event.respondWith(
-        caches.match(event.request).then(cached => {
-            return cached || fetch(event.request);
-        })
-      );
-  }
+  event.respondWith(
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      const cachedResponse = await cache.match(event.request);
+
+      // 1. INSTANT LOAD: If we have it, give it to the user IMMEDIATELY.
+      if (cachedResponse) {
+        // If it's the data file, check for updates in the background
+        if (isDataFile) {
+          event.waitUntil(checkNetworkForUpdates(event.request, cache, cachedResponse));
+        }
+        return cachedResponse;
+      }
+
+      // 2. NO CACHE? (First time visit): Go to network
+      try {
+        return await fetch(event.request);
+      } catch (error) {
+        // If offline and no cache, we can't do anything.
+        // But for data.js, we return nothing to prevent the "ERR_FAILED" crash
+        return new Response('', { status: 408, statusText: 'Offline' });
+      }
+    })()
+  );
 });
 
-// The Special Logic for data.js
-async function handleDataUpdate(request) {
-    const cache = await caches.open(CACHE_NAME);
+// The Background Worker (Safety Net Added)
+async function checkNetworkForUpdates(request, cache, cachedResponse) {
+  try {
+    // 1. Fetch fresh data (bypass browser cache)
+    const networkResponse = await fetch(request, { cache: 'no-store' });
     
-    // 1. Get the "Clean" Request (without timestamp ?t=...)
-    // We need this so we save it to the cache correctly
-    const cleanUrl = new URL(request.url);
-    cleanUrl.search = ''; 
-    const cleanRequest = new Request(cleanUrl);
+    // 2. If network works...
+    if (networkResponse && networkResponse.status === 200) {
+      const cachedText = await cachedResponse.text();
+      const networkText = await networkResponse.clone().text();
 
-    // 2. Try to fetch from Network (bypass ALL caches)
-    try {
-        const networkResponse = await fetch(request, { 
-            cache: 'no-store',
-            headers: { 'Cache-Control': 'no-cache' } 
-        });
-
-        if (networkResponse && networkResponse.status === 200) {
-            // 3. Compare with what we have in Cache
-            const cachedResponse = await cache.match(cleanRequest);
-            
-            if (cachedResponse) {
-                const cachedText = await cachedResponse.text();
-                const networkText = await networkResponse.clone().text();
-
-                if (cachedText !== networkText) {
-                    console.log("[SW] Data changed! Updating cache & reloading...");
-                    await cache.put(cleanRequest, networkResponse.clone());
-                    notifyClients(); // TRIGGER RELOAD
-                }
-            } else {
-                // First time? Just save it.
-                await cache.put(cleanRequest, networkResponse.clone());
-            }
-            return networkResponse;
-        }
-    } catch (error) {
-        // Network failed? Fall back to cache
+      // 3. Compare: Is the new data different?
+      if (cachedText !== networkText) {
+        console.log("[SW] Data changed! Updating cache & refreshing...");
+        
+        // Update the cache
+        await cache.put(request, networkResponse.clone());
+        
+        // Tell the App to Reload
+        notifyClients();
+      }
     }
-
-    // 4. Return Cached Version if network failed
-    return cache.match(cleanRequest);
+  } catch (err) {
+    // NETWORK FAILED (Offline)? 
+    // Do nothing. The user is already seeing the cached app. 
+    // This prevents the crash!
+    console.log("[SW] Background check failed (likely offline). Ignoring.");
+  }
 }
 
 async function notifyClients() {
