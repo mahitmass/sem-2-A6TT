@@ -37,17 +37,18 @@ self.addEventListener('fetch', (event) => {
     (async () => {
       const cache = await caches.open(CACHE_NAME);
       
-      // 1. Prepare Clean Request
+      // 1. Prepare CLEAN Request (For Cache Key)
+      // We strip extra parameters so the cache always finds the file
       const cleanUrl = new URL(event.request.url);
       cleanUrl.search = '';
       const cleanRequest = new Request(cleanUrl);
 
-      // 2. Network Promise (Safe)
-      // We wrap this so it never throws an error that crashes the page
+      // 2. Network Promise (With Cache Buster & Crash Protection)
       const networkPromise = (async () => {
           try {
               const networkUrl = new URL(event.request.url);
-              if (isDataFile) networkUrl.searchParams.set('sb', Date.now()); // Cache Buster
+              // Force fresh data from Vercel
+              if (isDataFile) networkUrl.searchParams.set('sb', Date.now()); 
               
               const response = await fetch(networkUrl, { cache: 'no-store' });
               if (response && response.status === 200) {
@@ -69,10 +70,10 @@ self.addEventListener('fetch', (event) => {
       let winner;
       try {
           if (!cachedResponse) {
-              // If no cache (First Visit), we MUST wait for network. No racing.
+              // FIRST VISIT: Must wait for network (No racing to avoid crash)
               winner = await networkPromise;
           } else {
-              // If we have cache, we race.
+              // RETURN VISIT: Race Network vs Timeout
               winner = await Promise.race([networkPromise, timeoutPromise]);
           }
       } catch (e) {
@@ -81,15 +82,13 @@ self.addEventListener('fetch', (event) => {
 
       // SCENARIO A: Network Won (Fresh Data!)
       if (winner !== 'TIMEOUT') {
-          // Save valid response to cache
           await cache.put(cleanRequest, winner.clone());
           return winner;
       }
 
-      // SCENARIO B: Timeout Won (Slow Net) or Network Failed
+      // SCENARIO B: Timeout Won OR Network Failed -> Serve Cache
       if (cachedResponse) {
-          // Serve Old Data immediately
-          // But update in background if it was the data file
+          // Update in background if it's the data file
           if (isDataFile) {
               event.waitUntil(
                   updateInBackground(networkPromise, cache, cleanRequest, cachedResponse)
@@ -98,9 +97,7 @@ self.addEventListener('fetch', (event) => {
           return cachedResponse;
       }
       
-      // SCENARIO C: No Cache + Network Failed (Offline on First Visit)
-      // Instead of crashing with ERR_FAILED, return a basic fallback or nothing
-      // (The browser will show its standard offline page, which is better than a crash)
+      // SCENARIO C: First Visit + Offline (Prevent Crash)
       return networkPromise;
     })()
   );
@@ -116,17 +113,16 @@ async function updateInBackground(networkPromise, cache, cleanRequest, oldRespon
         // Update Cache
         await cache.put(cleanRequest, networkResponse.clone());
 
-        // Notify if changed
+        // Reload if changed
         if (oldText !== newText) {
             console.log("[SW] Update Detected. Reloading...");
             notifyClients();
         }
-    } catch (err) {
-        // Network failed silently. Do nothing.
-    }
+    } catch (err) { /* Silent fail */ }
 }
 
 async function notifyClients() {
+  // FIX: Include uncontrolled clients so "Rename Trick" works instantly
   const clients = await self.clients.matchAll({ includeUncontrolled: true, type: 'window' });
   clients.forEach(client => {
     client.postMessage({ type: 'FORCE_RELOAD' });
