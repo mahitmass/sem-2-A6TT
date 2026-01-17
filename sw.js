@@ -1,4 +1,6 @@
-const CACHE_NAME = 'a6-planner-v17'; // Version bump
+const CACHE_NAME = 'a6-planner-v18';
+const TIMEOUT_MS = 1000; // <--- The 1 Second Rule
+
 const ASSETS = [
   './',
   './index.html',
@@ -7,9 +9,7 @@ const ASSETS = [
   './js/app.js',
   './js/data.js',
   './js/utils.js',
-  './css/styles.css',
-  
-  // Font files (if you added them later, otherwise ignore)
+  './css/styles.css'
 ];
 
 // 1. INSTALL
@@ -32,49 +32,85 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 3. FETCH (The "No-Store" Fix)
+// 3. FETCH (The Hybrid "Race" Logic)
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
   if (url.origin !== location.origin) return;
 
   event.respondWith(
-    caches.open(CACHE_NAME).then(async (cache) => {
-      const cachedResponse = await cache.match(event.request);
+    (async () => {
+      // A. Create the Network Promise (Force fresh check)
+      const networkPromise = fetch(event.request.url, { cache: 'no-store' })
+        .catch(() => null);
 
-      // --- THE FIX IS HERE ---
-      // We add { cache: 'no-store' } to force the browser to go to the internet
-      const networkFetch = fetch(event.request.url, { cache: 'no-store' }).then(async (networkResponse) => {
+      // B. Create the Timeout Promise (1 Second)
+      const timeoutPromise = new Promise(resolve => 
+        setTimeout(() => resolve('TIMEOUT'), TIMEOUT_MS)
+      );
+
+      // C. Get Cache Promise (Just in case we need it)
+      const cachePromise = caches.match(event.request);
+
+      // D. RACE: Network vs 1 Second Timer
+      const raceResult = await Promise.race([networkPromise, timeoutPromise]);
+
+      // === SCENARIO 1: FAST INTERNET (< 1s) ===
+      // If network won and gave us a good file
+      if (raceResult && raceResult !== 'TIMEOUT' && raceResult.status === 200) {
+        // 1. Save to cache for next time
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(event.request, raceResult.clone());
         
-        if (networkResponse && networkResponse.status === 200) {
-          
-          let shouldNotify = true;
-          
-          if (cachedResponse) {
-            const cachedText = await cachedResponse.clone().text();
-            const networkText = await networkResponse.clone().text();
-            
-            // Compare content
-            if (cachedText === networkText) {
-              shouldNotify = false;
-            }
-          }
+        // 2. Return FRESH data to app immediately. 
+        // Result: App has latest data. NO BUTTON needed.
+        return raceResult;
+      }
 
-          cache.put(event.request, networkResponse.clone());
+      // === SCENARIO 2: SLOW INTERNET (> 1s) or OFFLINE ===
+      // Timeout won, so we must show Cache to avoid white screen
+      const cachedResponse = await cachePromise;
+      
+      if (cachedResponse) {
+        // 1. Clone cache to use for comparison later
+        const cacheClone = cachedResponse.clone();
 
-          if (shouldNotify) {
-             notifyClients(event.request.url);
-          }
-        }
-        return networkResponse;
-      }).catch(() => { 
-        // If offline, 'no-store' fails, so we just fall back to cache. Perfect.
-      });
+        // 2. Start Background Check
+        // Even though we are showing cache, let the slow network finish
+        // and notify us if it's different.
+        updateInBackground(event.request, networkPromise, cacheClone);
+        
+        // 3. Show OLD data now (Instant Load)
+        return cachedResponse;
+      }
 
-      return cachedResponse || networkFetch;
-    })
+      // Fallback: If no cache exists (first visit), we have to wait for network
+      return networkPromise;
+    })()
   );
 });
+
+// Helper: Handles the "Slow" update in background
+async function updateInBackground(request, networkPromise, cachedResponse) {
+  try {
+    const networkResponse = await networkPromise;
+    if (networkResponse && networkResponse.status === 200) {
+      
+      // Compare content: Old Cache vs New Slow Download
+      const cachedText = await cachedResponse.text();
+      const networkText = await networkResponse.clone().text();
+      
+      if (cachedText !== networkText) {
+        // Content changed! Update cache & Show Button
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(request, networkResponse.clone());
+        notifyClients(request.url);
+      }
+    }
+  } catch (err) {
+    // Network failed completely? Ignore.
+  }
+}
 
 async function notifyClients(url) {
   const clients = await self.clients.matchAll();
