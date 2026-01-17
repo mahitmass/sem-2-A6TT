@@ -141,7 +141,7 @@ const TimetableApp = (function() {
     
     // START SERVICES
     startActiveHighlighting();
-    setupServiceWorker();
+    
     
     // FIX LAYOUT & HIGHLIGHT AFTER LOAD
     setTimeout(() => {
@@ -1198,6 +1198,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
