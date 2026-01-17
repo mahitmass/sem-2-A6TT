@@ -1,4 +1,4 @@
-const CACHE_NAME = 'a6-planner-v8'; // I bumped the version for you
+const CACHE_NAME = 'a6-planner-v9'; // I bumped the version for you
 const ASSETS = [
   './',
   './index.html',
