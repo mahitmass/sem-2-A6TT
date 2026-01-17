@@ -20,7 +20,7 @@ if ("serviceWorker" in navigator) {
     });
 
     // 3. Register the NEW filename
-    navigator.serviceWorker.register("./service-worker.js") // <--- NEW NAME
+    navigator.serviceWorker.register("./sw.js") // <--- NEW NAME
         .then(reg => {
              // Force a check immediately on load
              reg.update();
@@ -983,4 +983,5 @@ window.addEventListener('online', () => {
     console.log("Back online! Checking for data...");
     TimetableApp.forceUpdateCheck();
 });
+
 
