@@ -1,4 +1,6 @@
-const CACHE_NAME = 'a6-planner-v27'; // Bump Version to 27
+const CACHE_NAME = 'a6-planner-v29'; // Bump Version
+const TIMEOUT_MS = 1000; // 1 Second Timeout
+
 const ASSETS = [
   './',
   './index.html',
@@ -28,7 +30,6 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  
   const url = new URL(event.request.url);
   const isDataFile = url.pathname.endsWith('data.js');
 
@@ -36,63 +37,92 @@ self.addEventListener('fetch', (event) => {
     (async () => {
       const cache = await caches.open(CACHE_NAME);
       
-      // 1. Get Clean URL (Strip all params so we store it cleanly)
-      // Example: "data.js?t=123" becomes "data.js"
+      // 1. Prepare Request Info
       const cleanUrl = new URL(event.request.url);
-      cleanUrl.search = ''; 
+      cleanUrl.search = '';
       const cleanRequest = new Request(cleanUrl);
 
-      // 2. Try Cache First (INSTANT LOAD)
-      const cachedResponse = await cache.match(cleanRequest);
+      // 2. Prepare Network Promise (With Cache Buster)
+      const networkPromise = (async () => {
+          const networkUrl = new URL(event.request.url);
+          if (isDataFile) networkUrl.searchParams.set('sb', Date.now()); // Unique timestamp
+          
+          const response = await fetch(networkUrl, { cache: 'no-store' });
+          if (response && response.status === 200) {
+              return response; // Return fresh response
+          }
+          throw new Error("Network Failed");
+      })();
 
-      if (cachedResponse) {
-        // Return cache immediately!
-        // But if it's data.js, check for updates in the background
-        if (isDataFile) {
-          event.waitUntil(
-            updateInBackground(event.request, cache, cleanRequest, cachedResponse)
-          );
-        }
-        return cachedResponse;
+      // 3. Prepare Timeout Promise
+      const timeoutPromise = new Promise(resolve => 
+          setTimeout(() => resolve('TIMEOUT'), TIMEOUT_MS)
+      );
+
+      // 4. Get Current Cache (Old Data)
+      const cachedResponse = await cache.match(cleanRequest);
+      
+      // --- THE RACE ---
+      let winner;
+      try {
+          // If we have no cache, we MUST wait for network (no race)
+          if (!cachedResponse) {
+              winner = await networkPromise;
+          } else {
+              winner = await Promise.race([networkPromise, timeoutPromise]);
+          }
+      } catch (e) {
+          winner = 'TIMEOUT'; // Network failed, treat as timeout
       }
 
-      // 3. No Cache? Fetch from Network
-      return fetch(event.request);
+      // SCENARIO A: Network Won (Fast Internet)
+      // We have fresh data ready to go!
+      if (winner !== 'TIMEOUT') {
+          // Save it to cache for next time
+          await cache.put(cleanRequest, winner.clone());
+          return winner; // User sees NEW data instantly. No reload needed.
+      }
+
+      // SCENARIO B: Timeout Won (Slow Internet) -> Serve Old Cache
+      // User sees OLD data. We must update in background.
+      if (cachedResponse) {
+          // Trigger background update logic
+          if (isDataFile) {
+              event.waitUntil(
+                  updateInBackground(networkPromise, cache, cleanRequest, cachedResponse)
+              );
+          }
+          return cachedResponse;
+      }
+      
+      // Fallback (Shouldn't happen if logic is correct)
+      return networkPromise;
     })()
   );
 });
 
-async function updateInBackground(originalRequest, cache, cleanRequest, cachedResponse) {
-  try {
-    // 1. CREATE A UNIQUE NETWORK REQUEST
-    // We append ?sw_bust=timestamp to FORCE the server to give us a fresh file.
-    // This bypasses Vercel/CDN caching.
-    const networkUrl = new URL(originalRequest.url);
-    networkUrl.searchParams.set('sw_bust', Date.now());
-    
-    const networkRequest = new Request(networkUrl);
-
-    // 2. Fetch fresh data
-    const networkResponse = await fetch(networkRequest, { cache: 'no-store' });
-    
-    if (networkResponse && networkResponse.status === 200) {
-      const cachedText = await cachedResponse.text();
-      const networkText = await networkResponse.clone().text();
-
-      // 3. Compare
-      if (cachedText !== networkText) {
-        console.log("[SW] New data detected! Updating cache...");
+async function updateInBackground(networkPromise, cache, cleanRequest, oldResponse) {
+    try {
+        // Wait for the network to finally finish
+        const networkResponse = await networkPromise;
         
-        // Update Cache (using the CLEAN request, so next load gets this version)
+        // 1. Get text content to compare
+        const oldText = await oldResponse.text();
+        const newText = await networkResponse.clone().text(); // Clone so we can still save it
+
+        // 2. Save new data to cache (Overwriting old)
         await cache.put(cleanRequest, networkResponse.clone());
-        
-        // Trigger Reload
-        notifyClients();
-      }
+
+        // 3. THE CHECK: Did the data actually change?
+        if (oldText !== newText) {
+            console.log("[SW] Data Update Detected. Reloading...");
+            notifyClients();
+        } else {
+            console.log("[SW] Data was already up to date.");
+        }
+    } catch (err) {
+        // Network failed completely. Do nothing.
     }
-  } catch (err) {
-    // Offline? Ignore.
-  }
 }
 
 async function notifyClients() {
