@@ -7,7 +7,7 @@ const ASSETS = [
   './js/app.js',
   './js/data.js',
   './js/utils.js', 
-  './css/style.css' 
+  './css/styles.css' 
 ];
 
 // 1. INSTALL
