@@ -1455,5 +1455,47 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.5;
 }
+/* ================= COMPACT TABLE FIX ================= */
+
+/* 1. Squeeze the Table Cells Vertically */
+.weekly-table td {
+  padding-top: 2px !important;    /* Reduce top padding (was likely 8px) */
+  padding-bottom: 2px !important; /* Reduce bottom padding */
+  height: auto !important;        /* Allow row to shrink */
+}
+
+/* 2. Fix the Time Column (Left Side) */
+/* This keeps the time readable but takes less vertical space */
+.weekly-table td:first-child div {
+  margin: 0 !important; 
+  line-height: 1.1 !important;    /* Tighten the spacing between 09:00 and 09:50 */
+}
+
+/* 3. Tighten the Subject and Room Code */
+.cell-subject {
+  margin-bottom: 0px !important;  /* Remove gap between Subject and Room */
+  line-height: 1.1 !important;    /* Tighter text lines */
+  display: block;                 /* Ensure it stacks cleanly */
+}
+
+.cell-room {
+  line-height: 1 !important;
+  margin-top: 1px !important;
+}
+
+/* 4. Shrink the "Tap on block..." Hint at the bottom */
+/* This row usually wastes a lot of space. Let's make it tiny. */
+.weekly-table tr:last-child td {
+  padding: 4px !important;        /* Very small padding */
+  font-size: 0.75rem !important;  /* Smaller text size for the hint */
+  line-height: 1 !important;
+}
+
+/* 5. (Optional) Safety Tweak for Small Screens */
+/* If the Time Column is still too tall, slightly reduce the '09:00' size */
+.weekly-table td:first-child div {
+  font-size: 0.9rem !important;   /* Changed from 0.95rem to 0.9rem (Imperceptible but saves space) */
+}
+
 
 
