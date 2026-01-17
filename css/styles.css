@@ -1535,6 +1535,24 @@ body {
 .break-card { padding: 20px !important; }
 .break-header { font-size: 1.2rem !important; }
 
+/* ================= 128 SERIES: HIDE LOCATIONS ================= */
+
+/* 1. Hide Room Code in Table View */
+body.series-128 .cell-room {
+  display: none !important;
+}
+
+/* 2. Hide "Venue" Row in the Popup Modal */
+/* (Requires id="modal-venue-row" in index.html) */
+body.series-128 #modal-venue-row {
+  display: none !important;
+}
+
+/* 3. Hide the FIRST Badge in Swipe View (The Room Badge) */
+/* This assumes the Room badge is always the first one on the left */
+body.series-128 .class-card .info-badge:first-of-type {
+  display: none !important;
+}
 
 
 
