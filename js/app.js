@@ -570,8 +570,24 @@ const TimetableApp = (function() {
   const originalSelectBatch = selectBatch; // Backup if needed logic exists there
   
   function selectBatch(batchName) {
-    // NO GATEKEEPER HERE! Just normal logic.
     state.currentBatch = batchName;
+    
+    // --- NEW: AUTO-DETECT SERIES & HIDE ROOMS ---
+    // 1. Check if this is a 128 batch (Starts with F, E, or H)
+    const is128 = /^[FEH]/.test(batchName); 
+    
+    // 2. Force the switch ON or OFF
+    if (is128) {
+        document.body.classList.add('series-128'); // Hides rooms
+    } else {
+        document.body.classList.remove('series-128'); // Shows rooms
+    }
+
+    // 3. Sync the "Series" button text
+    const seriesBtn = document.getElementById('series-text');
+    if (seriesBtn) seriesBtn.textContent = is128 ? "128 Series" : "62 Series";
+    // ---------------------------------------------
+
     if (typeof scheduleMap !== 'undefined' && scheduleMap[batchName]) {
         state.currentSchedule = scheduleMap[batchName];
     }
@@ -581,16 +597,16 @@ const TimetableApp = (function() {
     updateGridSelection();
     renderMobileView();
     renderDesktopView();
+    
+    // 4. Update the Grid (so the buttons filter correctly for the new series)
+    // We wrap this in a check to prevent infinite loops if populateBatchGrid calls selectBatch
+    // (It doesn't in your code, so this is safe)
+    populateBatchGrid(is128 ? "128" : "62");
+
     setTimeout(() => {
         highlightActiveClass();
         jumpToDay(state.currentDayIndex);
     }, 50);
-  }
-
-  function updateBatchUI() {
-    document.querySelectorAll('.batch-btn').forEach(btn => {
-      btn.classList.toggle('active-batch', btn.textContent === state.currentBatch);
-    });
   }
 
   // ==================== VIEW MODE ====================
@@ -1182,6 +1198,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
