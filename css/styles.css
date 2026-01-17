@@ -1423,3 +1423,37 @@ select:focus {
 
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
+/* ================= FONT SIZE FIXES ================= */
+
+/* 1. Swipe Cards: Make Subject Bigger & Bolder */
+.subject-name {
+  font-size: 1.35rem !important; /* Increased from default */
+  font-weight: 700 !important;   /* Make it thick like Inter */
+  letter-spacing: 0.5px;         /* Adds breathing room */
+  margin-bottom: 6px;
+}
+
+/* 2. Table View: Make Time Column Readable */
+/* Targets the first column (Time) specifically */
+.weekly-table td:first-child {
+  font-weight: 700;              /* Make 09:00 stand out */
+  min-width: 65px;               /* Ensure it doesn't get squished */
+}
+
+.weekly-table td:first-child div {
+  font-size: 0.95rem !important; /* Bigger time text */
+}
+
+.weekly-table td:first-child span {
+  font-size: 0.8rem !important;  /* Bigger "09:50" text */
+  opacity: 0.8 !important;       /* Make it easier to see */
+}
+
+/* 3. Global Text Boost (Optional) */
+body {
+  /* This tells the browser to use the clearest system font available */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+}
+
+
