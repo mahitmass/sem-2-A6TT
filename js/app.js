@@ -183,31 +183,52 @@ const TimetableApp = (function() {
     document.addEventListener('keydown', handleKeyboardNavigation);
   }
 
+  // --- NEW: Create the Update Button ---
+  function createUpdateToast() {
+    if (document.getElementById('update-toast')) return; // Prevent duplicates
+
+    const toast = document.createElement('div');
+    toast.id = 'update-toast';
+    toast.innerHTML = `
+      <span class="refresh-icon">↻</span>
+      <span>New Schedule Available</span>
+    `;
+    
+    // When clicked -> Reload the page to apply updates
+    toast.onclick = () => {
+      window.location.reload();
+    };
+
+    document.body.appendChild(toast);
+    
+    // Animate it in after a tiny delay
+    setTimeout(() => toast.classList.add('show'), 100);
+  }  
+
   function setupServiceWorker() {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("./sw.js").then(reg => {
-         // (Optional) Your existing install logic here
+         // Registration successful
       }).catch(err => console.log("SW Fail", err));
 
-      // --- NEW: LISTEN FOR UPDATES ---
+      // 1. LISTEN FOR UPDATES FROM SW
       navigator.serviceWorker.addEventListener('message', (event) => {
         if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
-            
-            // Filter: Only reload for important files (like your schedule data)
-            // Adjust 'timetable.js' or 'data.js' to match your actual file names
-            const isImportant = event.data.url.includes('timetable.js') || 
-                                event.data.url.includes('data.js') ||
-                                event.data.url.includes('index.html');
-
-            if (isImportant) {
-                // SAFETY CHECK: Only auto-reload once per session to prevent loops
-                if (!sessionStorage.getItem('dataUpdated')) {
-                    console.log("🔄 New data found! Force updating...");
-                    sessionStorage.setItem('dataUpdated', 'true');
-                    window.location.reload(); 
-                }
+            // Only show button if important files changed
+            if (event.data.url.includes('data.js') || 
+                event.data.url.includes('app.js') || 
+                event.data.url.includes('styles.css')) {
+                
+                console.log("Update found! Showing button...");
+                createUpdateToast(); // <--- SHOW THE BUTTON
             }
         }
+      });
+
+      // 2. CHECK CONNECTION RECOVERY
+      window.addEventListener('online', () => {
+          // If internet comes back, ping the server to check for new data
+          fetch('./js/data.js', { cache: 'no-store' }).catch(() => {});
       });
     }
   }
@@ -554,6 +575,7 @@ const TimetableApp = (function() {
   const originalSelectBatch = selectBatch; // Backup if needed logic exists there
   
   function selectBatch(batchName) {
+    // NO GATEKEEPER HERE! Just normal logic.
     state.currentBatch = batchName;
     if (typeof scheduleMap !== 'undefined' && scheduleMap[batchName]) {
         state.currentSchedule = scheduleMap[batchName];
@@ -562,7 +584,6 @@ const TimetableApp = (function() {
     updateBatchLabels(batchName);
     updateTriggerText(); 
     updateGridSelection();
-    // Renders
     renderMobileView();
     renderDesktopView();
     setTimeout(() => {
@@ -578,18 +599,17 @@ const TimetableApp = (function() {
   }
 
   // ==================== VIEW MODE ====================
-  function setViewMode(mode) {
+ function setViewMode(mode) {
+    // NO GATEKEEPER HERE!
     state.currentView = mode;
     Storage.set('preferredView', mode);
-    
     document.querySelectorAll('#btn-swipe, #btn-table').forEach(btn => btn.classList.remove('active'));
     const activeBtn = document.getElementById(`btn-${mode}`);
     if(activeBtn) activeBtn.classList.add('active');
-    
+
     if (mode === 'swipe') {
       dom.timetableContainer.classList.remove('hidden-view');
       dom.compactContainer.classList.add('hidden-view');
-      // Recalculate layout on view switch
       setTimeout(() => {
           handleResize();
           jumpToDay(state.currentDayIndex);
@@ -1167,6 +1187,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
