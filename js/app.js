@@ -182,52 +182,25 @@ const TimetableApp = (function() {
     document.addEventListener('click', handleOutsideClick);
     document.addEventListener('keydown', handleKeyboardNavigation);
   }
-
-  // --- NEW: Create the Update Button ---
-  function createUpdateToast() {
-    if (document.getElementById('update-toast')) return; // Prevent duplicates
-
-    const toast = document.createElement('div');
-    toast.id = 'update-toast';
-    toast.innerHTML = `
-      <span class="refresh-icon">↻</span>
-      <span>New Schedule Available</span>
-    `;
-    
-    // When clicked -> Reload the page to apply updates
-    toast.onclick = () => {
-      window.location.reload();
-    };
-
-    document.body.appendChild(toast);
-    
-    // Animate it in after a tiny delay
-    setTimeout(() => toast.classList.add('show'), 100);
-  }  
+  
 
   function setupServiceWorker() {
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./sw.js").then(reg => {
-         // Registration successful
-      }).catch(err => console.log("SW Fail", err));
+      navigator.serviceWorker.register("./sw.js")
+        .then(reg => console.log("SW Registered"))
+        .catch(err => console.log("SW Fail", err));
 
-      // 1. LISTEN FOR UPDATES FROM SW
+      // LISTEN FOR THE FORCED RELOAD COMMAND
       navigator.serviceWorker.addEventListener('message', (event) => {
-        if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
-            // Only show button if important files changed
-            if (event.data.url.includes('data.js') || 
-                event.data.url.includes('app.js') || 
-                event.data.url.includes('styles.css')) {
-                
-                console.log("Update found! Showing button...");
-                createUpdateToast(); // <--- SHOW THE BUTTON
-            }
+        if (event.data && event.data.type === 'FORCE_RELOAD') {
+            console.log("New data found. Force reloading...");
+            // Reload the page automatically to show new data
+            window.location.reload();
         }
       });
 
-      // 2. CHECK CONNECTION RECOVERY
+      // Check for updates when coming back online
       window.addEventListener('online', () => {
-          // If internet comes back, ping the server to check for new data
           fetch('./js/data.js', { cache: 'no-store' }).catch(() => {});
       });
     }
@@ -1187,6 +1160,7 @@ selectBatch(state.currentBatch);
 })();
 // Start
 document.addEventListener('DOMContentLoaded', TimetableApp.init);
+
 
 
 
