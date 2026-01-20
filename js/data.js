@@ -250,12 +250,12 @@ const scheduleA4 = [
 const scheduleA5 = [
     { day: 1, start: 10, duration: 2, title: "PH271", code: "PL1", teacher: "MKC/MTR", type: "lab" },
     { day: 1, start: 14, duration: 1, title: "HS111", code: "G1", teacher: "MTR", type: "lec" },
-    { day: 1, start: 15, duration: 1, title: "GE112", code: "TR307", teacher: "SWET", type: "tut" },
+    { day: 2, start: 9, duration: 1, title: "GE112", code: "TR307", teacher: "SWET", type: "tut" },
     { day: 2, start: 10, duration: 2, title: "GE112", code: "EW1", teacher: "SWET", type: "lab" },
     { day: 2, start: 13, duration: 1, title: "MA211", code: "G1", teacher: "ANK", type: "lec" },
     { day: 2, start: 14, duration: 1, title: "PH211", code: "G1", teacher: "SND", type: "lec" },
     { day: 2, start: 15, duration: 1, title: "CI121", code: "FF1", teacher: "ROH", type: "lec" },
-    { day: 3, start: 9, duration: 1, title: "HS111", code: "TR305", teacher: "PRI", type: "tut" },
+    { day: 1, start: 15, duration: 1, title: "HS111", code: "TR307", teacher: "PRI", type: "tut" },
     { day: 3, start: 13, duration: 1, title: "PH211", code: "CS5", teacher: "SND", type: "lec" },
     { day: 3, start: 14, duration: 1, title: "MA211", code: "FF3", teacher: "ANK", type: "lec" },
     { day: 3, start: 15, duration: 2, title: "CS121", code: "CL01", teacher: "TNV/IMR", type: "lab" },
@@ -1875,6 +1875,7 @@ const ROOM_LOCATIONS = {
     
     "Executive Room - I": "ABB-II", "Executive Room - II": "ABB-II"
 };
+
 
 
 
