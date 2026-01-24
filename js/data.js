@@ -702,7 +702,7 @@ const scheduleB10 = [
     { day: 1, start: 15, duration: 1, title: "CI121", code: "FF3", teacher: "ASA", type: "lec" },
     { day: 2, start: 10, duration: 1, title: "PH211", code: "FF3", teacher: "MKC", type: "lec" },
     { day: 2, start: 11, duration: 1, title: "PH211", code: "TS8", teacher: "VRT", type: "tut" },
-    { day: 2, start: 13, duration: 1, title: "MA211", code: "FF2", teacher: "RSC", type: "lec" },
+    { day: 2, start: 13, duration: 1, title: "HS111", code: "G7", teacher: "RAV", type: "lec" },
     { day: 2, start: 14, duration: 1, title: "CI121", code: "FF2", teacher: "ASA", type: "lec" },
     { day: 2, start: 15, duration: 1, title: "MA211", code: "TS8", teacher: "RSC", type: "tut" },
     { day: 3, start: 13, duration: 1, title: "PH211", code: "FF1", teacher: "MKC", type: "lec" },
@@ -710,14 +710,14 @@ const scheduleB10 = [
     { day: 3, start: 10, duration: 2, title: "CS121", code: "CL07", teacher: "AW/TNV", type: "lab" },
     { day: 4, start: 9, duration: 1, title: "GE112", code: "TS20", teacher: "MJH", type: "tut" },
     { day: 4, start: 10, duration: 1, title: "CI121", code: "FF4", teacher: "ASA", type: "lec" },
+    { day: 4, start: 11, duration: 1, title: "MA211", code: "G8", teacher: "RSC", type: "lec" },
     { day: 4, start: 13, duration: 2, title: "PH271", code: "PL1", teacher: "BCJ/MKC", type: "lab" },
     { day: 4, start: 15, duration: 2, title: "GE112", code: "EW2", teacher: "MJH", type: "lab" },
     { day: 5, start: 9, duration: 1, title: "CI121", code: "TS12", teacher: "APJ", type: "tut" },
     { day: 5, start: 10, duration: 1, title: "HS111", code: "FF2", teacher: "RAV", type: "lec" },
     { day: 5, start: 11, duration: 1, title: "PH211", code: "FF2", teacher: "MKC", type: "lec" },
     { day: 5, start: 13, duration: 2, title: "HS111", code: "LL1", teacher: "NAM", type: "lab" },
-    { day: 6, start: 9, duration: 1, title: "HS111", code: "G1", teacher: "RAV", type: "lec" },
-    { day: 6, start: 11, duration: 1, title: "MA211", code: "FF4", teacher: "RSC", type: "lec" }
+    { day: 1, start: 13, duration: 1, title: "MA211", code: "G5", teacher: "RSC", type: "lec" }
 ];
 
 const scheduleB11 = [
@@ -1875,6 +1875,7 @@ const ROOM_LOCATIONS = {
     
     "Executive Room - I": "ABB-II", "Executive Room - II": "ABB-II"
 };
+
 
 
 
