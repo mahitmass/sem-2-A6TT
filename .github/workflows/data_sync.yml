@@ -1,0 +1,63 @@
+name: Data Sync
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # Checks every 6 hours
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  sync-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Check External Sources
+        run: |
+          # Target Configuration
+          REPO="codelif/jiit-planner-cdn"
+          PATH_62="raw/time_tables/B.Tech%2062%20(btech-62)/2"
+          PATH_128="raw/time_tables/B.Tech%20128%20(btech-128)/2"
+          
+          mkdir -p raw_data
+
+          # Function to fetch latest file
+          fetch_file() {
+            FOLDER_PATH=$1
+            SAVE_NAME=$2
+            
+            # Silent API call
+            RESPONSE=$(curl -s "https://api.github.com/repos/$REPO/contents/$FOLDER_PATH")
+            DOWNLOAD_URL=$(echo "$RESPONSE" | grep -o '"download_url": "[^"]*"' | grep ".xlsx" | head -n 1 | cut -d'"' -f4)
+            
+            if [ -n "$DOWNLOAD_URL" ]; then
+              curl -L -o "raw_data/$SAVE_NAME.xlsx" "$DOWNLOAD_URL"
+            fi
+          }
+
+          fetch_file "$PATH_62" "Batch_62_Main"
+          fetch_file "$PATH_128" "Batch_128_Main"
+
+      - name: Process Updates
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            
+            git config --global user.name 'Automated Sync'
+            git config --global user.email 'actions@github.com'
+            
+            git add raw_data/*.xlsx
+            git commit -m "chore: synchronize schedule data"
+            git push
+
+            # Discreet Notification
+            gh issue create \
+              --title "Schedule Data Update" \
+              --body "New data files have been synchronized to the raw_data folder."
+              
+          fi
