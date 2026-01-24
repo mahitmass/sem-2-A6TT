@@ -704,7 +704,7 @@ const scheduleB9 = [
 ];
 
 const scheduleB10 = [
-    { day: 1, start: 11, duration: 1, title: "HS111", code: "TS11", teacher: "SDA", type: "tut" },
+    { day: 1, start: 11, duration: 1, title: "HS111", code: "TS11", teacher: "MDU", type: "tut" },
     { day: 1, start: 15, duration: 1, title: "CI121", code: "FF3", teacher: "ASA", type: "lec" },
     { day: 2, start: 10, duration: 1, title: "PH211", code: "FF3", teacher: "MKC", type: "lec" },
     { day: 2, start: 11, duration: 1, title: "PH211", code: "TS8", teacher: "VRT", type: "tut" },
@@ -1881,6 +1881,7 @@ const ROOM_LOCATIONS = {
     
     "Executive Room - I": "ABB-II", "Executive Room - II": "ABB-II"
 };
+
 
 
 
