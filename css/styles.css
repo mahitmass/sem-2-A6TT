@@ -755,7 +755,17 @@ body[data-theme="light"] .day-header {
 }
 
 /* Add visual indicator for multi-hour classes */
-
+.cell-lec[rowspan],
+.cell-tut[rowspan],
+.cell-lab[rowspan] {
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    transparent 92%,
+    var(--border-color) 92%,
+    var(--border-color) 100%
+  );
+}
 
 /* --- FOOTER --- */
 .footer-sig { 
@@ -1559,4 +1569,3 @@ body {
   border-left: 3px solid var(--accent-color);
   border-right: 3px solid var(--accent-color);
 }
-
