@@ -254,7 +254,7 @@ const scheduleA5 = [
     { day: 2, start: 10, duration: 2, title: "GE112", code: "EW1", teacher: "SWET", type: "lab" },
     { day: 2, start: 13, duration: 1, title: "MA211", code: "G1", teacher: "ANK", type: "lec" },
     { day: 2, start: 14, duration: 1, title: "PH211", code: "G1", teacher: "SND", type: "lec" },
-    { day: 2, start: 15, duration: 1, title: "CI121", code: "FF1", teacher: "ROH", type: "lec" },
+    { day: 2, start: 15, duration: 2, title: "CI121", code: "FF1", teacher: "ROH", type: "lec" },
     { day: 1, start: 15, duration: 1, title: "HS111", code: "TR307", teacher: "PRI", type: "tut" },
     { day: 3, start: 13, duration: 1, title: "PH211", code: "CS5", teacher: "SND", type: "lec" },
     { day: 3, start: 14, duration: 1, title: "MA211", code: "FF3", teacher: "ANK", type: "lec" },
@@ -266,7 +266,7 @@ const scheduleA5 = [
     { day: 5, start: 11, duration: 1, title: "PH211", code: "FF4", teacher: "SND", type: "lec" },
     { day: 5, start: 13, duration: 1, title: "MA211", code: "TS7", teacher: "NS", type: "tut" },
     { day: 5, start: 14, duration: 1, title: "PH211", code: "TS7", teacher: "RAV", type: "tut" },
-    { day: 2, start: 16, duration: 1, title: "CI121", code: "FF1", teacher: "ROH", type: "lec" },
+    //{ day: 5, start: 10, duration: 1, title: "CI121", code: "FF8", teacher: "ROH", type: "lec" },
     { day: 1, start: 13, duration: 1, title: "MA211", code: "G3", teacher: "ANK", type: "lec" }
 ];
 
@@ -280,7 +280,7 @@ const scheduleA6 = [
     { day: 2, start: 10, duration: 2, title: "GE112", code: "EW2", teacher: "GRP", type: "lab" },
     { day: 2, start: 13, duration: 1, title: "MA211", code: "G1", teacher: "ANK", type: "lec" },
     { day: 2, start: 14, duration: 1, title: "PH211", code: "G1", teacher: "SND", type: "lec" },
-    { day: 2, start: 15, duration: 1, title: "CI121", code: "FF1", teacher: "ROH", type: "lec" },
+    { day: 2, start: 15, duration: 2, title: "CI121", code: "FF1", teacher: "ROH", type: "lec" },
     { day: 3, start: 9, duration: 1, title: "HS111", code: "F10", teacher: "YN", type: "tut" },
     { day: 3, start: 13, duration: 1, title: "PH211", code: "CS5", teacher: "SND", type: "lec" },
     { day: 3, start: 14, duration: 1, title: "MA211", code: "FF3", teacher: "ANK", type: "lec" },
@@ -292,7 +292,7 @@ const scheduleA6 = [
     { day: 5, start: 13, duration: 1, title: "PH211", code: "TS8", teacher: "BCJ", type: "tut" },
     { day: 5, start: 14, duration: 1, title: "MA211", code: "TS8", teacher: "NS", type: "tut" },
     { day: 5, start: 15, duration: 1, title: "CI121", code: "TS6", teacher: "SHP", type: "tut" },
-    { day: 2, start: 16, duration: 1, title: "CI121", code: "FF1", teacher: "ROH", type: "lec" },
+    //{ day: 5, start: 10, duration: 1, title: "CI121", code: "FF8", teacher: "ROH", type: "lec" },
     { day: 1, start: 13, duration: 1, title: "MA211", code: "G3", teacher: "ANK", type: "lec" },
 
 ];
@@ -1881,6 +1881,7 @@ const ROOM_LOCATIONS = {
     
     "Executive Room - I": "ABB-II", "Executive Room - II": "ABB-II"
 };
+
 
 
 
