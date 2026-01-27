@@ -1,3 +1,4 @@
+
 // ================= IMMEDIATE UPDATE LISTENER =================
 // Keep this at the VERY TOP (Line 1)
 // ================= IMMEDIATE UPDATE LISTENER =================
@@ -80,6 +81,151 @@ document.addEventListener('scroll', () => {
 
 // ==================== TIMETABLE APPLICATION ====================
 const TimetableApp = (function() {
+// ==================== MOBILE BATCH SCROLLER (V3 - Final) ====================
+  const BatchScroller = (function() {
+  let masterList = [];
+  let overlay = null;
+  let badge = null;
+  let isOpen = false;
+  
+  let startY = 0;
+  let lastSwitchY = 0;
+  let isSwiping = false; 
+  
+  function init() {
+      overlay = document.getElementById('batch-scroller');
+      badge = document.getElementById('floating-batch');
+      if (!overlay || !badge) return;
+
+      badge.addEventListener('touchstart', handleStart, { passive: false });
+      badge.addEventListener('touchmove', handleMove, { passive: false });
+      badge.addEventListener('touchend', handleEnd);
+      
+      document.addEventListener('click', (e) => {
+          if (isOpen && !isSwiping && !overlay.contains(e.target) && !badge.contains(e.target)) {
+              close();
+          }
+      });
+      
+      overlay.addEventListener('click', (e) => {
+           const item = e.target.closest('.scroll-item');
+           if(item) {
+               selectBatch(item.textContent);
+               close();
+           }
+      });
+  }
+
+  function updateMasterList() {
+      if (typeof scheduleMap === 'undefined') return;
+      
+      const current = state.currentBatch;
+      const is128 = /^[FEH]/.test(current); 
+      
+      const allBatches = Object.keys(scheduleMap);
+      masterList = allBatches.filter(b => {
+           return is128 ? /^[EFH]/.test(b) : /^[ABCDG]/.test(b);
+      }).sort((a, b) => 
+          a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
+      );
+  }
+
+  function handleStart(e) {
+      if (state.currentView !== 'swipe') return;
+      
+      updateMasterList();
+      
+      startY = e.touches[0].clientY;
+      lastSwitchY = startY;
+      isSwiping = false; 
+      
+      if (!isOpen) open();
+  }
+
+  function handleMove(e) {
+      if (state.currentView !== 'swipe') return;
+      e.preventDefault(); 
+      
+      const currentY = e.touches[0].clientY;
+      const deltaTotal = currentY - startY;
+      const deltaStep = currentY - lastSwitchY;
+      
+      if (Math.abs(deltaTotal) > 10) {
+          isSwiping = true;
+      }
+
+      const SENSITIVITY = 25; 
+
+      if (Math.abs(deltaStep) > SENSITIVITY) {
+          const direction = deltaStep > 0 ? -1 : 1; 
+          
+          shiftBatch(direction);
+          lastSwitchY = currentY; 
+      }
+  }
+
+  function handleEnd(e) {
+      if (isSwiping) {
+          close();
+      } else {
+          if (!isOpen) open();
+      }
+      isSwiping = false;
+  }
+
+  function shiftBatch(direction) {
+      const currentIndex = masterList.indexOf(state.currentBatch);
+      if (currentIndex === -1) return;
+
+      let newIndex = currentIndex + direction;
+      
+      if (newIndex >= masterList.length) newIndex = 0;
+      if (newIndex < 0) newIndex = masterList.length - 1;
+
+      const newBatch = masterList[newIndex];
+      selectBatch(newBatch);
+      renderList(); 
+      if (navigator.vibrate) navigator.vibrate(5);
+  }
+
+  function open() {
+      isOpen = true;
+      renderList();
+      overlay.classList.add('active');
+      badge.classList.add('hide-self'); 
+  }
+
+  function close() {
+      isOpen = false;
+      overlay.classList.remove('active');
+      badge.classList.remove('hide-self');
+  }
+
+  function renderList() {
+      const currIdx = masterList.indexOf(state.currentBatch);
+      if (currIdx === -1) return;
+
+      const indices = [currIdx - 2, currIdx - 1, currIdx, currIdx + 1, currIdx + 2];
+      
+      overlay.innerHTML = ''; 
+      
+      indices.forEach(idx => {
+          let actualIdx = idx;
+          if (idx < 0) actualIdx = masterList.length + idx; 
+          if (idx >= masterList.length) actualIdx = idx - masterList.length; 
+          
+          const batch = masterList[actualIdx];
+          const div = document.createElement('div');
+          const isCenter = (idx === currIdx);
+          
+          div.className = `scroll-item ${isCenter ? 'current' : ''}`;
+          div.textContent = batch;
+          overlay.appendChild(div);
+      });
+  }
+
+  return { init };
+})();    
   let state = {
     currentSchedule: [],
     currentDayIndex: 0,
@@ -118,6 +264,7 @@ const TimetableApp = (function() {
     loadSavedPreferences();
     setupEventListeners();
     initializeBatchDropdown();
+    BatchScroller.init();
     
     const teacherBtn = document.getElementById('teacher-mode-btn');
     if(teacherBtn) teacherBtn.addEventListener('click', toggleTeacherMode);
@@ -983,5 +1130,9 @@ window.addEventListener('online', () => {
     console.log("Back online! Checking for data...");
     TimetableApp.forceUpdateCheck();
 });
+
+
+
+
 
 
