@@ -701,17 +701,26 @@ body[data-theme="light"] .day-header {
   color: var(--text-muted); 
   display: block; 
 }
+
 /* --- HIGHLIGHT CURRENT DAY ROW (Table View) --- */
 .weekly-table tr.active-day-row {
-  background-color: rgba(187, 134, 252, 0.08) !important; /* Subtle purple tint */
+  background-color: rgba(187, 134, 252, 0.08) !important; 
   position: relative;
-  z-index: 5;
+  z-index: 5; 
 }
 
-/* Add a left border indicator for extra clarity */
+/* --- FIX FOR TEXT OVERLAP --- */
 .weekly-table tr.active-day-row td:first-child {
   border-left: 4px solid var(--accent-color) !important;
-  background-color: rgba(187, 134, 252, 0.15) !important; 
+  
+  /* 1. We MUST use a SOLID background color to block text scrolling behind */
+  background-color: var(--card-bg) !important; 
+
+  /* 2. We apply the purple tint as an "Image" layer on top of the solid color */
+  background-image: linear-gradient(
+    rgba(187, 134, 252, 0.15), 
+    rgba(187, 134, 252, 0.15)
+  ) !important;
 }
 
 /* Light Mode Support */
@@ -719,6 +728,13 @@ body[data-theme="light"] .day-header {
   background-color: rgba(98, 0, 234, 0.08) !important;
 }
 
+[data-theme="light"] .weekly-table tr.active-day-row td:first-child {
+  background-color: var(--card-bg) !important; /* Solid White */
+  background-image: linear-gradient(
+    rgba(98, 0, 234, 0.08), 
+    rgba(98, 0, 234, 0.08)
+  ) !important;
+}
 /* -------------------------------------------------- */
 .weekly-table td.active-now {
   border: 2px solid var(--accent-color) !important;
@@ -1625,6 +1641,7 @@ body {
   color: var(--accent-color);
   font-size: 0.9rem;
 }
+
 
 
 
