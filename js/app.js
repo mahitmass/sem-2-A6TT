@@ -735,57 +735,61 @@ function createTableCell(cls) {
     jumpToDay(dayNumber - 1);
   }
 
-  // ==================== HIGHLIGHTING ====================
- function highlightActiveClass() {
+function highlightActiveClass() {
+    // 1. Cleanup old highlights
     document.querySelectorAll('.active-now').forEach(el => el.classList.remove('active-now'));
-    
+    document.querySelectorAll('.active-day-row').forEach(el => el.classList.remove('active-day-row')); // <--- NEW cleanup
+
     const now = new Date();
     const currentDay = now.getDay(); 
     let currentHour = now.getHours();
     const currentMinute = now.getMinutes();
-
+    
     // Logic: If it is past X:50, highlight the NEXT hour class
     if (currentMinute >= 50) {
         currentHour += 1;
     }
 
     if (currentDay >= 1 && currentDay <= 6) {
-      const activeClass = state.currentSchedule.find(cls => 
-        cls.day === currentDay && 
-        currentHour >= cls.start && 
-        currentHour < (cls.start + cls.duration)
-      );
+        // --- NEW: Highlight the Entire Row for Today (Table View) ---
+        const dayRow = document.querySelector(`.weekly-table tr[data-day="${currentDay}"]`);
+        if (dayRow) {
+            dayRow.classList.add('active-day-row');
+        }
+        // ------------------------------------------------------------
 
-      if (activeClass) {
-        // 1. Highlight Swipe Card (Unchanged)
-        const dayView = document.querySelector(`#day-${currentDay}`);
-        if (dayView) {
-          const card = dayView.querySelector(`.class-card[data-start-hour="${activeClass.start}"]`);
-          if (card) {
-              card.classList.add('active-now');
-              const dayViewEl = card.closest('.day-view');
-              if (dayViewEl) {
-                  dayViewEl.scrollTo({
-                    top: card.offsetTop - dayViewEl.clientHeight / 2 + card.clientHeight / 2,
-                    behavior: 'smooth'
-                  });
-              }
-          }
+        // Highlight Active Class (Existing Logic)
+        const activeClass = state.currentSchedule.find(cls => 
+            cls.day === currentDay && 
+            currentHour >= cls.start && 
+            currentHour < (cls.start + cls.duration)
+        );
+
+        if (activeClass) {
+            // 1. Highlight Swipe Card
+            const dayView = document.querySelector(`#day-${currentDay}`);
+            if (dayView) {
+                const card = dayView.querySelector(`.class-card[data-start-hour="${activeClass.start}"]`);
+                if (card) {
+                    card.classList.add('active-now');
+                    // Optional: Smooth scroll to card
+                    const dayViewEl = card.closest('.day-view');
+                    if (dayViewEl && !state.isDragging) { // Don't scroll if user is touching
+                         // Logic to scroll can go here if needed
+                    }
+                }
+            }
+            
+            // 2. Highlight Table Cell
+            if (dayRow) {
+                 const cell = dayRow.querySelector(`td[data-start-hour="${activeClass.start}"]`);
+                 if (cell) {
+                      cell.classList.add('active-now');
+                 }
+            }
         }
-        
-        // 2. Highlight Table Cell (UPDATED FOR NEW LAYOUT)
-        // Find the Row for the Day
-        const row = document.querySelector(`.weekly-table tr[data-day="${currentDay}"]`);
-        if (row) {
-             // Find the Cell for the Class Start Time
-             const cell = row.querySelector(`td[data-start-hour="${activeClass.start}"]`);
-             if (cell) {
-                  cell.classList.add('active-now');
-             }
-        }
-      }
     }
-  }
+}
     
   function startActiveHighlighting() {
     highlightActiveClass();
@@ -1193,6 +1197,7 @@ window.addEventListener('online', () => {
     console.log("Back online! Checking for data...");
     TimetableApp.forceUpdateCheck();
 });
+
 
 
 
