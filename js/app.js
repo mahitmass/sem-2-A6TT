@@ -537,30 +537,11 @@ function renderDesktopView() {
         tbody.appendChild(row);
     }
     
-   // --- UPDATED BOTTOM HINT (Sticky Left) ---
+    // Bottom Hint
     const hintRow = document.createElement('tr');
     const hintCell = document.createElement('td');
     hintCell.colSpan = hours.length + 1;
-    
-    // Key Changes: sticky !important, left: 0, and background color
-    hintCell.style.cssText = `
-        position: sticky !important; 
-        left: 0 !important; 
-        z-index: 10; 
-        
-        text-align: left !important; 
-        padding: 12px 0 12px 20px !important; 
-        
-        opacity: 0.8; 
-        font-size: 0.8rem; 
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        color: var(--accent-color);
-        
-        border: none !important;
-        background-color: var(--bg-color) !important; /* Crucial: Hides scrolling content behind it */
-    `;
-    
+    hintCell.style.cssText = "text-align: center; padding: 10px; opacity: 0.6; font-size: 0.8rem; border:none;";
     hintCell.textContent = "☝️ Tap any class block for details";
     hintRow.appendChild(hintCell);
     tbody.appendChild(hintRow);
@@ -1216,8 +1197,6 @@ window.addEventListener('online', () => {
     console.log("Back online! Checking for data...");
     TimetableApp.forceUpdateCheck();
 });
-
-
 
 
 
