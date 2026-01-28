@@ -594,15 +594,14 @@ body[data-theme="light"] .day-header {
 
 /* --- TABLE VIEW --- */
 #compact-container { 
-  overflow-x: auto; 
-  overflow-y: hidden; 
-
-  overscroll-behavior-y: none;
-  padding: 0; 
-  padding-bottom: 60px; 
+  display: block;
+  width: 100%;
+  height: 100%;            /* Fills vertical space */
+  overflow-x: auto;        
+  overflow-y: hidden;      
+  padding: 0;
+  padding-bottom: 60px;    /* Keeps space for your footer */
   background-color: var(--bg-color); 
-  scrollbar-width: thin;
-  scrollbar-color: var(--accent-color) transparent;
 }
 
 #compact-container::-webkit-scrollbar {
@@ -620,10 +619,11 @@ body[data-theme="light"] .day-header {
 }
 
 .weekly-table { 
-  border-collapse: separate; 
-  border-spacing: 0; 
+  height: 100%;            /* Forces table to stretch vertically */
   width: 100%; 
-  min-width: 600px; 
+  min-width: 750px;        
+  border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .weekly-table th, .weekly-table td { 
@@ -640,35 +640,34 @@ body[data-theme="light"] .day-header {
 .weekly-table thead th { 
   position: sticky; 
   top: 0; 
+  height: 50px;
+  vertical-align: middle;
   background-color: var(--header-bg); 
-  z-index: 20; 
+  z-index: 50; 
   border-bottom: 2px solid var(--border-color); 
   font-weight: 800; 
   text-transform: uppercase; 
   font-size: 0.75rem; 
 }
 
-.weekly-table tbody td:first-child { 
-  position: sticky; 
-  left: 0; 
-  background-color: var(--card-bg); 
-  z-index: 10; 
-  border-right: 2px solid var(--border-color); 
-  font-weight: bold; 
-  color: var(--accent-color); 
-  min-width: 75px; 
-  white-space: nowrap; 
-  font-size: 0.7rem; 
+/* New Fixed Column for Days (Mon, Tue, Wed...) */
+.weekly-table th:first-child,
+.weekly-table td:first-child,
+.day-col-header {
+  width: 70px !important;
+  min-width: 70px !important;
+  max-width: 70px !important;
+  position: sticky;
+  left: 0;
+  z-index: 60;
+  background-color: var(--card-bg);
+  border-right: 2px solid var(--border-color);
+  color: var(--accent-color);
+  font-weight: 800;
+  text-align: center;
 }
 
-.weekly-table thead th:first-child { 
-  position: sticky; 
-  top: 0; 
-  left: 0; 
-  z-index: 30; 
-  background-color: var(--header-bg); 
-  border-right: 2px solid var(--border-color); 
-}
+
 
 .cell-lec { 
   background-color: rgba(144, 202, 249, 0.15); 
@@ -706,8 +705,9 @@ body[data-theme="light"] .day-header {
 .weekly-table td.active-now {
   border: 2px solid var(--accent-color) !important;
   background-color: rgba(187, 134, 252, 0.2) !important;
-  box-shadow: inset 0 0 10px var(--accent-color);
-  z-index: 5;
+  box-shadow: 0 0 15px rgba(187, 134, 252, 0.4) !important;
+  z-index: 25;
+  position: relative;
   animation: tablePulse 2s infinite;
 }
 
@@ -721,77 +721,94 @@ body[data-theme="light"] .day-header {
 }
 /* In the TABLE VIEW section, add: */
 
-.weekly-table {
-  border-collapse: collapse !important; /* Change from separate to collapse */
-  border-spacing: 0;
-  width: 100%;
-  min-width: 600px;
-  table-layout: fixed; /* Add this */
-}
+
 
 .weekly-table th {
-  width: 14.28%; /* 100% / 7 columns */
-  min-width: 80px;
+  width: 11%; /* Roughly 100% / 9 */
+  min-width: 60px;
 }
 
 .weekly-table td {
-  height: 60px;
+  height: auto !important; /* Allows rows to expand */
   vertical-align: middle;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  padding: 3px !important;
   white-space: normal;
   word-wrap: break-word;
-  max-width: 0; /* Helps with text overflow */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
 }
 
-.weekly-table td:first-child {
-  width: 100px;
-  min-width: 100px;
-}
+
 
 /* Ensure rowspan cells don't break layout */
 .weekly-table td[rowspan] {
   position: relative;
 }
 
-.cell-lec[rowspan],
-.cell-tut[rowspan],
-.cell-lab[rowspan] {
-  /* 1. We use background-IMAGE so the underlying color stays! */
+.cell-lec[colspan],
+.cell-tut[colspan],
+.cell-lab[colspan] {
   background-image: linear-gradient(
     135deg,
-    rgba(0, 0, 0, 0.3) 0%,    /* Adds a 30% Dark Wash (The "Dark Vibe") */
-    rgba(0, 0, 0, 0.3) 90%, 
-    var(--border-color) 90%,  /* The Triangle at the corner */
+    rgba(0, 0, 0, 0.2) 0%,   
+    rgba(0, 0, 0, 0.2) 90%, 
+    var(--border-color) 90%, 
     var(--border-color) 100%
   );
+  background-blend-mode: multiply;
+}
+/* --- FOOTER (Restored Vibe) --- */
+/* --- FOOTER (Tab Style - Flush to Bottom) --- */
+.footer-sig { 
+  position: fixed !important; 
+  bottom: 0 !important;                  /* 1. Touches the bottom edge */
+  left: 50% !important; 
+  transform: translateX(-50%) !important; 
   
-  /* 2. Remove default border to make it look cleaner */
-  background-blend-mode: multiply; /* Blends the dark wash with the color */
+  width: auto !important;                
+  max-width: 90% !important;
+  
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  
+  /* 2. The Look: Tab style (Flat bottom, rounded top) */
+  background: rgba(30, 30, 30, 0.98) !important; 
+  backdrop-filter: blur(10px) !important;
+  
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-bottom: none !important;        /* No border on bottom edge */
+  border-radius: 16px 16px 0 0 !important; /* Top-left, Top-right, Bottom-right, Bottom-left */
+  
+  padding: 6px 24px !important;          
+  padding-bottom: calc(6px + env(safe-area-inset-bottom)) !important; /* Respects iPhone home bar */
+  
+  /* Text Styles (Unchanged) */
+  color: var(--text-muted) !important; 
+  font-size: 0.75rem !important;          
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  
+  /* Layering */
+  z-index: 9999 !important;              
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.3) !important; /* Shadow points UP now */
 }
 
-/* --- FOOTER --- */
-.footer-sig { 
-  position: fixed; 
-  bottom: 0; 
-  left: 0; 
-  width: 100%; 
-  text-align: center; 
-  padding: 10px; 
-  background: var(--bg-color); 
-  color: var(--text-muted); 
-  border-top: 1px solid var(--border-color); 
-  z-index: 200; 
-  padding-bottom: calc(10px + env(safe-area-inset-bottom)); 
-  font-size: 0.8rem; 
-  transition: all 0.3s ease;
+/* Light Mode Support */
+[data-theme="light"] .footer-sig {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-bottom: none !important;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.1) !important;
 }
 
 .signature { 
-  color: var(--accent-color); 
-  font-weight: 700; 
+  color: var(--accent-color) !important; 
+  font-weight: 800 !important;
+  margin: 0 4px !important;
 }
-
 /* --- LOADING STATE --- */
 .loading {
   opacity: 0.6;
@@ -1572,4 +1589,28 @@ body {
   border-left: 3px solid var(--accent-color);
   border-right: 3px solid var(--accent-color);
 }
+.weekly-table tr.active-now {
+    /* If you want to highlight the whole row (Day) */
+    background-color: rgba(187, 134, 252, 0.05); 
+}
+.weekly-table td:first-child, 
+.day-col-header {
+  width: 60px !important;
+  min-width: 60px !important;
+  max-width: 60px !important;
+  position: sticky;
+  left: 0;
+  z-index: 20;
+  background-color: var(--card-bg);
+  border-right: 2px solid var(--border-color);
+  font-weight: 800;
+  color: var(--accent-color);
+  font-size: 0.9rem;
+}
+
+
+
+
+
+
 
