@@ -341,16 +341,23 @@ const TimetableApp = (function() {
 
   function updateBatchLabels(batchName) {
     if (dom.floatingBatch) dom.floatingBatch.textContent = `BATCH ${batchName}`;
+    
     const cornerLabel = document.getElementById('table-corner-label');
     if (cornerLabel) {
-          cornerLabel.innerHTML = `
-              <div style="display: inline-block; font-size: 0.9rem; color: var(--accent-color); font-weight: 800; border: 1px solid var(--accent-color); background: rgba(187, 134, 252, 0.1); border-radius: 6px; padding: 1px 8px; margin-bottom: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); letter-spacing: 0.5px;">
-                  ${batchName}
-              </div>
-              <div style="font-size: 0.65rem; opacity: 0.6; font-weight: 600; letter-spacing: 1px;">TIME</div>
-          `;
+        // Teacher Mode Check
+        if (state.isTeacherMode) {
+             cornerLabel.innerHTML = 'Day';
+        } else {
+             // YOUR EXACT STYLING [cite: 70-71], just changed "TIME" to "DAY"
+             cornerLabel.innerHTML = `
+                  <div style="display: inline-block; font-size: 0.9rem; color: var(--accent-color); font-weight: 800; border: 1px solid var(--accent-color); background: rgba(187, 134, 252, 0.1); border-radius: 6px; padding: 1px 8px; margin-bottom: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); letter-spacing: 0.5px;">
+                      ${batchName}
+                  </div>
+                  <div style="font-size: 0.65rem; opacity: 0.6; font-weight: 600; letter-spacing: 1px;">DAY</div>
+              `;
+        }
     }
-  }
+}
 
   function renderMobileView() {
     if (!dom.daysTrack) return;
@@ -441,76 +448,104 @@ const TimetableApp = (function() {
     return breakCard;
   }
 
-  // --- DESKTOP VIEW ---
-   function renderDesktopView() {
-    if (!dom.tableBody) return;
-    dom.tableBody.innerHTML = '';
+// --- REPLACE 'renderDesktopView' IN app.js ---
+function renderDesktopView() {
+    const table = document.querySelector('.weekly-table');
+    // Safety check: if table doesn't exist, stop.
+    if (!table) return;
+
+    // 1. Grab parts DIRECTLY (Fixes "Nothing in table" issue)
+    const thead = table.querySelector('thead');
+    let tbody = table.querySelector('tbody');
+    
+    // If tbody is missing for some reason, create it
+    if (!tbody) {
+        tbody = document.createElement('tbody');
+        table.appendChild(tbody);
+    }
+
     const hours = [9, 10, 11, 12, 13, 14, 15, 16];
-    const occupiedCells = new Set();
+
+    // ================= HEADER (Time Slots) =================
+    thead.innerHTML = '';
+    const headerRow = document.createElement('tr');
+
+    // Corner Cell (Batch + "DAY")
+    const corner = document.createElement('th');
+    corner.id = 'table-corner-label';
+    corner.style.zIndex = '65'; // Higher than others
     
-    hours.forEach(hour => {
-      const row = document.createElement('tr');
-      row.setAttribute('data-hour', hour); 
+    if (state.isTeacherMode) {
+        corner.innerHTML = 'Day';
+    } else {
+        corner.innerHTML = `
+             <div style="display: inline-block; font-size: 0.9rem; color: var(--accent-color); font-weight: 800; border: 1px solid var(--accent-color); background: rgba(187, 134, 252, 0.1); border-radius: 6px; padding: 1px 8px; margin-bottom: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); letter-spacing: 0.5px;">
+                  ${state.currentBatch}
+              </div>
+              <div style="font-size: 0.65rem; opacity: 0.6; font-weight: 600; letter-spacing: 1px;">DAY</div>
+        `;
+    }
+    headerRow.appendChild(corner);
 
-      const timeCell = document.createElement('td');
-      const displayHour = hour % 12 || 12;
-      const ampm = hour >= 12 ? 'PM' : 'AM';
-      const hStr = displayHour < 10 ? '0' + displayHour : displayHour;
-
-      timeCell.innerHTML = `
-         <div style="line-height: 1.1;">
-            ${hStr}:00<br>
-            <span style="font-size: 0.85em; opacity: 0.7;">${hStr}:50</span>
-        </div>
-        <div style="font-size: 0.75em; margin-top: 4px; opacity: 0.6;">${ampm}</div>
-      `;
-      row.appendChild(timeCell);
-
-      for (let day = 1; day <= 6; day++) {
-        const cellKey = `${hour}-${day}`;
-        if (occupiedCells.has(cellKey)) continue;
-        
-        const cls = state.currentSchedule.find(s => s.day === day && s.start === hour);
-        
-        if (cls) {
-          const cell = createTableCell(cls);
-          if (cls.duration > 1) {
-            for (let i = 1; i < cls.duration; i++) occupiedCells.add(`${hour + i}-${day}`);
-          }
-          row.appendChild(cell);
-        } else {
-          const cell = createEmptyTableCell(day, hour);
-          row.appendChild(cell);
-        }
-      }
-      dom.tableBody.appendChild(row);
+    // Time Columns
+    hours.forEach(h => {
+        const th = document.createElement('th');
+        const displayH = h % 12 || 12;
+        th.innerHTML = `${displayH}:00`;
+        headerRow.appendChild(th);
     });
+    thead.appendChild(headerRow);
+
+    // ================= BODY (Days Mon-Sat) =================
+    tbody.innerHTML = ''; // Clear previous content
+
+    for (let day = 1; day <= 6; day++) {
+        const row = document.createElement('tr');
+        row.setAttribute('data-day', day); 
+
+        // 1. Day Name (Sticky Left)
+        const dayLabel = document.createElement('td');
+        dayLabel.textContent = state.dayNames[day].substring(0, 3); 
+        dayLabel.className = 'day-col-header';
+        row.appendChild(dayLabel);
+
+        // 2. Class Slots
+        let skipSlots = 0;
+        hours.forEach(hour => {
+            if (skipSlots > 0) {
+                skipSlots--;
+                return;
+            }
+
+            const cls = state.currentSchedule.find(s => s.day === day && s.start === hour);
+
+            if (cls) {
+                const cell = createTableCell(cls); // Uses helper below
+                if (cls.duration > 1) {
+                    cell.colSpan = cls.duration;
+                    skipSlots = cls.duration - 1;
+                }
+                cell.setAttribute('data-start-hour', cls.start);
+                row.appendChild(cell);
+            } else {
+                const cell = createEmptyTableCell(day, hour);
+                cell.setAttribute('data-start-hour', hour);
+                row.appendChild(cell);
+            }
+        });
+
+        tbody.appendChild(row);
+    }
     
+    // Bottom Hint
     const hintRow = document.createElement('tr');
     const hintCell = document.createElement('td');
-    hintCell.colSpan = "7";
-    hintCell.style.cssText = `text-align: center; padding: 0px 12px 12px 12px; color: var(--accent-color); font-size: 0.8rem; border: none; opacity: 0.8; font-weight: 600; letter-spacing: 0.5px;`;
-    hintCell.innerHTML = "☝️ Tap any class block for details";
+    hintCell.colSpan = hours.length + 1;
+    hintCell.style.cssText = "text-align: center; padding: 10px; opacity: 0.6; font-size: 0.8rem; border:none;";
+    hintCell.textContent = "☝️ Tap any class block for details";
     hintRow.appendChild(hintCell);
-    dom.tableBody.appendChild(hintRow);
-  }
-
-  function createTableCell(cls) {
-    const cell = document.createElement('td');
-    cell.setAttribute('data-day', cls.day);
-    cell.className = `cell-${cls.type}`;
-    cell.style.cursor = 'pointer';
-    cell.onclick = () => openDetailsModal(cls);
-
-    if (cls.duration > 1) cell.rowSpan = cls.duration;
-    
-    const displayTitle = getSubjectFullTitle(cls.title, cls.type) || cls.title;
-    const shortTitle = displayTitle.includes('(') ? displayTitle.split('(')[0].trim() : displayTitle;
-
-    cell.innerHTML = `<span class="cell-subject" title="${displayTitle}">${shortTitle}</span><span class="cell-room">${cls.code}</span>`;
-    return cell;
-  }
-
+    tbody.appendChild(hintRow);
+}
   function createEmptyTableCell(day, hour) {
     const cell = document.createElement('td');
     cell.setAttribute('data-day', day);
@@ -520,7 +555,21 @@ const TimetableApp = (function() {
     }
     return cell;
   }
+function createTableCell(cls) {
+    const cell = document.createElement('td');
+    cell.className = `cell-${cls.type}`;
+    cell.style.cursor = 'pointer';
+    cell.onclick = () => openDetailsModal(cls);
 
+    const displayTitle = getSubjectFullTitle(cls.title, cls.type) || cls.title;
+    const shortTitle = displayTitle.includes('(') ? displayTitle.split('(')[0].trim() : displayTitle;
+
+    cell.innerHTML = `
+        <span class="cell-subject" title="${displayTitle}">${shortTitle}</span>
+        <span class="cell-room">${cls.code}</span>
+    `;
+    return cell; // <--- This is CRITICAL
+}
   // --- BATCH MANAGEMENT ---
   function initializeBatchDropdown() {
     const current = state.currentBatch;
@@ -687,22 +736,20 @@ const TimetableApp = (function() {
   }
 
   // ==================== HIGHLIGHTING ====================
-  function highlightActiveClass() {
+ function highlightActiveClass() {
     document.querySelectorAll('.active-now').forEach(el => el.classList.remove('active-now'));
     
     const now = new Date();
-    const currentDay = now.getDay(); // 0=Sun, 1=Mon...
+    const currentDay = now.getDay(); 
     let currentHour = now.getHours();
     const currentMinute = now.getMinutes();
 
-    // LOGIC: If it is past the 50th minute (e.g., 9:51), 
-    // treat it as the NEXT hour (10:00) so we highlight the upcoming class.
+    // Logic: If it is past X:50, highlight the NEXT hour class
     if (currentMinute >= 50) {
         currentHour += 1;
     }
 
     if (currentDay >= 1 && currentDay <= 6) {
-      // Find a class that matches the (possibly adjusted) hour
       const activeClass = state.currentSchedule.find(cls => 
         cls.day === currentDay && 
         currentHour >= cls.start && 
@@ -710,13 +757,12 @@ const TimetableApp = (function() {
       );
 
       if (activeClass) {
-        // 1. Highlight Swipe Card
+        // 1. Highlight Swipe Card (Unchanged)
         const dayView = document.querySelector(`#day-${currentDay}`);
         if (dayView) {
           const card = dayView.querySelector(`.class-card[data-start-hour="${activeClass.start}"]`);
           if (card) {
               card.classList.add('active-now');
-              // Auto-scroll to the active card
               const dayViewEl = card.closest('.day-view');
               if (dayViewEl) {
                   dayViewEl.scrollTo({
@@ -727,18 +773,20 @@ const TimetableApp = (function() {
           }
         }
         
-        // 2. Highlight Table Cell
-        const row = document.querySelector(`.weekly-table tr[data-hour="${activeClass.start}"]`);
+        // 2. Highlight Table Cell (UPDATED FOR NEW LAYOUT)
+        // Find the Row for the Day
+        const row = document.querySelector(`.weekly-table tr[data-day="${currentDay}"]`);
         if (row) {
-         const cell = row.querySelector(`td[data-day="${currentDay}"]`);
-         if (cell && !cell.classList.contains('cell-break')) {
-              cell.classList.add('active-now');
-         }
+             // Find the Cell for the Class Start Time
+             const cell = row.querySelector(`td[data-start-hour="${activeClass.start}"]`);
+             if (cell) {
+                  cell.classList.add('active-now');
+             }
         }
       }
     }
   }
-
+    
   function startActiveHighlighting() {
     highlightActiveClass();
     state.activeHighlightInterval = setInterval(highlightActiveClass, 60000);
@@ -1145,6 +1193,8 @@ window.addEventListener('online', () => {
     console.log("Back online! Checking for data...");
     TimetableApp.forceUpdateCheck();
 });
+
+
 
 
 
