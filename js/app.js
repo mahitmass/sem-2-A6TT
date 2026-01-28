@@ -689,21 +689,34 @@ const TimetableApp = (function() {
   // ==================== HIGHLIGHTING ====================
   function highlightActiveClass() {
     document.querySelectorAll('.active-now').forEach(el => el.classList.remove('active-now'));
-    const currentDay = DateTime.getCurrentDay();
-    const currentHour = DateTime.getCurrentHour();
     
+    const now = new Date();
+    const currentDay = now.getDay(); // 0=Sun, 1=Mon...
+    let currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+
+    // LOGIC: If it is past the 50th minute (e.g., 9:51), 
+    // treat it as the NEXT hour (10:00) so we highlight the upcoming class.
+    if (currentMinute >= 50) {
+        currentHour += 1;
+    }
+
     if (currentDay >= 1 && currentDay <= 6) {
+      // Find a class that matches the (possibly adjusted) hour
       const activeClass = state.currentSchedule.find(cls => 
         cls.day === currentDay && 
         currentHour >= cls.start && 
         currentHour < (cls.start + cls.duration)
       );
+
       if (activeClass) {
+        // 1. Highlight Swipe Card
         const dayView = document.querySelector(`#day-${currentDay}`);
         if (dayView) {
           const card = dayView.querySelector(`.class-card[data-start-hour="${activeClass.start}"]`);
           if (card) {
               card.classList.add('active-now');
+              // Auto-scroll to the active card
               const dayViewEl = card.closest('.day-view');
               if (dayViewEl) {
                   dayViewEl.scrollTo({
@@ -713,6 +726,8 @@ const TimetableApp = (function() {
               }
           }
         }
+        
+        // 2. Highlight Table Cell
         const row = document.querySelector(`.weekly-table tr[data-hour="${activeClass.start}"]`);
         if (row) {
          const cell = row.querySelector(`td[data-day="${currentDay}"]`);
@@ -1130,6 +1145,7 @@ window.addEventListener('online', () => {
     console.log("Back online! Checking for data...");
     TimetableApp.forceUpdateCheck();
 });
+
 
 
 
