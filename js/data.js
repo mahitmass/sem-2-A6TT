@@ -317,7 +317,7 @@ const scheduleA7 = [
 
     { day: 5, start: 9, duration: 2, title: "HS111", code: "LL", teacher: "VSE", type: "lab" },
     { day: 5, start: 13, duration: 1, title: "PH211", code: "FF1", teacher: "DIP", type: "lec" },
-    { day: 5, start: 14, duration: 1, title: "GE112", code: "TS10", teacher: "BCJ", type: "tut" },
+    { day: 5, start: 14, duration: 1, title: "PH211", code: "TS10", teacher: "BCJ", type: "tut" },
     { day: 5, start: 15, duration: 2, title: "PH271", code: "PL3", teacher: "RKD,INC", type: "lab" },
 
     { day: 6, start: 9, duration: 2, title: "GE112", code: "EW1", teacher: "ASG,GRP", type: "lab" },
@@ -1881,6 +1881,7 @@ const ROOM_LOCATIONS = {
     
     "Executive Room - I": "ABB-II", "Executive Room - II": "ABB-II"
 };
+
 
 
 
