@@ -741,7 +741,7 @@ const scheduleB11 = [
     { day: 3, start: 15, duration: 2, title: "GE112", code: "EW1", teacher: "ADM", type: "lab" },
     { day: 3, start: 9, duration: 1, title: "GE112", code: "TS10", teacher: "ADM", type: "tut" },
     { day: 4, start: 10, duration: 1, title: "CI121", code: "CS5", teacher: "AM", type: "lec" },
-    { day: 4, start: 13, duration: 2, title: "CS121", code: "CL01", teacher: "AM/PAR", type: "lab" },
+    { day: 4, start: 13, duration: 2, title: "CS121", code: "CL01", teacher: "AM/AW", type: "lab" },
     { day: 4, start: 15, duration: 2, title: "HS111", code: "LL", teacher: "HK", type: "lab" },
     { day: 5, start: 10, duration: 1, title: "HS111", code: "FF3", teacher: "APR", type: "lec" },
     { day: 5, start: 11, duration: 1, title: "PH211", code: "FF3", teacher: "NG", type: "lec" },
@@ -889,7 +889,7 @@ const scheduleD1 = [
     { day: 5, start: 9, duration: 1, title: "HS111", code: "CS5", teacher: "BCJ", type: "lec" },
     { day: 5, start: 10, duration: 2, title: "PH271", code: "PL1", teacher: "MTR/NKS", type: "lab" },
     { day: 5, start: 13, duration: 1, title: "MA211", code: "FF3", teacher: "SGL", type: "lec" },
-    { day: 5, start: 16, duration: 1, title: "CI121", code: "FF3", teacher: "SRG", type: "lec" }
+    { day: 4, start: 15, duration: 1, title: "CI121", code: "FF3", teacher: "SRG", type: "lec" }
 ];
 
 const scheduleD2 = [
@@ -910,9 +910,9 @@ const scheduleD2 = [
     { day: 5, start: 9, duration: 1, title: "HS111", code: "CS5", teacher: "BCJ", type: "lec" },
     { day: 5, start: 10, duration: 2, title: "PH271", code: "PL2", teacher: "VRT/PC", type: "lab" },
     { day: 5, start: 13, duration: 1, title: "MA211", code: "FF3", teacher: "SGL", type: "lec" },
-    { day: 5, start: 16, duration: 1, title: "CI121", code: "FF3", teacher: "SRG", type: "lec" },
+    { day: 4, start: 15, duration: 1, title: "CI121", code: "FF3", teacher: "SRG", type: "lec" },
     { day: 6, start: 10, duration: 1, title: "PH211", code: "TS8", teacher: "EKY", type: "tut" },
-    { day: 6, start: 11, duration: 2, title: "CS121", code: "CL09", teacher: "KRL/SOS", type: "lab" }
+    { day: 6, start: 11, duration: 2, title: "CS121", code: "CL09", teacher: "NEH/SOS", type: "lab" }
 ];
 
 // --- GROUP G ---
@@ -1881,6 +1881,7 @@ const ROOM_LOCATIONS = {
     
     "Executive Room - I": "ABB-II", "Executive Room - II": "ABB-II"
 };
+
 
 
 
