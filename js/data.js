@@ -258,7 +258,7 @@ const scheduleA5 = [
     { day: 1, start: 15, duration: 1, title: "HS111", code: "TR307", teacher: "PRI", type: "tut" },
     { day: 3, start: 13, duration: 1, title: "PH211", code: "CS5", teacher: "SND", type: "lec" },
     { day: 3, start: 14, duration: 1, title: "MA211", code: "FF3", teacher: "ANK", type: "lec" },
-    { day: 3, start: 15, duration: 2, title: "CS121", code: "CL01", teacher: "TNV/MAY", type: "lab" },
+    { day: 3, start: 15, duration: 2, title: "CS121", code: "CL01", teacher: "TNV/KRL", type: "lab" },
     { day: 4, start: 10, duration: 1, title: "CI121", code: "G1", teacher: "ROH", type: "lec" },
     { day: 4, start: 11, duration: 1, title: "HS111", code: "G1", teacher: "MTR", type: "lec" },
     { day: 4, start: 13, duration: 2, title: "HS111", code: "LL1", teacher: "KMB", type: "lab" },
@@ -544,7 +544,7 @@ const scheduleB3 = [
     { day: 4, start: 15, duration: 2, title: "PH271", code: "PL3", teacher: "SPP/SND", type: "lab" },
     { day: 4, start: 14, duration: 1, title: "HS111", code: "G8", teacher: "PU", type: "lec" },
     { day: 5, start: 13, duration: 1, title: "MA211", code: "FF2", teacher: "LK", type: "lec" },
-    { day: 5, start: 14, duration: 1, title: "HS111", code: "FF2", teacher: "PU", type: "lec" },
+    { day: 1, start: 10, duration: 1, title: "HS111", code: "G2", teacher: "PU", type: "lec" },
     { day: 5, start: 15, duration: 1, title: "PH211", code: "FF4", teacher: "SPP", type: "lec" }
 ];
 
@@ -567,7 +567,7 @@ const scheduleB4 = [
     { day: 4, start: 15, duration: 2, title: "PH271", code: "PL1", teacher: "VRT/RKG", type: "lab" },
     { day: 5, start: 13, duration: 1, title: "MA211", code: "FF2", teacher: "LK", type: "lec" },
     { day: 5, start: 11, duration: 1, title: "HS111", code: "TS7", teacher: "MEE", type: "tut" },
-    { day: 5, start: 14, duration: 1, title: "HS111", code: "FF2", teacher: "PU", type: "lec" },
+    { day: 1, start: 10, duration: 1, title: "HS111", code: "G2", teacher: "PU", type: "lec" },
     { day: 5, start: 15, duration: 1, title: "PH211", code: "FF4", teacher: "SPP", type: "lec" }
 ];
 
@@ -1881,6 +1881,7 @@ const ROOM_LOCATIONS = {
     
     "Executive Room - I": "ABB-II", "Executive Room - II": "ABB-II"
 };
+
 
 
 
