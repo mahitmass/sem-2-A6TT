@@ -745,8 +745,8 @@ const scheduleB11 = [
     { day: 4, start: 15, duration: 2, title: "HS111", code: "LL", teacher: "HK", type: "lab" },
     { day: 5, start: 10, duration: 1, title: "HS111", code: "FF3", teacher: "APR", type: "lec" },
     { day: 5, start: 11, duration: 1, title: "PH211", code: "FF3", teacher: "NG", type: "lec" },
-    { day: 6, start: 9, duration: 1, title: "HS111", code: "FF1", teacher: "APR", type: "lec" },
-    { day: 6, start: 11, duration: 1, title: "MA211", code: "FF2", teacher: "HPT", type: "lec" }
+    { day: 2, start: 9, duration: 1, title: "HS111", code: "CR301", teacher: "APR", type: "lec" },
+    { day: 4, start: 11, duration: 1, title: "MA211", code: "G9", teacher: "HPT", type: "lec" }
 ];
 
 // --- BATCH B12 (NO CHANGES - from original)
@@ -769,8 +769,8 @@ const scheduleB12 = [
     { day: 5, start: 11, duration: 1, title: "PH211", code: "FF3", teacher: "NG", type: "lec" },
     { day: 5, start: 13, duration: 1, title: "GE112", code: "TS11", teacher: "MJH", type: "tut" },
     { day: 5, start: 15, duration: 2, title: "GE112", code: "EW2", teacher: "MJH", type: "lab" },
-    { day: 6, start: 9, duration: 1, title: "HS111", code: "FF1", teacher: "APR", type: "lec" },
-    { day: 6, start: 11, duration: 1, title: "MA211", code: "FF2", teacher: "HPT", type: "lec" }
+    { day: 2, start: 9, duration: 1, title: "HS111", code: "CR301", teacher: "APR", type: "lec" },
+    { day: 4, start: 11, duration: 1, title: "MA211", code: "G9", teacher: "HPT", type: "lec" }
 ];
 
 const scheduleB14 = [
@@ -1881,6 +1881,7 @@ const ROOM_LOCATIONS = {
     
     "Executive Room - I": "ABB-II", "Executive Room - II": "ABB-II"
 };
+
 
 
 
