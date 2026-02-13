@@ -78,7 +78,7 @@ header {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--border-color);
-  z-index: 100;
+  z-index: 1100;
   position: relative;
   transition: all 0.3s ease;
 }
@@ -1643,6 +1643,20 @@ body {
 }
 
 
+/* --- FIX: POINTER UP, LABEL DOWN (No Search Bar Movement) --- */
+
+/* 1. Lift the Floating Pointer UP */
+.teacher-hint {
+  top: -1px !important;       /* Was 10px, now higher */
+}
+
+/* 2. Push the Label DOWN (into the gap) */
+#teacher-controls .filter-label {
+  margin-top: 8px !important;    /* Pushes label down */
+  margin-bottom: -8px !important; /* Pulls search bar back UP so it doesn't move */
+  position: relative;
+  z-index: 5;
+}
 
 
 
