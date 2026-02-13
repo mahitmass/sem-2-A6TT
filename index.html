@@ -29,13 +29,13 @@
       <h1>Planner</h1>
     </div>
     <div class="header-controls">
-      <button id="teacher-mode-btn" class="icon-btn" aria-label="Teacher Mode">
-    <span class="t-icon">👨‍🏫</span>
-  <span class="t-label">Find Teacher</span>
-  </button>
+      <button id="teacher-mode-btn" class="icon-btn" aria-label="Search Mode">
+        <span class="t-icon">🔍</span> <span class="t-label">Search</span>
+      </button>
       <button class="filter-toggle-btn" onclick="TimetableApp.toggleFilterPanel()" aria-expanded="false" aria-controls="filter-panel">
         FILTERS <span id="filter-arrow">🔽</span>
       </button>
+      
       <button class="icon-btn" onclick="TimetableApp.toggleTheme()" id="theme-btn" aria-label="Toggle theme">☀</button>
     </div>
   </header>
@@ -43,7 +43,7 @@
   <div id="filter-panel" role="region" aria-label="Filter panel">
     <div class="filter-content">
   <div class="teacher-hint">
-          <span class="hint-arrow">⤴</span> <span>Teacher Mode</span>          </div>
+          <span class="hint-arrow">⤴</span> <span>Search Mode</span>          </div>
   <div id="student-controls">
       <div class="filter-group bring-to-front">
         <div class="filter-label">Select Batch</div>
@@ -61,9 +61,9 @@
 
   <div id="teacher-controls" class="hidden">
       <div class="filter-group">
-        <div class="filter-label">Find Teacher</div>
+        <div class="filter-label">Find Teacher/Classroom</div>
         <div class="search-wrapper">
-          <input type="text" id="teacher-search" placeholder="Type name (e.g. RS, Anubha)..." autocomplete="off">
+          <input type="text" id="teacher-search" placeholder="Type (e.g. ANK, Manoj, G2)..." autocomplete="off">
           <div id="search-suggestions" class="suggestions-list"></div>
         </div>
       </div>
