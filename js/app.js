@@ -274,12 +274,28 @@ const TimetableApp = (function() {
     startActiveHighlighting();
 
     // FIX LAYOUT
-    setTimeout(() => {
-        handleResize();
+   setTimeout(() => {
+        handleResize(); 
         jumpToDay(state.currentDayIndex);
+    }, 100);
+
+    // 1. Run immediately (50ms) so it feels instant
+    setTimeout(() => {
+        handleResize(); // This now uses instant jump internally
+        jumpToDay(state.currentDayIndex, false); // Force Instant Jump
         highlightActiveClass();
-    }, 200);
-  }
+    }, 50);
+
+    // 2. Safety Check (In case browser was slow to calculate width)
+    setTimeout(() => {
+        const trackWidth = dom.timetableContainer ? dom.timetableContainer.offsetWidth : window.innerWidth;
+        // If the math is wrong (we aren't exactly on the day), snap it again instantly
+        if (Math.abs(state.currentTranslate) % trackWidth !== 0 || trackWidth === 0) {
+            handleResize();
+            jumpToDay(state.currentDayIndex, false); // Instant Correction
+        }
+    }, 300);
+}
 
   function cacheDOMElements() {
     dom.daysTrack = document.getElementById('daysTrack');
@@ -696,49 +712,72 @@ function createTableCell(cls) {
   }
 
   // ==================== VIEW MODE ====================
- function setViewMode(mode) {
+ // REPLACE 'setViewMode' in app.js
+function setViewMode(mode) {
     state.currentView = mode;
     Storage.set('preferredView', mode);
+    
     document.querySelectorAll('#btn-swipe, #btn-table').forEach(btn => btn.classList.remove('active'));
     const activeBtn = document.getElementById(`btn-${mode}`);
     if(activeBtn) activeBtn.classList.add('active');
+
     if (mode === 'swipe') {
       dom.timetableContainer.classList.remove('hidden-view');
       dom.compactContainer.classList.add('hidden-view');
+      
+      // Instant snap for Swipe View
       setTimeout(() => {
           handleResize();
-          jumpToDay(state.currentDayIndex);
+          jumpToDay(state.currentDayIndex, false); 
       }, 50);
+
     } else {
+      // Switch to Table View
       dom.timetableContainer.classList.add('hidden-view');
       dom.compactContainer.classList.remove('hidden-view');
+      
+      // --- NEW: Trigger Navigation immediately for Table View ---
+      setTimeout(() => {
+          highlightActiveClass(); 
+      }, 50);
     }
-  }
+}
 
   // ==================== NAVIGATION ====================
-  function jumpToDay(index) {
+  // REPLACE 'jumpToDay' in app.js
+function jumpToDay(index, animate = true) { // <--- Added 'animate' parameter (Default: true)
     if (index < 0 || index >= state.totalDays) return;
     state.currentDayIndex = index;
     const trackWidth = dom.timetableContainer ? dom.timetableContainer.offsetWidth : window.innerWidth;
     state.currentTranslate = index * -trackWidth;
     state.prevTranslate = state.currentTranslate;
+
     if (dom.daysTrack) {
-      dom.daysTrack.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1)';
-      dom.daysTrack.style.transform = `translateX(${state.currentTranslate}px)`;
+        if (animate) {
+            // Normal Swipe Animation
+            dom.daysTrack.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1)';
+        } else {
+            // INSTANT JUMP (No Animation)
+            dom.daysTrack.style.transition = 'none';
+        }
+        dom.daysTrack.style.transform = `translateX(${state.currentTranslate}px)`;
     }
+    
+    // Update Active Button State
     document.querySelectorAll('.day-btn').forEach(btn => {
       btn.classList.toggle('active-day', parseInt(btn.dataset.day) === index + 1);
     });
-  }
+}
 
   function manualJumpToDay(dayNumber) {
     jumpToDay(dayNumber - 1);
   }
 
+// REPLACE 'highlightActiveClass' in app.js
 function highlightActiveClass() {
     // 1. Cleanup old highlights
     document.querySelectorAll('.active-now').forEach(el => el.classList.remove('active-now'));
-    document.querySelectorAll('.active-day-row').forEach(el => el.classList.remove('active-day-row')); // <--- NEW cleanup
+    document.querySelectorAll('.active-day-row').forEach(el => el.classList.remove('active-day-row'));
 
     const now = new Date();
     const currentDay = now.getDay(); 
@@ -751,14 +790,13 @@ function highlightActiveClass() {
     }
 
     if (currentDay >= 1 && currentDay <= 6) {
-        // --- NEW: Highlight the Entire Row for Today (Table View) ---
+        // --- A. TABLE VIEW: Highlight Row ---
         const dayRow = document.querySelector(`.weekly-table tr[data-day="${currentDay}"]`);
         if (dayRow) {
             dayRow.classList.add('active-day-row');
         }
-        // ------------------------------------------------------------
 
-        // Highlight Active Class (Existing Logic)
+        // --- B. FIND THE ACTIVE CLASS DATA ---
         const activeClass = state.currentSchedule.find(cls => 
             cls.day === currentDay && 
             currentHour >= cls.start && 
@@ -766,25 +804,42 @@ function highlightActiveClass() {
         );
 
         if (activeClass) {
-            // 1. Highlight Swipe Card
+            // 1. Handle Swipe Card View (Unchanged)
             const dayView = document.querySelector(`#day-${currentDay}`);
             if (dayView) {
                 const card = dayView.querySelector(`.class-card[data-start-hour="${activeClass.start}"]`);
                 if (card) {
                     card.classList.add('active-now');
-                    // Optional: Smooth scroll to card
-                    const dayViewEl = card.closest('.day-view');
-                    if (dayViewEl && !state.isDragging) { // Don't scroll if user is touching
-                         // Logic to scroll can go here if needed
+                    if (!state.isDragging) {
+                        if (state.currentDayIndex !== (currentDay - 1)) {
+                            jumpToDay(currentDay - 1, false); // Instant jump
+                        }
+                        // Scroll card into view
+                        setTimeout(() => {
+                            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 100);
                     }
                 }
             }
             
-            // 2. Highlight Table Cell
+            // 2. Handle Table View Cell (UPDATED WITH NAVIGATION)
             if (dayRow) {
                  const cell = dayRow.querySelector(`td[data-start-hour="${activeClass.start}"]`);
                  if (cell) {
                       cell.classList.add('active-now');
+
+                      // === NEW: Horizontal Auto-Scroll ===
+                      const container = document.getElementById('compact-container');
+                      // Only scroll if Table View is currently visible
+                      if (container && !container.classList.contains('hidden-view')) {
+                           // Calculate center position: Cell Position - Half Screen Width + Half Cell Width
+                           const scrollTarget = cell.offsetLeft - (container.clientWidth / 2) + (cell.clientWidth / 2);
+                           
+                           container.scrollTo({
+                               left: scrollTarget,
+                               behavior: 'smooth' // Smooth scroll to the right time column
+                           });
+                      }
                  }
             }
         }
@@ -872,43 +927,98 @@ function highlightActiveClass() {
   }
 
   // ==================== MODAL LOGIC ====================
+
+function openRoomModal(code, location) {
+    const modal = document.getElementById('details-modal');
+    if(!modal) return;
+
+    // 1. Set Data
+    document.getElementById('modal-subject').textContent = code; // e.g. "TS12"
+    document.getElementById('modal-time').textContent = "Room Detail"; // Subtitle
+    
+    // 2. Hide Irrelevant Fields (Type, Teacher, Batch)
+    const typeRow = document.getElementById('modal-type') ? document.getElementById('modal-type').parentElement : null;
+    const teacherRow = document.getElementById('modal-teacher') ? document.getElementById('modal-teacher').parentElement : null;
+    const batchRow = document.getElementById('modal-batch') ? document.getElementById('modal-batch').parentElement : null;
+
+    if (typeRow) typeRow.style.display = 'none';
+    if (teacherRow) teacherRow.style.display = 'none';
+    if (batchRow) batchRow.style.display = 'none';
+
+    // 3. Show Venue
+    const roomRow = document.getElementById('modal-venue-row');
+    if(roomRow) roomRow.style.display = 'flex';
+    document.getElementById('modal-room').textContent = location;
+
+    // 4. Show Modal
+    modal.classList.remove('hidden-modal');
+    modal.setAttribute('aria-hidden', 'false');
+    
+    // 5. Close Handlers
+    const closeBtn = document.getElementById('modal-close-btn');
+    closeBtn.onclick = () => {
+        closeModal();
+        resetModalFields(); // Reset for next time
+    };
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            closeModal();
+            resetModalFields();
+        }
+    };
+}
+
+// --- HELPER: Reset Hidden Fields ---
+function resetModalFields() {
+    const typeRow = document.getElementById('modal-type') ? document.getElementById('modal-type').parentElement : null;
+    const teacherRow = document.getElementById('modal-teacher') ? document.getElementById('modal-teacher').parentElement : null;
+    const batchRow = document.getElementById('modal-batch') ? document.getElementById('modal-batch').parentElement : null;
+
+    if (typeRow) typeRow.style.display = 'flex';
+    if (teacherRow) teacherRow.style.display = 'flex';
+    if (batchRow) batchRow.style.display = 'flex';
+}
+    
   function openDetailsModal(cls) {
-      const modal = document.getElementById('details-modal');
-      if(!modal) return;
+    const modal = document.getElementById('details-modal');
+    if(!modal) return;
+    
+    // CRITICAL: Ensure fields are visible (in case Room Modal hid them)
+    resetModalFields();
 
-      const rawTitle = cls.title;
-      const isFormatted = rawTitle.includes('('); 
-      const displayTitle = isFormatted ? rawTitle : (getSubjectFullTitle(rawTitle, cls.type) || rawTitle);
-      const displayTeacher = getTeacherDisplayName(cls.teacher);
-      const displayTime = formatTimeRange(cls.start, cls.duration);
-      
-      let displayBatch = state.currentBatch;
-      if (cls.batchNames && Array.isArray(cls.batchNames)) {
-          displayBatch = cls.batchNames.join(', ');
-      }
+    const rawTitle = cls.title;
+    const isFormatted = rawTitle.includes('('); 
+    const displayTitle = isFormatted ? rawTitle : (getSubjectFullTitle(rawTitle, cls.type) || rawTitle);
+    const displayTeacher = getTeacherDisplayName(cls.teacher);
+    const displayTime = formatTimeRange(cls.start, cls.duration);
+    
+    let displayBatch = state.currentBatch;
+    if (cls.batchNames && Array.isArray(cls.batchNames)) {
+        displayBatch = cls.batchNames.join(', ');
+    }
 
-      document.getElementById('modal-subject').textContent = displayTitle;
-      document.getElementById('modal-time').textContent = displayTime;
-      document.getElementById('modal-type').textContent = cls.type.charAt(0).toUpperCase() + cls.type.slice(1);
-      document.getElementById('modal-teacher').textContent = displayTeacher;
-      document.getElementById('modal-batch').textContent = displayBatch;
-      
-      const roomEl = document.getElementById('modal-room');
-      roomEl.innerHTML = `
-        ${cls.code} 
-        <span class="modal-glow-btn" onclick="window.showRoomPopup(event, '${cls.code}')">
-          i
-        </span>
-      `;
-
-      modal.classList.remove('hidden-modal');
-      modal.setAttribute('aria-hidden', 'false');
-      const closeBtn = document.getElementById('modal-close-btn');
-      closeBtn.onclick = closeModal;
-      modal.onclick = (e) => {
-          if (e.target === modal) closeModal();
-      };
-  }
+    document.getElementById('modal-subject').textContent = displayTitle;
+    document.getElementById('modal-time').textContent = displayTime;
+    document.getElementById('modal-type').textContent = cls.type.charAt(0).toUpperCase() + cls.type.slice(1);
+    document.getElementById('modal-teacher').textContent = displayTeacher;
+    document.getElementById('modal-batch').textContent = displayBatch;
+    
+    const roomEl = document.getElementById('modal-room');
+    roomEl.innerHTML = `
+      ${cls.code} 
+      <span class="modal-glow-btn" onclick="window.showRoomPopup(event, '${cls.code}')">
+        i
+      </span>
+    `;
+    
+    modal.classList.remove('hidden-modal');
+    modal.setAttribute('aria-hidden', 'false');
+    const closeBtn = document.getElementById('modal-close-btn');
+    closeBtn.onclick = closeModal;
+    modal.onclick = (e) => {
+        if (e.target === modal) closeModal();
+    };
+}
 
   function closeModal() {
       const modal = document.getElementById('details-modal');
@@ -918,13 +1028,63 @@ function highlightActiveClass() {
       }
   }
 
+// --- NEW HELPER: The "Glass Wall" Manager ---
+function manageBackdrop(shouldShow) {
+    let backdrop = document.getElementById('filter-backdrop');
+    
+    if (shouldShow) {
+        if (!backdrop) {
+            backdrop = document.createElement('div');
+            backdrop.id = 'filter-backdrop';
+            // z-index 1050: Above Table, Below Header
+            backdrop.style.cssText = `
+                position: fixed; 
+                top: 0; 
+                left: 0; 
+                width: 100vw; 
+                height: 100vh; 
+                z-index: 1050; 
+                background: transparent; 
+                touch-action: none;
+                cursor: default;
+            `;
+            
+            // The "Closer" Function
+            const closeAndBlock = (e) => {
+                e.preventDefault();
+                e.stopPropagation(); // <--- CRITICAL: Stops click from hitting table
+                
+                if (state.isTeacherMode) {
+                    toggleTeacherMode();
+                } else {
+                    toggleFilterPanel();
+                }
+            };
+            
+            backdrop.addEventListener('click', closeAndBlock);
+            backdrop.addEventListener('touchstart', closeAndBlock, { passive: false });
+            backdrop.addEventListener('wheel', (e) => { e.preventDefault(); e.stopPropagation(); }, { passive: false });
+            document.body.appendChild(backdrop);
+        }
+    } else {
+        if (backdrop) backdrop.remove();
+    }
+}
+    
   // ==================== UI CONTROLS ====================
-  function toggleFilterPanel() {
+ // REPLACE 'toggleFilterPanel' in app.js
+function toggleFilterPanel() {
+    if (state.isTeacherMode) {
+        toggleTeacherMode();
+        return; 
+    }
+
     const isExpanded = dom.filterPanel.classList.toggle('expanded');
+    
     if (isExpanded) {
         const computedStyle = window.getComputedStyle(dom.filterPanel);
         if (computedStyle.position === 'static') dom.filterPanel.style.position = 'relative';
-        dom.filterPanel.style.zIndex = '1001';
+        dom.filterPanel.style.zIndex = '1060'; 
     } else {
         dom.filterPanel.style.zIndex = ''; 
         dom.filterPanel.style.position = '';
@@ -934,28 +1094,11 @@ function highlightActiveClass() {
       dom.filterArrow.textContent = isExpanded ? '▲' : '▼';
     }
 
-    let backdrop = document.getElementById('filter-backdrop');
-    if (isExpanded) {
-        if (!backdrop) {
-            backdrop = document.createElement('div');
-            backdrop.id = 'filter-backdrop';
-            backdrop.style.cssText = `position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1000; background: transparent; touch-action: none;`;
-            
-            const closeAndBlock = (e) => {
-                if (e.cancelable) e.preventDefault();
-                e.stopPropagation();
-                toggleFilterPanel();
-            };
-            backdrop.addEventListener('click', closeAndBlock);
-            backdrop.addEventListener('touchstart', closeAndBlock, { passive: false });
-            backdrop.addEventListener('wheel', closeAndBlock, { passive: false });
-            document.body.appendChild(backdrop);
-        }
-    } else {
-        if (backdrop) backdrop.remove();
-    }
     toggleBatchGrid(false);
-  }
+    
+    // THE FIX: Turn on the glass wall
+    manageBackdrop(isExpanded);
+}
 
   function handleOutsideClick(e) {
     const filterPanel = dom.filterPanel;
@@ -977,9 +1120,11 @@ function highlightActiveClass() {
     if(btn) btn.textContent = newTheme === 'dark' ? '☀' : '🌙';
   }
 
-  function handleResize() {
-    jumpToDay(state.currentDayIndex);
-  }
+  // REPLACE 'handleResize' in app.js
+function handleResize() {
+    // Pass 'false' to make it instant
+    jumpToDay(state.currentDayIndex, false);
+}
 
   function handleKeyboardNavigation(e) {
     if (state.currentView !== 'swipe') return;
@@ -988,49 +1133,59 @@ function highlightActiveClass() {
   }
 
   // ==================== TEACHER MODE ====================
-  function toggleTeacherMode() {
+  // REPLACE 'toggleTeacherMode' in app.js
+function toggleTeacherMode() {
     state.isTeacherMode = !state.isTeacherMode;
     const btn = document.getElementById('teacher-mode-btn');
     const studentControls = document.getElementById('student-controls');
     const teacherControls = document.getElementById('teacher-controls');
-    if (btn) btn.classList.toggle('active-mode', state.isTeacherMode);
     
+    if (btn) btn.classList.toggle('active-mode', state.isTeacherMode);
+
     if (state.isTeacherMode) {
-      if (studentControls) studentControls.classList.add('hidden');
-      if (teacherControls) teacherControls.classList.remove('hidden');
-      if (dom.filterPanel) {
-          dom.filterPanel.classList.add('expanded');
-          dom.filterPanel.style.zIndex = '100'; 
-          if(dom.filterArrow) dom.filterArrow.textContent = '▲';
-      }
-      setTimeout(() => {
-          const searchInput = document.getElementById('teacher-search');
-          if (searchInput) searchInput.focus();
-      }, 300);
+        // --- OPEN MODE ---
+        if (studentControls) studentControls.classList.add('hidden');
+        if (teacherControls) teacherControls.classList.remove('hidden');
+
+        if (dom.filterPanel) {
+            dom.filterPanel.classList.add('expanded');
+            dom.filterPanel.style.zIndex = '1060'; 
+            if(dom.filterArrow) dom.filterArrow.textContent = '▲';
+        }
+        setTimeout(() => {
+            const searchInput = document.getElementById('teacher-search');
+            if (searchInput) searchInput.focus();
+        }, 300);
+        
     } else {
-      if (studentControls) studentControls.classList.remove('hidden');
-      if (teacherControls) teacherControls.classList.add('hidden');
+        // --- CLOSE MODE ---
+        if (studentControls) studentControls.classList.remove('hidden');
+        if (teacherControls) teacherControls.classList.add('hidden');
 
-      const viewModeButtons = document.querySelector('.filter-group:nth-child(2) .filter-options');
-      const jumpToDayButtons = document.querySelector('.filter-group:nth-child(3) .filter-options');
-      if (viewModeButtons) {
-          viewModeButtons.style.visibility = 'visible';
-          viewModeButtons.style.opacity = '1';
-      }
-      if (jumpToDayButtons) {
-          jumpToDayButtons.style.visibility = 'visible';
-          jumpToDayButtons.style.opacity = '1';
-      }
+        const viewModeButtons = document.querySelector('.filter-group:nth-child(2) .filter-options');
+        const jumpToDayButtons = document.querySelector('.filter-group:nth-child(3) .filter-options');
+        if (viewModeButtons) { viewModeButtons.style.visibility = 'visible'; viewModeButtons.style.opacity = '1'; }
+        if (jumpToDayButtons) { jumpToDayButtons.style.visibility = 'visible'; jumpToDayButtons.style.opacity = '1'; }
 
-      const searchInput = document.getElementById('teacher-search');
-      const searchList = document.getElementById('search-suggestions');
-      if (searchInput) searchInput.value = '';
-      if (searchList) searchList.innerHTML = '';
-      selectBatch(state.currentBatch);
+        const searchInput = document.getElementById('teacher-search');
+        const searchList = document.getElementById('search-suggestions');
+        if (searchInput) searchInput.value = '';
+        if (searchList) searchList.innerHTML = '';
+        
+        if (dom.filterPanel) {
+            dom.filterPanel.classList.remove('expanded');
+            if(dom.filterArrow) dom.filterArrow.textContent = '▼';
+        }
+        
+        selectBatch(state.currentBatch);
     }
-  }
+    
+    // THE FIX: Turn on the glass wall here too!
+    manageBackdrop(state.isTeacherMode);
+}
 
-  function initTeacherSearch() {
+ // REPLACE 'initTeacherSearch' in app.js
+function initTeacherSearch() {
     const input = document.getElementById('teacher-search');
     const list = document.getElementById('search-suggestions');
     if (!input || !list) return;
@@ -1063,20 +1218,32 @@ function highlightActiveClass() {
         }
         toggleOtherGroups(false);
 
-        let allFaculty = [];
+        let allResults = [];
+
+        // 1. Add Teachers
         if (typeof facultyNames !== 'undefined') {
             Object.entries(facultyNames).forEach(([code, name]) => 
-                allFaculty.push({ code, name, source: '62' }));
+                allResults.push({ type: 'teacher', code, name, source: '62' }));
         }
         if (typeof facultyNames128 !== 'undefined') {
             Object.entries(facultyNames128).forEach(([code, name]) => 
-                allFaculty.push({ code, name, source: '128' }));
+                allResults.push({ type: 'teacher', code, name, source: '128' }));
         }
 
-        let matches = allFaculty.filter(f => 
-            f.code.toLowerCase().includes(val) || f.name.toLowerCase().includes(val)
+        // 2. Add Rooms
+        if (typeof ROOM_LOCATIONS !== 'undefined') {
+            Object.entries(ROOM_LOCATIONS).forEach(([code, location]) => {
+                allResults.push({ type: 'room', code: code, name: location });
+            });
+        }
+
+        // 3. Filter Matches
+        let matches = allResults.filter(item => 
+            item.code.toLowerCase().includes(val) || 
+            item.name.toLowerCase().includes(val)
         );
 
+        // 4. Sort
         matches.sort((a, b) => {
              const aCodeStart = a.code.toLowerCase().startsWith(val);
              const bCodeStart = b.code.toLowerCase().startsWith(val);
@@ -1086,26 +1253,44 @@ function highlightActiveClass() {
         });
 
         if (matches.length === 0) {
-            list.innerHTML = '<div style="padding:15px; opacity:0.6;">No teachers found</div>';
+            list.innerHTML = '<div style="padding:15px; opacity:0.6;">No matches found</div>';
         } else {
-             matches.slice(0, 15).forEach(f => {
+             matches.slice(0, 15).forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'suggestion-item';
-                const codeDisplay = f.source === '128' ? `${f.code} (128)` : f.code;
-                div.innerHTML = `<span class="s-code">${codeDisplay}</span> <span class="s-name">${f.name}</span>`;
-                div.onclick = () => {
-                    loadTeacherSchedule(f.code, f.name);
-                    input.value = `${f.name} (${codeDisplay})`;
-                    list.innerHTML = '';
-                    toggleFilterPanel(); 
-                    setTimeout(() => toggleOtherGroups(true), 300);
-                };
+                
+                if (item.type === 'teacher') {
+                    // --- TEACHER CLICK ---
+                    const codeDisplay = item.source === '128' ? `${item.code} (128)` : item.code;
+                    div.innerHTML = `<span class="s-code">${codeDisplay}</span> <span class="s-name">${item.name}</span>`;
+                    div.onclick = () => {
+                        loadTeacherSchedule(item.code, item.name);
+                        input.value = `${item.name} (${codeDisplay})`;
+                        list.innerHTML = '';
+                        
+                        // CLOSE PANEL for Teachers (So user can see the schedule)
+                        toggleFilterPanel(); 
+                        setTimeout(() => toggleOtherGroups(true), 300);
+                    };
+                } else {
+                    // --- ROOM CLICK ---
+                    div.innerHTML = `<span class="s-code">📍 ${item.code}</span> <span class="s-name" style="font-size:0.8rem">${item.name}</span>`;
+                    div.onclick = () => {
+                        openRoomModal(item.code, item.name);
+                        input.value = ''; // Clear input for next search
+                        list.innerHTML = '';
+                        
+                        // DO NOT CLOSE PANEL for Rooms
+                        // The User stays in "Search Mode" to look up more rooms if they want.
+                        
+                        setTimeout(() => toggleOtherGroups(true), 300);
+                    };
+                }
                 list.appendChild(div);
             });
         }
     });
-  }
-
+}
   function handleWheel(e) {
     if (state.currentView !== 'swipe') return;
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
@@ -1197,6 +1382,12 @@ window.addEventListener('online', () => {
     console.log("Back online! Checking for data...");
     TimetableApp.forceUpdateCheck();
 });
+
+
+
+
+
+
 
 
 
