@@ -354,7 +354,7 @@ const scheduleA8 = [
 
 
 const scheduleA10 = [
-    { day: 1, start: 9, duration: 1, title: "HS111", code: "FF4", teacher: "ASY", type: "lec" },
+    { day: 1, start: 9, duration: 1, title: "HS111", code: "CS2", teacher: "ASY", type: "lec" },
     { day: 1, start: 10, duration: 1, title: "PH211", code: "CS5", teacher: "SHIV", type: "lec" },
     { day: 1, start: 11, duration: 1, title: "MA211", code: "CS5", teacher: "ANK", type: "lec" },
     { day: 1, start: 15, duration: 2, title: "CS121", code: "CL23", teacher: "APJ/MEE", type: "lab" },
@@ -444,7 +444,7 @@ const scheduleA17 = [
     { day: 6, start: 12, duration: 1, title: "CI121", code: "FF1", teacher: "SHR", type: "lec" },
     
     { day: 2, start: 10, duration: 2, title: "CS121", code: "CL09", teacher: "APR/AM", type: "lab" },
-    { day: 1, start: 11, duration: 1, title: "CI121", code: "TR302", teacher: "ASY", type: "tut" },
+    { day: 5, start: 9, duration: 1, title: "CI121", code: "TR302", teacher: "ASY", type: "tut" },
     { day: 3, start: 15, duration: 2, title: "PH271", code: "PL3", teacher: "AP/SHIV", type: "lab" },
     { day: 4, start: 11, duration: 1, title: "PH211", code: "TS6", teacher: "INC", type: "tut" },
     { day: 4, start: 14, duration: 1, title: "MA211", code: "TS7", teacher: "HA", type: "tut" },
@@ -774,7 +774,7 @@ const scheduleB12 = [
 ];
 
 const scheduleB14 = [
-    { day: 1, start: 9, duration: 1, title: "HS111", code: "FF4", teacher: "ASY", type: "lec" },
+    { day: 1, start: 9, duration: 1, title: "HS111", code: "CS2", teacher: "ASY", type: "lec" },
     { day: 1, start: 10, duration: 1, title: "PH211", code: "CS5", teacher: "SHIV", type: "lec" },
     { day: 1, start: 11, duration: 1, title: "MA211", code: "CS5", teacher: "ANK", type: "lec" },
     { day: 1, start: 14, duration: 1, title: "HS111", code: "TS6", teacher: "MB", type: "tut" },
@@ -1881,6 +1881,7 @@ const ROOM_LOCATIONS = {
     
     "Executive Room - I": "ABB-II", "Executive Room - II": "ABB-II"
 };
+
 
 
 
